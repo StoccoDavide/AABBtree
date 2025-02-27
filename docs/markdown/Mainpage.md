@@ -2,8 +2,6 @@
 
 `AABBtree` is a library for the construction and manipulation of axis-aligned bounding box (AABB) trees. The library is designed to be used in the context of collision detection, and other applications that require the efficient computation of intersections between axis-aligned bounding boxes. It provides a simple and intuitive interface for the construction of AABB trees from a set of axis-aligned bounding boxes, as well as for the computation of intersections between AABB trees, individual AABBs, and points. The library is implemented in C++17 and is header-only, meaning that it can be easily integrated into existing C++ projects without the need for additional dependencies. This fast and efficient library is implemented in C++17 and is header-only, meaning that it can be easily integrated into existing C++ projects without the need for additional dependencies or compilation steps.
 
-Are you looking for the online documentation? Visit [this link](https://stoccodavide.github.io/AABBtree/)!
-
 ## Installation
 
 ### Quick and dirty
