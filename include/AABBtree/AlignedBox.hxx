@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
  * Copyright (c) 2025, Davide Stocco and Enrico Bertolazzi.                                      *
  *                                                                                               *
- * The Sandals project is distributed under the BSD 2-Clause License.                            *
+ * The AABBtree project is distributed under the BSD 2-Clause License.                           *
  *                                                                                               *
  * Davide Stocco                                                               Enrico Bertolazzi *
  * University of Trento                                                     University of Trento *
@@ -24,7 +24,7 @@ namespace AABBtree
   * This class represents an axis-aligned box as a pair of opposite corners, i.e., a minimal corner
   * and a maximal corner.
   * \tparam Real the type of the scalar coefficients
-  * \tparam N the dimension of the ambient space, can be a compile time value or Dynamic.
+  * \tparam N Simension of the ambient space.
   */
   template <typename Real, Integer N>
   class AlignedBox
@@ -37,23 +37,26 @@ namespace AABBtree
     constexpr static Real MIN{-MAX};
     constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};
 
-    using Vector = Eigen::Vector<Real, N>; /**< Eigen column vector of real numbers. */
+  public:
+    using Vector = Eigen::Vector<Real, N>; /**> Eigen column vector of real numbers. */
+    using Point = Eigen::Vector<Real, N>; /**> Point in the ambient space (Eigen column vector of real numbers). */
 
-    Vector m_min; /**< Minimal corner of the box. */
-    Vector m_max; /**< Maximal corner of the box. */
+  private:
+    Point m_min; /**< Minimal corner of the box. */
+    Point m_max; /**< Maximal corner of the box. */
 
   public:
 
     /**
     * Cast the current object to a new scalar type.
     * \tparam NewReal the new scalar type
-    * \note If \a NewReal is equal to the current scalar type currently used, then this function
-    * returns a const reference to the current object.
+    * \note If the new real typeis equal to the current scalar type currently used, then this
+    * function returns a const reference to the current object.
     */
     template<typename NewReal>
     AlignedBox<NewReal, N> cast() const
     {
-      if (std::is_same<Real, NewReal>::value) {
+      if constexpr (std::is_same<Real, NewReal>::value) {
         return *this;
       } else {
         return AlignedBox<NewReal, N>(this->m_min.template cast<NewReal>(), this->m_max.template cast<NewReal>());
@@ -69,15 +72,22 @@ namespace AABBtree
     * Class constructor for a axis-aligned box given the minimal and maximal corners.
     * \param[in] t_min Minimal corner of the box.
     * \param[in] t_max Maximal corner of the box.
-    * \warning If either component of \a t_min is larger than the same component of \a t_max, the constructed box is empty.
+    * \tparam reorder If true, the corners are reordered such that the minimal corner is less than
+    * \warning If the reordering is not performed, and the minimal corner is greater than the maximal
+    * corner in any dimension, undefined behavior may occur.
     */
-    AlignedBox(Vector const & t_min, Vector const & t_max) : m_min(t_min), m_max(t_max) {}
+    AlignedBox(const Point & t_min, const Point & t_max) : m_min(t_min), m_max(t_max)
+    {
+      #define CMD "AABBtree::AlignedBox::AlignedBox(...): "
+      if (this->is_empty()) {AABBTREE_ERROR("minimal corner is greater than the maximal corner.");}
+      #undef CMD
+    }
 
     /**
     * Class constructor for a axis-aligned box containing a single point.
     * \param[in] p Point to be contained in the box.
     */
-    AlignedBox(const Vector & p) : m_min(p), m_max(p) {}
+    AlignedBox(const Point & p) : m_min(p), m_max(p) {}
 
     /**
     * Copy constructor for a axis-aligned box given another box with a different scalar type.
@@ -94,6 +104,17 @@ namespace AABBtree
     * Class destructor for the axis-aligned box.
     */
     ~AlignedBox() {}
+
+    /**
+    * Reorder the corners of the box such that the minimal corner is less than the maximal corner.
+    */
+    void reorder()
+    {
+      for (Integer i{0}; i < N; ++i)
+      {
+        if (this->m_min[i] > this->m_max[i]) {std::swap(this->m_min[i], this->m_max[i]);}
+      }
+    }
 
     /**
     * Check if the current box is approximately equal to another box.
@@ -119,7 +140,7 @@ namespace AABBtree
     * Set the box to be degenerate.
     * \param[in] p Point to set the box to.
     */
-    void set_degenerate(const Vector & p)
+    void set_degenerate(const Point & p)
     {
       this->m_min = p;
       this->m_max = p;
@@ -147,25 +168,25 @@ namespace AABBtree
     * Get the minimal corner.
     * \return The minimal corner of the box.
     */
-    const Vector & min() const {return this->m_min;}
+    const Point & min() const {return this->m_min;}
 
     /**
     * Get a non const reference to the minimal corner.
     * \return The minimal corner of the box.
     */
-    Vector & min() {return this->m_min;}
+    Point & min() {return this->m_min;}
 
     /**
     * Get the maximal corner.
     * \return The maximal corner of the box.
     */
-    const Vector & max() const {return this->m_max;}
+    const Point & max() const {return this->m_max;}
 
     /**
     * Get a non const reference to the maximal corner.
     * \return The maximal corner of the box.
     */
-    Vector & max() {return this->m_max;}
+    Point & max() {return this->m_max;}
 
     /**
     * Compute the center of the box.
@@ -179,8 +200,28 @@ namespace AABBtree
     */
     const Vector sizes() const {return this->m_max - this->m_min;}
 
-    /** \return the volume of the bounding box */
-    const Real volume() const { return this->sizes().prod(); }
+    /**
+    * Compute the volume of the bounding box.
+    * \return The volume of the bounding box.
+    */
+    const Real volume() const {return this->sizes().prod();}
+
+    /**
+    * Compute the external surface area of the bounding box.
+    * \return The external surface area of the bounding box.
+    */
+    const Real surface() const
+    {
+      Vector sizes{this->sizes()};
+      Real area{static_cast<Real>(0.0)}, prod;
+      for (Integer i{0}, j; i < N; ++i)
+      {
+        prod = static_cast<Real>(1.0);
+        for (j = 0; j < N; ++j) {if (j != i) {prod *= sizes[j];}}
+        area += static_cast<Real>(2.0)*prod;
+      }
+      return area;
+    }
 
     /**
     * Compute the bounding box diagonal vector.
@@ -194,7 +235,7 @@ namespace AABBtree
     * \param[in] p Point to check.
     * \return True if the point is inside the box, false otherwise.
     */
-    bool contains(const Vector & p) const
+    bool contains(const Point & p) const
     {
       return (this->m_min.array() <= p.array()).all() &&
              (p.array() <= this->m_max.array()).all();
@@ -203,7 +244,7 @@ namespace AABBtree
     /**
     * Check if the current box contains a given box.
     * \param[in] b Box to check.
-    * \return True if the current box contains the box \a b, false otherwise.
+    * \return True if the current box contains the given box, false otherwise.
     */
     bool contains(const AlignedBox & b) const
     {
@@ -214,7 +255,7 @@ namespace AABBtree
     /**
     * Check if the current box intersects a given box.
     * \param[in] b Box to check.
-    * \return True if the current box intersects the box \a b, false otherwise.
+    * \return True if the current box intersects the given box, false otherwise.
     */
     bool intersects(const AlignedBox & b) const
     {
@@ -228,7 +269,7 @@ namespace AABBtree
     * \return A reference to the current box.
     */
     template<typename Derived>
-    AlignedBox & extend(const Vector & p)
+    AlignedBox & extend(const Point & p)
     {
       this->m_min = this->m_min.cwiseMin(p);
       this->m_max = this->m_max.cwiseMax(p);
@@ -287,7 +328,6 @@ namespace AABBtree
     * \param[in] t Vector to translate the box by.
     * \return A reference to the current box.
     */
-    template<typename Derived>
     AlignedBox & translate(const Vector & t)
     {
       this->m_min += t;
@@ -311,10 +351,11 @@ namespace AABBtree
     * Compute the squared distance between the current box a given point.
     * \param[in] p Point to compute the squared distance to.
     * \return The squared distance between the box and the point.
-    * \note The squared distance is positive if the point is outside the box, zero otherwise.
+    * \note The returned value is positive if the point is outside the box, zero otherwise.
     */
-    Real squared_exterior_distance(const Vector & p) const
+    Real squared_distance(const Point & p) const
     {
+      if (this->contains(p)) {return static_cast<Real>(0.0);}
       Real dist2{0.0}, aux;
       for (Integer i{0}; i < N; ++i)
       {
@@ -330,13 +371,56 @@ namespace AABBtree
     }
 
     /**
-    * Compute the squared distance between the current box a given box.
+    * Compute the squared distance between the current box a given point, returning two points at
+    * the given distance.
+    * \param[in] p Point to compute the squared distance to.
+    * \param[out] p_max First point at the distance.
+    * \param[out] p_min Second point at the distance.
+    * \return The squared distance between the box and the point.
+    * \note The returned value is positive if the point is outside the box, zero otherwise.
+    */
+    Real squared_distance(const Point & p, Point & p_min, Point & p_max) const
+    {
+      if (this->contains(p)) {return static_cast<Real>(0.0);}
+      p_min = p.cwiseMin(this->m_min);
+      p_max = p.cwiseMax(this->m_max);
+      return (p_max - p_min).squaredNorm();
+    }
+
+    /**
+    * Compute the distance between the current box a given point.
+    * \param[in] p Point to compute the distance to.
+    * \return The distance between the box and the point.
+    * \note The distance is positive if the point is outside the box, zero otherwise.
+    */
+    Real distance(const Point & p) const
+    {
+      return std::sqrt(static_cast<Real>(this->squared_distance(p)));
+    }
+
+    /**
+    * Compute the distance between the current box a given point, returning two points at the given
+    * distance.
+    * \param[in] p Point to compute the distance to.
+    * \param[out] p_max First point at the distance.
+    * \param[out] p_min Second point at the distance.
+    * \return The distance between the box and the point.
+    * \note The returned value is positive if the point is outside the box, zero otherwise.
+    */
+    Real distance(const Point & p, Point & p_min, Point & p_max) const
+    {
+      return std::sqrt(static_cast<Real>(this->squared_distance(p, p_min, p_max)));
+    }
+
+    /**
+    * Compute the squared \em interior (or \em minimum) distance between the current box a given box.
     * \param[in] b Box to compute the squared distance to.
     * \return The squared distance between the boxes.
     * \note The squared distance is positive if the boxes do not intersect, zero otherwise.
     */
-    Real squared_exterior_distance(const AlignedBox & b) const
+    Real squared_interior_distance(const AlignedBox & b) const
     {
+      if (this->intersects(b)) {return static_cast<Real>(0.0);}
       Real dist2{0.0}, aux;
       for (Integer i{0}; i < N; ++i)
       {
@@ -352,18 +436,93 @@ namespace AABBtree
     }
 
     /**
-    * Compute the distance between the current box a given point.
-    * \param[in] p Point to compute the distance to.
-    * \return The distance between the box and the point.
-    * \note The distance is positive if the point is outside the box, zero otherwise.
+    * Compute the squared \em interior (or \em minimum) distance between the current box a given box,
+    * returning two points at the minimum distance.
+    * \param[in] b Box to compute the squared distance to.
+    * \param[out] p_max First point at the minimum distance.
+    * \param[out] p_min Second point at the minimum distance.
+    * \return The squared distance between the boxes.
+    * \note The squared distance is positive if the boxes do not intersect, zero otherwise.
     */
-    Real exterior_distance(const Vector & p) const
+    Real squared_interior_distance(const AlignedBox & b, Point & p_min, Point & p_max) const
     {
-      return std::sqrt(static_cast<Real>(this->squared_exterior_distance(p)));
+      if (this->intersects(b)) {return static_cast<Real>(0.0);}
+      for (Integer i{0}; i < N; ++i)
+      {
+        if (this->m_min[i] > b.m_max[i]) {
+          p_min[i] = b.m_max[i];
+          p_max[i] = this->m_min[i];
+        } else if (b.m_min[i] > this->m_max[i]) {
+          p_min[i] = this->m_max[i];
+          p_max[i] = b.m_min[i];
+        } else {
+          p_min[i] = p_max[i] =
+            (std::min(this->m_max[i], b.m_max[i]) + std::max(this->m_min[i], b.m_min[i]))/
+            static_cast<Real>(2.0);
+        }
+      }
+      return (p_max - p_min).squaredNorm();
     }
 
     /**
-    * Compute the distance between the current box a given box.
+    * Compute the \em interior (or \em minimum) distance between the current box a given box.
+    * \param[in] b Box to compute the distance to.
+    * \return The distance between the boxes.
+    * \note The distance is positive if the boxes do not intersect, zero otherwise.
+    */
+    Real interior_distance(const AlignedBox & b) const
+    {
+      return std::sqrt(static_cast<Real>(this->squared_interior_distance(b)));
+    }
+
+    /**
+    * Compute the \em interior (or \em minimum) distance between the current box a given box,
+    * returning two points at the minimum distance.
+    * \param[in] b Box to compute the distance to.
+    * \param[out] p_max First point at the minimum distance.
+    * \param[out] p_min Second point at the minimum distance.
+    * \return The distance between the boxes.
+    * \note The distance is positive if the boxes do not intersect, zero otherwise.
+    */
+    Real interior_distance(const AlignedBox & b, Point & p_min, Point & p_max) const
+    {
+      return std::sqrt(static_cast<Real>(this->squared_interior_distance(b, p_min, p_max)));
+    }
+
+    /**
+    * Compute the squared \em exterior (or \em maximum) distance between the current box a given box.
+    * \param[in] b Box to compute the squared distance to.
+    * \return The squared distance between the boxes.
+    * \note The squared distance is positive if one box is not contained in the other, zero otherwise.
+    */
+    Real squared_exterior_distance(const AlignedBox & b) const
+    {
+      Real dist2{0.0}, aux;
+      for (Integer i{0}; i < N; ++i)
+      {
+        aux = std::max(this->m_max[i], b.m_max[i]) - std::min(this->m_min[i], b.m_min[i]);
+        dist2 += aux*aux;
+      }
+      return dist2;
+    }
+
+    /**
+    * Compute the squared \em exterior (or \em maximum) distance between the current box a given box,
+    * returning two points at the maximum distance.
+    * \param[in] b Box to compute the squared distance to.
+    * \param[out] p_max First point at the maximum distance.
+    * \param[out] p_min Second point at the maximum distance.
+    * \return The squared distance between the boxes.
+    */
+    Real squared_exterior_distance(const AlignedBox & b, Point & p_min, Point & p_max) const
+    {
+      p_min = b.m_min.cwiseMin(this->m_min);
+      p_max = b.m_max.cwiseMax(this->m_max);
+      return (p_max - p_min).squaredNorm();
+    }
+
+    /**
+    * Compute the \em exterior (or \em maximum) distance between the current box a given box.
     * \param[in] b Box to compute the distance to.
     * \return The distance between the boxes.
     * \note The distance is positive if the boxes do not intersect, zero otherwise.
@@ -371,6 +530,20 @@ namespace AABBtree
     Real exterior_distance(const AlignedBox & b) const
     {
       return std::sqrt(static_cast<Real>(this->squared_exterior_distance(b)));
+    }
+
+    /**
+    * Compute the \em exterior (or \em maximum) distance between the current box a given box,
+    * and return two points at the maximum distance.
+    * \param[in] b Box to compute the distance to.
+    * \param[out] p_max First point at the maximum distance.
+    * \param[out] p_min Second point at the maximum distance.
+    * \return The distance between the boxes.
+    * \note The distance is positive if the boxes do not intersect, zero otherwise.
+    */
+    Real exterior_distance(const AlignedBox & b, Point & p_min, Point & p_max) const
+    {
+      return std::sqrt(static_cast<Real>(this->squared_exterior_distance(b, p_min, p_max)));
     }
 
   }; // class AlignedBox

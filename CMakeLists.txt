@@ -65,6 +65,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   option(BUILD_TESTS "Build tests" OFF)
   option(BUILD_BENCHMARKS "Build benchmarks" OFF)
   option(BUILD_EXAMPLES "Build examples" OFF)
+  option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" OFF)
 
   file(GLOB_RECURSE HEADER_FILES_HH "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh")
   file(GLOB_RECURSE HEADER_FILES_HXX "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hxx")
@@ -89,6 +90,10 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
   if(BUILD_EXAMPLES)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+  endif()
+
+  if(AABBTREE_ENABLE_PLOTTING)
+    target_compile_definitions(AABBtree INTERFACE AABBTREE_ENABLE_PLOTTING)
   endif()
 endif()
 
