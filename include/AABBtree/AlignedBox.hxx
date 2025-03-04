@@ -23,8 +23,8 @@ namespace AABBtree
   *
   * This class represents an axis-aligned box as a pair of opposite corners, i.e., a minimal corner
   * and a maximal corner.
-  * \tparam Real the type of the scalar coefficients
-  * \tparam N Simension of the ambient space.
+  * \tparam Real Type of the scalar coefficients
+  * \tparam N Dimension of the ambient space.
   */
   template <typename Real, Integer N>
   class AlignedBox
@@ -32,10 +32,10 @@ namespace AABBtree
     static_assert(N > 0, "AlignedBox dimension must be positive.");
     static_assert(std::is_floating_point<Real>::value, "AlignedBox real type must be a floating-point type.");
 
-    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()};
-    constexpr static Real MAX{static_cast<Real>(1.0)/EPS};
-    constexpr static Real MIN{-MAX};
-    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};
+    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()}; /**> Machine epsilon for the scalar type. */
+    constexpr static Real MAX{static_cast<Real>(1.0)/EPS}; /**> Maximum value for the scalar type. */
+    constexpr static Real MIN{-MAX}; /**> Minimum value for the scalar type. */
+    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)}; /**> Dummy tolerance for the scalar type. */
 
   public:
     using Vector = Eigen::Vector<Real, N>; /**> Eigen column vector of real numbers. */
@@ -46,6 +46,10 @@ namespace AABBtree
     Point m_max; /**< Maximal corner of the box. */
 
   public:
+    /**
+    * Class destructor for the axis-aligned box.
+    */
+    ~AlignedBox() {}
 
     /**
     * Cast the current object to a new scalar type.
@@ -72,16 +76,10 @@ namespace AABBtree
     * Class constructor for a axis-aligned box given the minimal and maximal corners.
     * \param[in] t_min Minimal corner of the box.
     * \param[in] t_max Maximal corner of the box.
-    * \tparam reorder If true, the corners are reordered such that the minimal corner is less than
     * \warning If the reordering is not performed, and the minimal corner is greater than the maximal
     * corner in any dimension, undefined behavior may occur.
     */
-    AlignedBox(const Point & t_min, const Point & t_max) : m_min(t_min), m_max(t_max)
-    {
-      #define CMD "AABBtree::AlignedBox::AlignedBox(...): "
-      if (this->is_empty()) {AABBTREE_ERROR("minimal corner is greater than the maximal corner.");}
-      #undef CMD
-    }
+    AlignedBox(const Point & t_min, const Point & t_max) : m_min(t_min), m_max(t_max) {}
 
     /**
     * Class constructor for a axis-aligned box containing a single point.
@@ -90,8 +88,64 @@ namespace AABBtree
     AlignedBox(const Point & p) : m_min(p), m_max(p) {}
 
     /**
+    * Class constructor for the 1D axis-aligned bounding box.
+    * \param[in] x_min Minimal \f$ x \f$-axis corner of the box.
+    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
+    * \tparam T Type of the scalar coefficients.
+    * \note This constructor is only available for 1D boxes.
+    */
+    template <typename T = Real>
+    AlignedBox<T, 1>(Real x_min, Real x_max) : m_min(x_min), m_max(x_max) {}
+
+    /**
+    * Class constructor for the 2D axis-aligned bounding box.
+    * \param[in] x_min Minimal \f$ x \f$-axis corner of the box.
+    * \param[in] y_min Minimal \f$ y \f$-axis corner of the box.
+    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
+    * \param[in] y_max Maximal \f$ y \f$-axis corner of the box.
+    * \tparam T Type of the scalar coefficients.
+    * \note This constructor is only available for 2D boxes.
+    */
+    template <typename T = Real>
+    AlignedBox<T, 2>(Real x_min, Real y_min, Real x_max, Real y_max)
+      : m_min(x_min, y_min), m_max(x_max, y_max) {}
+
+    /**
+    * Class constructor for the 3D axis-aligned bounding box.
+    * \param[in] x_min Minimal \f$ x \f$-axis corner of the box.
+    * \param[in] y_min Minimal \f$ y \f$-axis corner of the box.
+    * \param[in] z_min Minimal \f$ z \f$-axis corner of the box.
+    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
+    * \param[in] y_max Maximal \f$ y \f$-axis corner of the box.
+    * \param[in] z_max Maximal \f$ z \f$-axis corner of the box.
+    * \tparam T Type of the scalar coefficients.
+    * \note This constructor is only available for 3D boxes.
+    */
+    template <typename T = Real>
+    AlignedBox<T, 3>(Real x_min, Real y_min, Real z_min, Real x_max, Real y_max, Real z_max)
+      : m_min(x_min, y_min, z_min), m_max(x_max, y_max, z_max) {}
+
+    /**
+    * Class constructor for the 4D axis-aligned bounding box.
+    * \param[in] x_min Minimal \f$ x \f$-axis corner of the box.
+    * \param[in] y_min Minimal \f$ y \f$-axis corner of the box.
+    * \param[in] z_min Minimal \f$ z \f$-axis corner of the box.
+    * \param[in] w_min Minimal \f$ w \f$-axis corner of the box.
+    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
+    * \param[in] y_max Maximal \f$ y \f$-axis corner of the box.
+    * \param[in] z_max Maximal \f$ z \f$-axis corner of the box.
+    * \param[in] w_max Maximal \f$ w \f$-axis corner of the box.
+    * \tparam T Type of the scalar coefficients.
+    * \note This constructor is only available for 4D boxes.
+    */
+    template <typename T = Real>
+    AlignedBox<T, 4>(Real x_min, Real y_min, Real z_min, Real w_min, Real x_max, Real y_max, Real
+      z_max, Real w_max) : m_min(x_min, y_min, z_min, w_min), m_max(x_max, y_max, z_max, w_max) {}
+
+    /**
     * Copy constructor for a axis-aligned box given another box with a different scalar type.
     * \param[in] b Box to copy.
+    * \tparam OtherReal Type of the scalar coefficients of the box to copy.
     */
     template<typename OtherReal>
     explicit AlignedBox(const AlignedBox<OtherReal, N>& b)
@@ -99,11 +153,6 @@ namespace AABBtree
       this->m_min = b.m_min.template cast<Real>();
       this->m_max = b.m_max.template cast<Real>();
     }
-
-    /**
-    * Class destructor for the axis-aligned box.
-    */
-    ~AlignedBox() {}
 
     /**
     * Reorder the corners of the box such that the minimal corner is less than the maximal corner.
@@ -127,7 +176,7 @@ namespace AABBtree
     }
 
     /**
-    * Check if the current box is degenrate.
+    * Check if the current box is degenrate, i.e., it has zero volume.
     * \param[in] tol Tolerance to use for the comparison.
     * \return True if the box is degenerate, false otherwise.
     */
@@ -147,7 +196,8 @@ namespace AABBtree
     }
 
     /**
-    * Check if the box is empty.
+    * Check if the box is empty, i.e., the minimal corner is greater than the maximal corner in any
+    * dimension.
     * \return True if the box is empty, false otherwise.
     */
     bool is_empty() const
@@ -177,6 +227,13 @@ namespace AABBtree
     Point & min() {return this->m_min;}
 
     /**
+    * Get the /f$ i /f$-th component of the minimal corner.
+    * \param[in] i Index of the component.
+    * \return The /f$ i /f$-th component of the minimal corner.
+    */
+    Real min(Integer i) const {return this->m_min[i];}
+
+    /**
     * Get the maximal corner.
     * \return The maximal corner of the box.
     */
@@ -189,10 +246,27 @@ namespace AABBtree
     Point & max() {return this->m_max;}
 
     /**
+    * Get the /f$ i /f$-th component of the maximal corner.
+    * \param[in] i Index of the component.
+    * \return The /f$ i /f$-th component of the maximal corner.
+    */
+    Real max(Integer i) const {return this->m_max[i];}
+
+    /**
+    * Get the longest axis of the box.
+    * \return The longest axis of the box.
+    */
+    Integer longest_axis() const
+    {
+      Vector sizes{this->sizes()};
+      return std::distance(sizes.data(), std::max_element(sizes.data(), sizes.data() + N));
+    }
+
+    /**
     * Compute the center of the box.
     * \return The center of the box.
     */
-    const Real center() const {return (this->m_min + this->m_max)/static_cast<Real>(2.0);}
+    const Point center() const {return (this->m_min + this->m_max)/static_cast<Real>(2.0);}
 
     /**
     * Compute the lengths of the bounding box's sides.
@@ -277,7 +351,18 @@ namespace AABBtree
     }
 
     /**
-    * Extends the current box such that it contains a given box.
+    * Extend the current box such that it contains the given points.
+    * \param[in] p Points to extend the box to.
+    * \return A reference to the current box.
+    */
+    AlignedBox & extend(const std::vector<Point> & p)
+    {
+      for (const Point & point : p) {this->extend(point);}
+      return *this;
+    }
+
+    /**
+    * Extend the current box such that it contains a given box.
     * \param[in] b Box to extend the box to.
     * \return A reference to the current box.
     * \note Merging with an empty box may result in a box bigger than \c *this.
@@ -286,6 +371,18 @@ namespace AABBtree
     {
       this->m_min = this->m_min.cwiseMin(b.m_min);
       this->m_max = this->m_max.cwiseMax(b.m_max);
+      return *this;
+    }
+
+    /**
+    * Extend the current box such that it contains the given boxes.
+    * \param[in] b Boxes to extend the box to.
+    * \return A reference to the current box.
+    * \note Merging with an empty box may result in a box bigger than \c *this.
+    */
+    AlignedBox & extend(const std::vector<AlignedBox> & b)
+    {
+      for (const AlignedBox & box : b) {this->extend(box);}
       return *this;
     }
 
@@ -547,6 +644,17 @@ namespace AABBtree
     }
 
   }; // class AlignedBox
+
+  template class AlignedBox<float, 1>;
+  template class AlignedBox<float, 2>;
+  template class AlignedBox<float, 3>;
+  template class AlignedBox<float, 4>;
+  template class AlignedBox<float, 5>;
+  template class AlignedBox<double, 1>;
+  template class AlignedBox<double, 2>;
+  template class AlignedBox<double, 3>;
+  template class AlignedBox<double, 4>;
+  template class AlignedBox<double, 5>;
 
 } // namespace AABBtree
 

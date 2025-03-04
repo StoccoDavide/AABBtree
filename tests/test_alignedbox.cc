@@ -26,8 +26,8 @@ using namespace Catch::Matchers;
 #ifdef AABBTREE_ENABLE_PLOTTING
 #include <matplot/matplot.h>
 using namespace matplot;
-static auto fig = figure(true);
-static axes_handle ax = fig->current_axes();
+static auto fig{figure(true)};
+static axes_handle ax{fig->current_axes()};
 #endif
 
 // Plot an aligned box
@@ -37,10 +37,8 @@ void plot_alignedbox(const AlignedBox<Real, N> & box, const Real line_width = 1)
   std::vector<Real> min(box.min().data(), box.min().data() + N);
   std::vector<Real> max(box.max().data(), box.max().data() + N);
   #ifdef AABBTREE_ENABLE_PLOTTING
-  ax->plot(
-    {min[0], max[0], min[0], min[0], min[0], max[0], max[0], max[0]},
-    {min[1], min[1], min[1], max[1], max[1], max[1], min[1], max[1]}
-  )->line_width(line_width);
+  ax->plot({min[0], max[0], max[0], min[0], min[0]},
+    {min[1], min[1], max[1], max[1], min[1]})->line_width(line_width);
   #endif
 }
 
@@ -70,8 +68,8 @@ TEMPLATE_TEST_CASE("Aligned box", "[template]", float, double) {
   SECTION("Intersection") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
     using AlignedBox = AABBtree::AlignedBox<TestType, 2>;
-    AlignedBox box_1(Vector(-1.0, -1.0), Vector(2.0, 2.0));
-    AlignedBox box_2(Vector(-2.0, -2.0), Vector(1.0, 1.0));
+    AlignedBox box_1(-1.0, -1.0, 2.0, 2.0);
+    AlignedBox box_2(-2.0, -2.0, 1.0, 1.0);
     AlignedBox box_3 = box_1.intersection(box_2);
     SET_PLOT
     title(ax, "Intersection");
@@ -89,14 +87,11 @@ TEMPLATE_TEST_CASE("Aligned box", "[template]", float, double) {
   SECTION("Interior distance") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
     using AlignedBox = AABBtree::AlignedBox<TestType, 2>;
-    AlignedBox box_1(Vector(-2.0, -2.0), Vector(-0.5, -0.5));
-    AlignedBox box_2(Vector(-2.5, 0.5), Vector(2.0, 2.0));
+    AlignedBox box_1(-2.0, -2.0, -0.5, -0.5);
+    AlignedBox box_2(-2.5, 0.5, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.interior_distance(box_2, p_1, p_2)};
     SET_PLOT
-    std::cout << "Interior distance1: " << d << std::endl;
-    std::cout << "Interior distance2: " << box_1.interior_distance(box_2) << std::endl;
-
     title(ax, "Interior distance");
     plot_alignedbox<TestType, 2>(box_1, 1.0); ax->hold(true);
     plot_alignedbox<TestType, 2>(box_2, 1.0);
@@ -107,8 +102,8 @@ TEMPLATE_TEST_CASE("Aligned box", "[template]", float, double) {
   SECTION("Exterior distance") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
     using AlignedBox = AABBtree::AlignedBox<TestType, 2>;
-    AlignedBox box_1(Vector(-2.0, -2.0), Vector(0.0, 0.0));
-    AlignedBox box_2(Vector(0.0, 0.0), Vector(2.0, 2.0));
+    AlignedBox box_1(-2.0, -2.0, 0.0, 0.0);
+    AlignedBox box_2(0.0, 0.0, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.exterior_distance(box_2, p_1, p_2)};
     SET_PLOT

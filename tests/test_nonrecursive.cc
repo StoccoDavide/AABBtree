@@ -8,12 +8,12 @@
  * e-mail: davide.stocco@unitn.it                             e-mail: enrico.bertolazzi@unitn.it *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// AABBtree library
 #include "AABBtree.hh"
 
 int main() {
 
-  AABBtree::AlignedBox<double, 3> box_double;
-  AABBtree::AlignedBox<float, 3> box_float;
+  AABBtree::NonRecursive<double, 2> tree;
 
   return 0;
 }

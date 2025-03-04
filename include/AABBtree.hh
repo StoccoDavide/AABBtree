@@ -74,6 +74,8 @@ namespace AABBtree {
 } // namespace AABBtree
 
 #include "AABBtree/AlignedBox.hxx"
-//#include "AABBtree/AABBtree.hxx"
+#include "AABBtree/Tree.hxx"
+#include "AABBtree/Recursive.hxx"
+//#include "AABBtree/NonRecursive.hxx"
 
 #endif // INCLUDE_AABBTREE_HH

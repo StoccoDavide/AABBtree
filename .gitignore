@@ -34,3 +34,4 @@
 # CMake files
 CMakeCache.txt
 build/
+tmp/
