@@ -24,6 +24,7 @@
 #include <utility>
 #include <memory>
 #include <algorithm>
+#include <numeric>
 
 // Eigen library
 #include <Eigen/Dense>
@@ -88,17 +89,19 @@ namespace AABBtree {
   */
   using Integer = AABBTREE_DEFAULT_INTEGER_TYPE;
   using Set     = set<Integer>;        /**< Set of indexes. */
+  using MapSet  = map<Integer,Set>;    /**< Map of Set of indexes. */
+  using Indexes = vector<Integer>;     /**< Vector of indexes. */
 
   using istream_type = std::basic_istream<char>;
   using ostream_type = std::basic_ostream<char>;
 
   static_assert( is_integral<Integer>::value, "Integer must be an integer type." );
 
-  template <Integer N, typename Real>                       class Box;
-  template <Integer N, typename Real, typename DerivedTree> class Tree;
+  template <typename Real, Integer N>                       class Box;
+  template <typename Real, Integer N, typename DerivedTree> class Tree;
 
-  template <Integer N, typename Real> using BoxUPtr    = unique_ptr<Box<N,Real>>;
-  template <Integer N, typename Real> using BoxUPtrVec = vector<BoxUPtr<N,Real>>;
+  template <typename Real, Integer N> using BoxUPtr    = unique_ptr<Box<Real,N>>;
+  template <typename Real, Integer N> using BoxUPtrVec = vector<BoxUPtr<Real,N>>;
   template <typename Real, Integer N> using Vector     = Eigen::Vector<Real,N>; /**> Eigen column vector of real numbers. */
   template <typename Real, Integer N> using Point      = Eigen::Vector<Real,N>; /**> Point in the ambient space (Eigen column vector of real numbers). */
 
@@ -107,6 +110,6 @@ namespace AABBtree {
 #include "AABBtree/Box.hxx"
 #include "AABBtree/Tree.hxx"
 #include "AABBtree/RecursiveTree.hxx"
-//#include "AABBtree/NonRecursiveTree.hxx"
+#include "AABBtree/NonRecursiveTree.hxx"
 
 #endif // INCLUDE_AABBTREE_HH

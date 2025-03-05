@@ -29,25 +29,25 @@ namespace AABBtree {
   * \tparam N Dimension of the ambient space.
   */
  
-  template <Integer N, typename Real=double>
-  class Recursive : public Tree<N, Real, Recursive<N, Real>>
+  template <typename Real, Integer N>
+  class Recursive : public Tree<Real,N,Recursive<Real,N>>
   {
     using Point      = Point<Real,N>;
     using Vector     = Vector<Real,N>;
-    using Box        = Box<N,Real>;
-    using BoxUPtr    = BoxUPtr<N,Real>;
-    using BoxUPtrVec = BoxUPtrVec<N,Real>;
+    using Box        = Box<Real,N>;
+    using BoxUPtr    = BoxUPtr<Real,N>;
+    using BoxUPtrVec = BoxUPtrVec<Real,N>;
 
-    using Tree      = Tree<N,Real,Recursive<N,Real>>;
-    using Set       = typename Tree::Set;
-    //using TreePt    = unique_ptr<Recursive>;
-    using Children = std::pair<BoxUPtr, BoxUPtr>;
+    using Tree       = Tree<Real,N,Recursive<Real,N>>;
+    using Children   = std::pair<BoxUPtr, BoxUPtr>;
 
     Children   m_children; /** Pointers to the children (left and right) boxes. */
     BoxUPtr    m_box;      /** Pointer to the current box. */
     BoxUPtrVec m_objects;  /** Object axis-aligned bounding boxes. */
 
   public:
+
+  #if 0
 
     Recursive(Recursive const &) = delete; /**< Copy constructor. */
     Recursive & operator=(Recursive const &) = delete; /**< Copy assignment operator. */
@@ -246,17 +246,31 @@ namespace AABBtree {
     {
       return static_cast<Real>(0.0);
     }
+  #endif
 
   }; // Recursive
 
-  template class Recursive<float, 1>;
-  template class Recursive<float, 2>;
-  template class Recursive<float, 3>;
-  template class Recursive<float, 4>;
-  template class Recursive<double, 1>;
-  template class Recursive<double, 2>;
-  template class Recursive<double, 3>;
-  template class Recursive<double, 4>;
+  template class Recursive<float,1>;
+  template class Recursive<float,2>;
+  template class Recursive<float,3>;
+  template class Recursive<float,4>;
+  template class Recursive<float,5>;
+  template class Recursive<float,6>;
+  template class Recursive<float,7>;
+  template class Recursive<float,8>;
+  template class Recursive<float,9>;
+  template class Recursive<float,10>;
+
+  template class Recursive<double,1>;
+  template class Recursive<double,2>;
+  template class Recursive<double,3>;
+  template class Recursive<double,4>;
+  template class Recursive<double,5>;
+  template class Recursive<double,6>;
+  template class Recursive<double,7>;
+  template class Recursive<double,8>;
+  template class Recursive<double,9>;
+  template class Recursive<double,10>;
 
 } // namespace AABBtree
 

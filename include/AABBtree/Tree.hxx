@@ -27,7 +27,7 @@ namespace AABBtree {
   * \tparam Real Type of the scalar coefficients
   * \tparam N Dimension of the ambient space.
   */
-  template <Integer N, typename Real, typename DerivedTree>
+  template <typename Real, Integer N, typename DerivedTree>
   class Tree {
     static_assert( is_floating_point<Real>::value, "Tree Real type must be a floating-point type." );
     static_assert( is_integral<Integer>::value,    "Tree dimension type must be an integer type."  );
@@ -37,19 +37,32 @@ namespace AABBtree {
     DerivedTree const * THIS() const { return static_cast<DerivedTree const *>(this); }
 
   protected:
+
+    using Box        = Box<Real,N>;         /**< Axis-aligned bounding box in N-dimensional space. */
+    using BoxUPtr    = BoxUPtr<Real,N>;     /**< Unique pointer to an axis-aligned bounding box. */
+    using BoxUPtrVec = BoxUPtrVec<Real,N>;  /**< Vector of unique pointers to an axis-aligned bounding box. */
+    using Point      = Point<Real,N>;       /**< Point in the ambient space (Eigen column vector of real numbers). */
+
     // Tree parameters
-    Integer m_max_nodal_objects{16};    /**< Maximum number of objects per node. */
-    Real    m_long_edge_ratio{0.8};     /**< Long edge ratio for bounding boxes. */
-    Real    m_collision_tolerance{0.1}; /**< Overlap tolerance for bounding boxes. */
-    Real    m_min_size_tolerance{0.0};  /**< Minimum size tolerance for bounding boxes. */
+    Integer m_max_nodal_objects{16};               /**< Maximum number of objects per node. */
+    Real    m_separation_ratio_tolerance{0.1};     /**< Long edge ratio for bounding boxes. */
+    Real    m_balance_ratio_LR{0.25};               /**< Long edge ratio for bounding boxes. */
+    Real    m_collision_tolerance{0.1};            /**< Overlap tolerance for bounding boxes. */
+    Real    m_min_size_tolerance{0.0};             /**< Minimum size tolerance for bounding boxes. */
+
+    unique_ptr<BoxUPtrVec> m_boxes{nullptr};
+
+    /*
+    //     _        _
+    //  __| |_ __ _| |_ ___
+    // (_-<  _/ _` |  _(_-<
+    // /__/\__\__,_|\__/__/
+    */
+
+    mutable Integer m_check_counter{0};  /**< Number of overlap check (for statistic). */
 
   public:
 
-    using Box        = Box<N,Real>;         /**< Axis-aligned bounding box in N-dimensional space. */
-    using BoxUPtr    = BoxUPtr<N,Real>;     /**< Unique pointer to an axis-aligned bounding box. */
-    using BoxUPtrVec = BoxUPtrVec<N,Real>;  /**< Vector of unique pointers to an axis-aligned bounding box. */
-
-    using Point      = Point<Real,N>;       /**< Point in the ambient space (Eigen column vector of real numbers). */
 
     Tree ( Tree const & ) = delete;          /**< Copy constructor. */
     Tree & operator=(Tree const &) = delete; /**< Copy assignment operator. */
@@ -94,12 +107,12 @@ namespace AABBtree {
      * \param[in] ratio Long edge ratio for bounding boxes.
      */
     void
-    set_long_edge_ratio( Real const ratio ) {
+    set_separation_ratio_tolerance( Real const ratio ) {
       AABBTREE_ASSERT(
         ratio > 0 && ratio < static_cast<Real>(1),
-        "NonRecursive::long_edge_ratio(...): input must be in the range [0, 1]."
+        "NonRecursive::set_separation_ratio_tolerance(...): input must be in the range [0, 1]."
       );
-      m_long_edge_ratio = ratio;
+      m_separation_ratio_tolerance = ratio;
     }
 
     /**
@@ -143,10 +156,10 @@ namespace AABBtree {
     Integer max_nodes_objects() const { return this->m_max_nodal_objects; }
 
     /**
-     * Get the long edge ratio for bounding boxes.
-     * \return The long edge ratio for bounding boxes.
+     * Get the long edge ratio tolerance for bounding boxes separation.
+     * \return .
      */
-    Real long_edge_ratio() const { return m_long_edge_ratio; }
+    Real separation_ratio_tolerance() const { return m_separation_ratio_tolerance; }
 
     /**
      * Get the overlap tolerance for bounding boxes.
@@ -173,7 +186,7 @@ namespace AABBtree {
      * \param[in] boxes Bounding boxes to build the tree from.
      * \return True if the tree was built successfully, false otherwise.
      */
-    void build( BoxUPtrVec const & boxes ) { return THIS()->build_impl(boxes); }
+    void build( unique_ptr<BoxUPtrVec> boxes ) { m_boxes = std::move(boxes); return THIS()->build_impl(); }
 
     /**
      * Clear the tree.

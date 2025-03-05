@@ -13,7 +13,7 @@
 
 int main() {
 
-  AABBtree::NonRecursive<double, 2> tree;
+  AABBtree::NonRecursive<double,2> tree;
 
   return 0;
 }

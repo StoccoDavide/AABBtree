@@ -25,9 +25,10 @@ namespace AABBtree {
   * \tparam Real Type of the scalar coefficients
   * \tparam N Dimension of the ambient space.
   */
-  template <Integer N, typename Real=double>
+  template <typename Real, Integer N>
   class Box {
     static_assert( is_floating_point<Real>::value, "Box Real type must be a floating-point type." );
+    static_assert( is_integral<Integer>::value, "Integer must be an integer type." );
     static_assert( N > 0, "Box dimension must be positive." );
 
     constexpr static Real EPS{numeric_limits<Real>::epsilon()};      /**> Machine epsilon for the scalar type. */
@@ -37,11 +38,11 @@ namespace AABBtree {
 
     using Point      = Point<Real,N>;
     using Vector     = Vector<Real,N>;
-    using BoxUPtr    = BoxUPtr<N,Real>;
-    using BoxUPtrVec = BoxUPtrVec<N,Real>;
+    using BoxUPtr    = BoxUPtr<Real,N>;
+    using BoxUPtrVec = BoxUPtrVec<Real,N>;
 
-    Point m_min{MAX}; /**< Minimal corner of the box. */
-    Point m_max{MIN}; /**< Maximal corner of the box. */
+    Point m_min; /**< Minimal corner of the box. */
+    Point m_max; /**< Maximal corner of the box. */
 
   public:
 
@@ -55,7 +56,11 @@ namespace AABBtree {
     /**
      * Class constructor for an empty axis-aligned box.
      */
-    Box() { this->set_empty(); }
+    Box() {
+      m_min.fill(MAX);
+      m_max.fill(MIN); 
+      this->set_empty();
+    }
 
     /**
      * Class destructor for the axis-aligned box.
@@ -69,7 +74,7 @@ namespace AABBtree {
      * \warning If the reordering is not performed, and the minimal corner is greater than the maximal
      * corner in any dimension, undefined behavior may occur.
      */
-    Box( Point const & t_min, const Point & t_max) : m_min(t_min), m_max(t_max) {}
+    Box( Point const & t_min, const Point & t_max ) : m_min(t_min), m_max(t_max) {}
 
     /**
      * Class constructor for a axis-aligned box containing a single point.
@@ -178,7 +183,7 @@ namespace AABBtree {
      */
     template<typename OtherReal, typename OtherInteger>
     explicit
-    Box( Box<N,OtherReal> const & b )
+    Box( Box<OtherReal,N> const & b )
     : m_min(b.m_min.template cast<Real>())
     , m_max(b.m_max.template cast<Real>())
     {}
@@ -197,10 +202,10 @@ namespace AABBtree {
      * function returns a const reference to the current object.
      */
     template<typename NewReal>
-    Box<N,NewReal>
+    Box<NewReal,N>
     cast() const {
       if constexpr (is_same<Real, NewReal>::value ) return *this;
-      return Box<N,NewReal>( m_min.template cast<NewReal>(), m_max.template cast<NewReal>());
+      return Box<NewReal,N>( m_min.template cast<NewReal>(), m_max.template cast<NewReal>());
     }
 
     /*
@@ -275,20 +280,45 @@ namespace AABBtree {
     Real max( Integer i ) const { return m_max[i]; }
 
     /**
+     */
+    Real length( Integer i ) const { return m_max(i)-m_min(i); }
+
+    /**
      * Get the longest axis of the box.
      * \return The longest axis of the box.
      */
     Integer
-    longest_axis() const {
-      Vector sizes{ this->sizes() };
-      return static_cast<Integer>( max_element(sizes.data(), sizes.data() + N) - sizes.data() );
+    longest_axis( Real & mx, Real & mp ) const {
+      Integer ipos{-1};
+      mx = -1;
+      for ( Integer i{0}; i < N; ++i )
+        if ( Real const mx1{ m_max(i) - m_min(i) }; mx < mx1 )
+          { mx = mx1; mp = (m_max(i) + m_min(i) ) / 2; ipos = i; }
+      return ipos;
+    }
+
+    /**
+     * Get the longest axis of the box.
+     * \return The longest axis of the box.
+     */
+    void
+    sort_axis( Vector & S, Integer ipos[N] ) const {
+      std::iota( ipos, ipos + N, 0 );
+      S = m_max - m_min;
+      std::sort( ipos, ipos+N, [&S]( Integer a, Integer b ) -> bool { return S[a] > S[b]; } );
     }
 
     /**
      * Compute the center of the box.
      * \return The center of the box.
      */
-    Point center() const { return (m_min + m_max)*static_cast<Real>(0.5); }
+    Point center() const { return (m_min + m_max)/2; }
+
+    /**
+     * Compute the center of the box.
+     * \return The center of the box.
+     */
+    Real center( Integer i ) const { return (m_min(i) + m_max(i))/2; }
 
     /**
      * Compute the lengths of the bounding box's sides.
@@ -429,6 +459,18 @@ namespace AABBtree {
     contains( Point const  & p ) const {
       return ( m_min.array() <= p.array()     ).all() &&
              ( p.array()     <= m_max.array() ).all();
+    }
+
+    /**
+     * Check if the point is inside the interval, on the left or right.
+     * \param[in] p Point to check.
+     * \return True if the point is inside the box, false otherwise.
+     */
+    Integer
+    classify( Real const x, Real const x_tol, Integer const idim ) const {
+      if ( x < m_min(idim)+x_tol ) return -1;
+      if ( x > m_max(idim)-x_tol ) return +1;
+      return 0;
     }
 
     /**
@@ -688,17 +730,27 @@ namespace AABBtree {
 
   }; // class Box
 
-  template class Box<1,float>;
-  template class Box<2,float>;
-  template class Box<3,float>;
-  template class Box<4,float>;
-  template class Box<5,float>;
+  template class Box<float,1>;
+  template class Box<float,2>;
+  template class Box<float,3>;
+  template class Box<float,4>;
+  template class Box<float,5>;
+  template class Box<float,6>;
+  template class Box<float,7>;
+  template class Box<float,8>;
+  template class Box<float,9>;
+  template class Box<float,10>;
 
-  template class Box<1,double>;
-  template class Box<2,double>;
-  template class Box<3,double>;
-  template class Box<4,double>;
-  template class Box<5,double>;
+  template class Box<double,1>;
+  template class Box<double,2>;
+  template class Box<double,3>;
+  template class Box<double,4>;
+  template class Box<double,5>;
+  template class Box<double,6>;
+  template class Box<double,7>;
+  template class Box<double,8>;
+  template class Box<double,9>;
+  template class Box<double,10>;
 
 } // namespace AABBtree
 

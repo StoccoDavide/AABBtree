@@ -31,8 +31,8 @@ static axes_handle ax{fig->current_axes()};
 #endif
 
 // Plot an aligned box
-template <unsigned N, typename Real>
-void plot_alignedbox(const Box<Real, N> & box, const Real line_width = 1) {
+template <typename Real, Integer N>
+void plot_alignedbox(const Box<Real,N> & box, const Real line_width = 1) {
   static_assert(N == 2, "Plotting is only supported for 2D boxes.");
   std::vector<Real> min(box.min().data(), box.min().data() + N);
   std::vector<Real> max(box.max().data(), box.max().data() + N);
@@ -43,8 +43,8 @@ void plot_alignedbox(const Box<Real, N> & box, const Real line_width = 1) {
 }
 
 // Plot an aligned box
-template <unsigned N, typename Real>
-void plot_segment(const Eigen::Vector<Real, N> & p_1, const Eigen::Vector<Real, N> & p_2, const Real line_width = 1) {
+template <typename Real, Integer N>
+void plot_segment( Eigen::Vector<Real,N> const & p_1, const Eigen::Vector<Real,N> & p_2, Real const line_width = 1) {
   static_assert(N == 2, "Plotting is only supported for 2D boxes.");
   std::vector<Real> v_1(p_1.data(), p_1.data() + N);
   std::vector<Real> v_2(p_2.data(), p_2.data() + N);
@@ -67,15 +67,15 @@ TEMPLATE_TEST_CASE("Aligned box", "[template]", float, double) {
 
   SECTION("Intersection") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
+    using Box = AABBtree::Box<TestType,2>;
     Box box_1(-1.0, -1.0, 2.0, 2.0);
     Box box_2(-2.0, -2.0, 1.0, 1.0);
     Box box_3 = box_1.intersection(box_2);
     SET_PLOT
     title(ax, "Intersection");
-    plot_alignedbox<TestType, 2>(box_1, 1.0); ax->hold(true);
-    plot_alignedbox<TestType, 2>(box_2, 1.0);
-    plot_alignedbox<TestType, 2>(box_3, 2.0); ax->hold(false); show(fig);
+    plot_alignedbox<TestType,2>(box_1, 1.0); ax->hold(true);
+    plot_alignedbox<TestType,2>(box_2, 1.0);
+    plot_alignedbox<TestType,2>(box_3, 2.0); ax->hold(false); show(fig);
     REQUIRE(box_3.min().isApprox(Vector(-1.0, -1.0)));
     REQUIRE(box_3.max().isApprox(Vector(1.0, 1.0)));
     REQUIRE(box_1.intersects(box_2));
@@ -86,31 +86,31 @@ TEMPLATE_TEST_CASE("Aligned box", "[template]", float, double) {
 
   SECTION("Interior distance") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
+    using Box = AABBtree::Box<TestType,2>;
     Box box_1(-2.0, -2.0, -0.5, -0.5);
     Box box_2(-2.5, 0.5, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.interior_distance(box_2, p_1, p_2)};
     SET_PLOT
     title(ax, "Interior distance");
-    plot_alignedbox<TestType, 2>(box_1, 1.0); ax->hold(true);
-    plot_alignedbox<TestType, 2>(box_2, 1.0);
-    plot_segment<TestType, 2>(p_1, p_2, 2.0); ax->hold(false); show(fig);
+    plot_alignedbox<TestType,2>(box_1, 1.0); ax->hold(true);
+    plot_alignedbox<TestType,2>(box_2, 1.0);
+    plot_segment<TestType,2>(p_1, p_2, 2.0); ax->hold(false); show(fig);
     REQUIRE_THAT(d, WithinAbs(box_1.interior_distance(box_2), 1.0e-8));
   }
 
   SECTION("Exterior distance") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
+    using Box = AABBtree::Box<TestType,2>;
     Box box_1(-2.0, -2.0, 0.0, 0.0);
     Box box_2(0.0, 0.0, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.exterior_distance(box_2, p_1, p_2)};
     SET_PLOT
     title(ax, "Exterior distance");
-    plot_alignedbox<TestType, 2>(box_1, 1.0); ax->hold(true);
-    plot_alignedbox<TestType, 2>(box_2, 1.0);
-    plot_segment<TestType, 2>(p_1, p_2, 2.0); ax->hold(false); show(fig);
+    plot_alignedbox<TestType,2>(box_1, 1.0); ax->hold(true);
+    plot_alignedbox<TestType,2>(box_2, 1.0);
+    plot_segment<TestType,2>(p_1, p_2, 2.0); ax->hold(false); show(fig);
     REQUIRE_THAT(d, WithinAbs(box_1.exterior_distance(box_2), 1.0e-8));
     REQUIRE(p_1.isApprox(Vector(-2.0, -2.0)));
     REQUIRE(p_2.isApprox(Vector(2.0, 2.0)));

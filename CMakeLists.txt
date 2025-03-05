@@ -66,7 +66,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(STATUS "AABBtree: CMAKE_BUILD_TYPE not specified, defaulting to ${CMAKE_BUILD_TYPE}")
   endif()
 
-  option(BUILD_TESTS "Build tests" OFF)
+  option(BUILD_TESTS "Build tests" ON)
   option(BUILD_BENCHMARKS "Build benchmarks" OFF)
   option(BUILD_EXAMPLES "Build examples" OFF)
   option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" OFF)
