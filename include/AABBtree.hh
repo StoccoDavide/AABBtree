@@ -13,7 +13,7 @@
 #ifndef INCLUDE_AABBTREE_HH
 #define INCLUDE_AABBTREE_HH
 
-// C++ standard libraries
+// C++17 standard libraries
 #include <limits>
 #include <type_traits>
 #include <array>
@@ -63,6 +63,23 @@
 */
 namespace AABBtree {
 
+  using std::sqrt;
+  using std::swap;
+  using std::numeric_limits;
+  using std::is_floating_point;
+  using std::is_integral;
+  using std::is_same;
+  using std::distance;
+  using std::max_element;
+  using std::min_element;
+
+  using std::vector;
+  using std::set;
+  using std::map;
+
+  using std::unique_ptr;
+  using std::make_unique;
+
   /**
   * \brief The Integer type used in the AABBtree class.
   *
@@ -70,12 +87,26 @@ namespace AABBtree {
   * default value is \c int.
   */
   using Integer = AABBTREE_DEFAULT_INTEGER_TYPE;
+  using Set     = set<Integer>;        /**< Set of indexes. */
+
+  using istream_type = std::basic_istream<char>;
+  using ostream_type = std::basic_ostream<char>;
+
+  static_assert( is_integral<Integer>::value, "Integer must be an integer type." );
+
+  template <Integer N, typename Real>                       class Box;
+  template <Integer N, typename Real, typename DerivedTree> class Tree;
+
+  template <Integer N, typename Real> using BoxUPtr    = unique_ptr<Box<N,Real>>;
+  template <Integer N, typename Real> using BoxUPtrVec = vector<BoxUPtr<N,Real>>;
+  template <typename Real, Integer N> using Vector     = Eigen::Vector<Real,N>; /**> Eigen column vector of real numbers. */
+  template <typename Real, Integer N> using Point      = Eigen::Vector<Real,N>; /**> Point in the ambient space (Eigen column vector of real numbers). */
 
 } // namespace AABBtree
 
-#include "AABBtree/AlignedBox.hxx"
+#include "AABBtree/Box.hxx"
 #include "AABBtree/Tree.hxx"
-#include "AABBtree/Recursive.hxx"
-//#include "AABBtree/NonRecursive.hxx"
+#include "AABBtree/RecursiveTree.hxx"
+//#include "AABBtree/NonRecursiveTree.hxx"
 
 #endif // INCLUDE_AABBTREE_HH

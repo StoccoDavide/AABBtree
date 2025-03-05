@@ -28,24 +28,24 @@ namespace AABBtree {
   * \tparam Real Type of the scalar coefficients
   * \tparam N Dimension of the ambient space.
   */
-  template <typename Real, Integer N>
+  template <unsigned N, typename Real=double>
   class NonRecursive {
   public:
     // Basic types for managing the axis-aligned bounding boxes
-    using AlignedBox = AlignedBox<Real, N>; /**< Axis-aligned bounding box in N-dimensional space. */
-    using AlignedBoxes = std::vector<std::unique_ptr<AlignedBox>>; /**< Vector of unique pointers to an axis-aligned bounding box. */
+    using Box = Box<Real, N>; /**< Axis-aligned bounding box in N-dimensional space. */
+    using Boxes = vector<unique_ptr<Box>>; /**< Vector of unique pointers to an axis-aligned bounding box. */
 
     // Basic types for managing the tree
     using Indexes = std::vector<Integer>; /**< Vector of indexes. */
 
     // Basic types for retrieving indexes
-    using Set = std::set<Integer>; /**< Set of indexes. */
-    using Map = std::map<Integer, Set>; /**< Map of indexes. */
+    using Set = set<Integer>; /**< Set of indexes. */
+    using Map = map<Integer, Set>; /**< Map of indexes. */
 
   private:
     // Tree structure
-    AlignedBoxes m_objs_boxes; /**< Object axis-aligned bounding boxes. */
-    AlignedBoxes m_tree_boxes; /**< Tree axis-aligned bounding boxes. */
+    Boxes m_objs_boxes; /**< Object axis-aligned bounding boxes. */
+    Boxes m_tree_boxes; /**< Tree axis-aligned bounding boxes. */
 
     Integer m_num_objects{0};    /**< Number of objects. */
     Integer m_num_tree_nodes{0}; /**< Number of nodes in the tree. */
@@ -179,7 +179,7 @@ namespace AABBtree {
     * Add an axis-aligned bounding box to the AABB tree.
     * \param[in] box Pointer to the box to add.
     */
-    void add_box(std::unique_ptr<AlignedBox> & box)
+    void add_box( unique_ptr<Box> & box)
     {
         AABBTREE_ASSERT(!box->is_empty(), "NonRecursive::add_box(...): empty box detected.");
         this->m_objs_boxes.push_back(std::move(box));
@@ -189,7 +189,7 @@ namespace AABBtree {
 //    * Add an axis-aligned bounding box to the AABB tree.
 //    * \param[in] box Box to add.
 //    */
-//    void add_box(AlignedBox const & box)
+//    void add_box(Box const & box)
 //    {
 //        AABBTREE_ASSERT(!box.is_empty(), "NonRecursive::add_box(...): empty box detected.");
 //        this->m_objs_boxes.emplace_back(box);
@@ -199,7 +199,7 @@ namespace AABBtree {
 //    * Add axis-aligned bounding boxes to the AABB tree.
 //    * \param[in] boxes Bounding boxes to add.
 //    */
-//    void add_boxes(AlignedBoxes & boxes)
+//    void add_boxes(Boxes & boxes)
 //    {
 //      for (auto & box : boxes) {this->add_box(box);}
 //    }//
@@ -208,7 +208,7 @@ namespace AABBtree {
 //    * Add axis-aligned bounding boxes to the AABB tree.
 //    * \param[in] boxes Bounding boxes to add.
 //    */
-//    void add_boxes(std::vector<AlignedBox> const & boxes)
+//    void add_boxes(std::vector<Box> const & boxes)
 //    {
 //      for (auto const & box : boxes) {this->add_box(box);}
 //    }//
@@ -322,7 +322,7 @@ namespace AABBtree {
 //      Integer id_right{this->m_num_tree_nodes + 1};
 //
 //      // Compute bbox of left and right child
-//      AlignedBox bb_left;
+//      Box bb_left;
 //      Real * bb_left_min = this->m_bbox_tree + id_left * this->m_2dim;
 //      Real * bb_left_max = bb_left_min + N;
 //      for (Integer i{0}; i < n_left; ++i) {
@@ -340,7 +340,7 @@ namespace AABBtree {
 //        }
 //      }
 //
-//      AlignedBox bb_right;
+//      Box bb_right;
 //      Real * bb_right_min = this->m_bbox_tree + id_right * this->m_2dim;
 //      Real * bb_right_max = bb_right_min + N;
 //      for (Integer i{0}; i < n_right; ++i) {
@@ -393,7 +393,7 @@ namespace AABBtree {
 //  * Build the AABB tree given the bounding boxes.
 //  * \param[in] boxes Bounding boxes to build the tree from.
 //  */
-//  void build(AlignedBoxes const & boxes)
+//  void build(Boxes const & boxes)
 //  {
 //    this->allocate(boxes.size());
 //    this->add_bboxes(boxes);
@@ -404,7 +404,7 @@ namespace AABBtree {
 //  * Build the AABB tree given the bounding boxes.
 //  * \param[in] boxes Bounding boxes to build the tree from.
 //  */
-//  void build(std::vector<AlignedBox> const & boxes)
+//  void build(std::vector<Box> const & boxes)
 //  {
 //    this->allocate(boxes.size());
 //    this->add_bboxes(boxes);
