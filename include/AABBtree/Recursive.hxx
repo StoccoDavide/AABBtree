@@ -13,6 +13,7 @@
 #ifndef INCLUDE_AABBTREE_RECURSIVE_HXX
 #define INCLUDE_AABBTREE_RECURSIVE_HXX
 
+#include "AABBtree/Box.hxx"
 #include "AABBtree/Tree.hxx"
 
 namespace AABBtree {
@@ -28,27 +29,25 @@ namespace AABBtree {
   * \tparam Real Type of the scalar coefficients
   * \tparam N Dimension of the ambient space.
   */
- 
+
   template <typename Real, Integer N>
-  class Recursive : public Tree<Real,N,Recursive<Real,N>>
+  class Recursive : public Tree<Real, N, Recursive<Real, N>>
   {
-    using Point      = Point<Real,N>;
-    using Vector     = Vector<Real,N>;
-    using Box        = Box<Real,N>;
-    using BoxUPtr    = BoxUPtr<Real,N>;
-    using BoxUPtrVec = BoxUPtrVec<Real,N>;
+    friend class Tree<Real, N, Recursive<Real, N>>; // Allow access to the base class members
 
-    using Tree       = Tree<Real,N,Recursive<Real,N>>;
-    using Children   = std::pair<BoxUPtr, BoxUPtr>;
+    // Basic types definitions
+    using Point = Point<Real, N>;
+    using Vector = Vector<Real, N>;
+    using Box = Box<Real, N>;
+    using BoxUniquePtr = BoxUniquePtr<Real, N>;
+    using BoxUniquePtrList = BoxUniquePtrList<Real, N>;
+    using Children = std::pair<BoxUniquePtr, BoxUniquePtr>;
 
-    Children   m_children; /** Pointers to the children (left and right) boxes. */
-    BoxUPtr    m_box;      /** Pointer to the current box. */
-    BoxUPtrVec m_objects;  /** Object axis-aligned bounding boxes. */
+    Children m_children; /** Pointers to the children (left and right) boxes. */
+    BoxUniquePtr m_box; /** Pointer to the current box. */
+    BoxUniquePtrList m_objects; /** Object axis-aligned bounding boxes. */
 
   public:
-
-  #if 0
-
     Recursive(Recursive const &) = delete; /**< Copy constructor. */
     Recursive & operator=(Recursive const &) = delete; /**< Copy assignment operator. */
 
@@ -91,51 +90,51 @@ namespace AABBtree {
      * \return True if the tree was built successfully, false otherwise.
      */
     void
-    build_impl( BoxUPtrVec const & boxes ) {
+    build_impl(BoxUniquePtrList const & boxes) {
       // Check if the input vector is empty
-      if ( boxes.empty() ) return;
+      if (boxes.empty() ) return;
 
       // Check if the input vector contains only one box
-      if ( boxes.size() == static_cast<Integer>(1) ) {
+      if (boxes.size() == static_cast<Integer>(1)) {
         this->m_box.emplace_back(boxes.front());
         return;
       }
 
       // Compute the bounding box of the input vector
-      this->m_box = make_unique<Box>();
+      this->m_box = std::make_unique<Box>();
       this->m_box->extend(boxes);
 
       // Cut on longest edge of the bounding box
       Integer n_cut{ this->m_box->max_dimension()};
       Real    x_min{ this->m_box->min(n_cut)};
       Real    x_max{ this->m_box->max(n_cut)};
-      Real    x_cut{ (x_max + x_min)/static_cast<Real>(2.0)};
+      Real    x_cut{ (x_max + x_min)/2.0};
 
       // Collect the boxes that have a size similar to the current box
       // CHECKME
      this->m_objects.clear();
-     for (const Box & box : boxes)
+     for (Box const & box : boxes)
      {
-        Real x_mid{(box->min(n_cut) + box->max(n_cut))/static_cast<Real>(2.0)};
+        Real x_mid{(box->min(n_cut) + box->max(n_cut))/2.0};
         if (x_mid > x_cut) {this->m_objects.emplace_back(box);}
       }
 
       // Split the boxes into left and right
-      BoxUPtrVec left_boxes;
-      BoxUPtrVec right_boxes;
-      for ( auto const & b : boxes ) {
+      BoxUniquePtrList left_boxes;
+      BoxUniquePtrList right_boxes;
+      for (auto const & b : boxes ) {
         Real x_mid{(b.min(n_cut) + b.max(n_cut))*static_cast<Real>(0.5)};
-        if ( x_mid > x_cut ) left_boxes.emplace_back(b);
-        else                 right_boxes.emplace_back(b);
+        if (x_mid > x_cut) {left_boxes.emplace_back(b);}
+        else {right_boxes.emplace_back(b);}
       }
 
       // Build the left and right trees
-      TreePtr left_tree  { make_unique<Recursive>() };
-      TreePtr right_tree { make_unique<Recursive>() };
+      TreePtr left_tree{std::make_unique<Recursive>()};
+      TreePtr right_tree{std::make_unique<Recursive>()};
       left_tree->build(left_boxes);
       right_tree->build(right_boxes);
-      if ( !left_tree->is_empty()  ) m_children.first(left_tree);
-      if ( !right_tree->is_empty() ) m_children.second(right_tree);
+      if (!left_tree->is_empty()) {m_children.first(left_tree);}
+      if (!right_tree->is_empty()) {m_children.second(right_tree);}
     }
 
     /**
@@ -144,8 +143,8 @@ namespace AABBtree {
      * \return True if the tree was built successfully, false otherwise.
      */
     void
-    build_impl( vector<Box> const & boxes) {
-      this->build_impl(BoxUPtrVec(boxes.begin(), boxes.end()));
+    build_impl(vector<Box> const & boxes) {
+      this->build_impl(BoxUniquePtrList(boxes.begin(), boxes.end()));
     }
 
     /**
@@ -155,7 +154,7 @@ namespace AABBtree {
      * \return True if the point intersects the tree, false otherwise.
      */
     bool
-    intersect_impl( Point const & point, Set & candidates) const {
+    intersect_impl(Point const & point, Set & candidates) const {
       return true;
     }
 
@@ -166,7 +165,7 @@ namespace AABBtree {
      * \return True if the point intersects the tree, false otherwise.
      */
     bool
-    intersect_impl( Box const & box, Set & candidates ) const {
+    intersect_impl(Box const & box, Set & candidates ) const {
       return true;
     }
 
@@ -177,7 +176,7 @@ namespace AABBtree {
      * \return True if the point intersects the tree, false otherwise.
      */
     bool
-    intersect_impl( Recursive const & tree, Set & candidates) const {
+    intersect_impl(Recursive const & tree, Set & candidates) const {
       return true;
     }
 
@@ -187,7 +186,7 @@ namespace AABBtree {
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the point and the tree.
     */
-    Real min_distance_impl(const Point & point, Set & candidates) const
+    Real min_distance_impl(Point const & point, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
@@ -198,7 +197,7 @@ namespace AABBtree {
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the box and the tree.
     */
-    Real min_distance_impl(const Box & box, Set & candidates) const
+    Real min_distance_impl(Box const & box, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
@@ -209,7 +208,7 @@ namespace AABBtree {
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the trees.
     */
-    Real min_distance_impl(const Recursive & tree, Set & candidates) const
+    Real min_distance_impl(Recursive const & tree, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
@@ -220,7 +219,7 @@ namespace AABBtree {
     * \param[out] candidates Maximum distance candidates.
     * \return The maximum distance between the point and the tree.
     */
-    Real max_distance_impl(const Point & point, Set & candidates) const
+    Real max_distance_impl(Point const & point, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
@@ -231,7 +230,7 @@ namespace AABBtree {
     * \param[out] candidates Maximum distance candidates.
     * \return The maximum distance between the box and the tree.
     */
-    Real max_distance_impl(const Box & box, Set & candidates) const
+    Real max_distance_impl(Box const & box, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
@@ -242,35 +241,12 @@ namespace AABBtree {
     * \param[out] candidates Maximum distance candidates.
     * \return The maximum distance between the trees.
     */
-    Real max_distance_impl(const Recursive & tree, Set & candidates) const
+    Real max_distance_impl(Recursive const & tree, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
-  #endif
 
   }; // Recursive
-
-  template class Recursive<float,1>;
-  template class Recursive<float,2>;
-  template class Recursive<float,3>;
-  template class Recursive<float,4>;
-  template class Recursive<float,5>;
-  template class Recursive<float,6>;
-  template class Recursive<float,7>;
-  template class Recursive<float,8>;
-  template class Recursive<float,9>;
-  template class Recursive<float,10>;
-
-  template class Recursive<double,1>;
-  template class Recursive<double,2>;
-  template class Recursive<double,3>;
-  template class Recursive<double,4>;
-  template class Recursive<double,5>;
-  template class Recursive<double,6>;
-  template class Recursive<double,7>;
-  template class Recursive<double,8>;
-  template class Recursive<double,9>;
-  template class Recursive<double,10>;
 
 } // namespace AABBtree
 

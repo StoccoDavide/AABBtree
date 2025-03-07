@@ -34,7 +34,6 @@
 # CMake files
 CMakeCache.txt
 build/
-tmp/
-
 third_party/*
-/Xcode
+Xcode/*
+.vscode/*

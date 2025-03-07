@@ -13,6 +13,8 @@
 #ifndef INCLUDE_AABBTREE_TREE_HXX
 #define INCLUDE_AABBTREE_TREE_HXX
 
+#include "AABBtree/Box.hxx"
+
 namespace AABBtree {
 
   /**
@@ -26,232 +28,177 @@ namespace AABBtree {
   * recurring template pattern (CRTP).
   * \tparam Real Type of the scalar coefficients
   * \tparam N Dimension of the ambient space.
+  * \tparam DerivedTree Type of the derived tree class.
   */
   template <typename Real, Integer N, typename DerivedTree>
-  class Tree {
-    static_assert( is_floating_point<Real>::value, "Tree Real type must be a floating-point type." );
-    static_assert( is_integral<Integer>::value,    "Tree dimension type must be an integer type."  );
-    static_assert( N > 0, "Tree dimension must be positive." );
+  class Tree
+  {
+    static_assert(std::is_floating_point<Real>::value, "Tree Real type must be a floating-point type.");
+    static_assert(std::is_integral<Integer>::value, "Tree dimension type must be an integer type." );
+    static_assert(N > 0, "Tree dimension must be positive.");
 
-    DerivedTree       * THIS()       { return static_cast<DerivedTree *>(this); }
-    DerivedTree const * THIS() const { return static_cast<DerivedTree const *>(this); }
+    DerivedTree * THIS() {return static_cast<DerivedTree *>(this);} /**< Cast the current object to the derived tree class. */
+    DerivedTree const * THIS() const {return static_cast<DerivedTree const *>(this);} /**< Cast the current object to the derived tree class. */
 
   protected:
+    using Box = Box<Real, N>; /**< Axis-aligned bounding box in N space. */
+    using BoxUniquePtr = BoxUniquePtr<Real, N>; /**< Unique pointer to an axis-aligned bounding box. */
+    using BoxUniquePtrList = BoxUniquePtrList<Real, N>; /**< Vector of unique pointers to an axis-aligned bounding box. */
+    using Point = Point<Real, N>; /**< Point in the ambient space (Eigen column vector of real numbers). */
 
-    using Box        = Box<Real,N>;         /**< Axis-aligned bounding box in N-dimensional space. */
-    using BoxUPtr    = BoxUPtr<Real,N>;     /**< Unique pointer to an axis-aligned bounding box. */
-    using BoxUPtrVec = BoxUPtrVec<Real,N>;  /**< Vector of unique pointers to an axis-aligned bounding box. */
-    using Point      = Point<Real,N>;       /**< Point in the ambient space (Eigen column vector of real numbers). */
+    // Bounding boxes
+    std::unique_ptr<BoxUniquePtrList> m_boxes{nullptr};
 
     // Tree parameters
-    Integer m_max_nodal_objects{16};               /**< Maximum number of objects per node. */
-    Real    m_separation_ratio_tolerance{0.1};     /**< Long edge ratio for bounding boxes. */
-    Real    m_balance_ratio_LR{0.25};               /**< Long edge ratio for bounding boxes. */
-    Real    m_collision_tolerance{0.1};            /**< Overlap tolerance for bounding boxes. */
-    Real    m_min_size_tolerance{0.0};             /**< Minimum size tolerance for bounding boxes. */
+    Integer m_max_nodal_objects{16}; /**< Maximum number of objects per node. */
+    Real m_separation_ratio_tolerance{0.1}; /**< Tolerance for bounding boxes separation. */
+    Real m_balance_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes balance. */
+    Real m_min_box_size{0.0}; /**< Minimum size tolerance for bounding boxes. */
 
-    unique_ptr<BoxUPtrVec> m_boxes{nullptr};
-
-    /*
-    //     _        _
-    //  __| |_ __ _| |_ ___
-    // (_-<  _/ _` |  _(_-<
-    // /__/\__\__,_|\__/__/
-    */
-
-    mutable Integer m_check_counter{0};  /**< Number of overlap check (for statistic). */
+    // Statistics
+    mutable Integer m_check_counter{0}; /**< Number of collision check (for statistic). */
+    mutable Integer m_dump_counter{0}; /**< Number of dumpings (for statistic). */
 
   public:
-
-
-    Tree ( Tree const & ) = delete;          /**< Copy constructor. */
+    Tree (Tree const &) = delete; /**< Copy constructor. */
     Tree & operator=(Tree const &) = delete; /**< Copy assignment operator. */
 
-    /*!
-     * Class destructor for the tree.
-     */
+    /**
+    * Class destructor for the tree.
+    */
     ~Tree() = default;
 
-    /*
-    //   ___        _               _
-    //  / __|___ __| |_ _ _ _  _ __| |_ ___ _ _ ___
-    // | (__/ _ (_-<  _| '_| || / _|  _/ _ \ '_(_-<
-    //  \___\___/__/\__|_|  \_,_\__|\__\___/_| /__/
+    /**
+    * Class constructor for the tree.
     */
-
-    /*!
-     * Class constructor for the tree.
-     */
     Tree() = default;
 
-    /*
-    //           _
-    //  ___  ___| |_
-    // / __|/ _ \ __|
-    // \__ \  __/ |_
-    // |___/\___|\__|
+    /**
+    * Get a look at the vector of unique pointers to the bounding boxes.
+    * \return A const reference to the vector of unique pointers to the bounding boxes.
     */
+    BoxUniquePtrList const & boxes() const {return *this->m_boxes;}
 
     /**
-     * Set the maximum number of objects per node.
-     * \param[in] n Maximum number of objects per node.
-     */
-    void
-    set_max_nodes_objects( Integer const n ) {
-      AABBTREE_ASSERT( n > 0, "NonRecursive::max_nodes_objects(...): input must be a positive integer." );
-      m_max_nodal_objects = n;
+    * Get a look at the i-th unique pointer to the bounding box.
+    * \param[in] i Index of the unique pointer to the bounding box.
+    * \return A const reference to the i-th unique pointer to the bounding box.
+    */
+    BoxUniquePtr const & box(Integer const i) const {return (*this->m_boxes)[i];}
+
+    /**
+    * Set the maximum number of objects per node.
+    * \param[in] n Maximum number of objects per node.
+    */
+    void max_nodal_objects(Integer const n)
+    {
+      #define CMD "AABBtree::NonRecursive::max_nodal_objects(...): "
+      AABBTREE_ASSERT(n > 0, CMD "input must be a positive integer.");
+      this->m_max_nodal_objects = n;
+      #undef CMD
     }
 
     /**
-     * Set the long edge ratio for bounding boxes.
-     * \param[in] ratio Long edge ratio for bounding boxes.
-     */
-    void
-    set_separation_ratio_tolerance( Real const ratio ) {
-      AABBTREE_ASSERT(
-        ratio > 0 && ratio < static_cast<Real>(1),
-        "NonRecursive::set_separation_ratio_tolerance(...): input must be in the range [0, 1]."
-      );
-      m_separation_ratio_tolerance = ratio;
+    * Get the maximum number of objects per node.
+    * \return The maximum number of objects per node.
+    */
+    Integer max_nodal_objects() const {return this->m_max_nodal_objects;}
+
+    /**
+    * Set the balance ratio tolerance for bounding boxes.
+    * \param[in] ratio Balance ratio tolerance for bounding boxes.
+    */
+    void separation_ratio_tolerance(Real const ratio)
+    {
+      #define CMD "AABBtree::NonRecursive::separation_ratio_tolerance(...): "
+      AABBTREE_ASSERT(ratio > 0.0 && ratio < 1.0, CMD "input must be in the range [0, 1].");
+      this->m_separation_ratio_tolerance = ratio;
+      #undef CMD
     }
 
     /**
-     * Set the overlap tolerance for bounding boxes.
-     * \param[in] tolerance Overlap tolerance for bounding boxes.
-     */
-    void
-    set_collision_tolerance( Real const tolerance ) {
-      AABBTREE_ASSERT(
-        tolerance > 0 && tolerance < static_cast<Real>(1),
-        "NonRecursive::collision_tolerance(...): input must be in the range [0, 1]."
-      );
-      m_collision_tolerance = tolerance;
+    * Get the balance ratio tolerance for bounding boxes.
+    * \return The balance ratio tolerance for bounding boxes.
+    */
+    Real separation_ratio_tolerance() const {return this->m_separation_ratio_tolerance;}
+
+    /**
+    * Set the minimum size for bounding boxes.
+    * \param[in] size Minimum size for bounding boxes.
+    */
+    void min_box_size(Real const size)
+    {
+      #define CMD "AABBtree::NonRecursive::min_box_size(...): "
+      AABBTREE_ASSERT(size >= 0.0, CMD "input must be a non-negative real number.");
+      this->m_min_box_size = size;
+      #undef CMD
     }
 
     /**
-     * Set the minimum size tolerance for bounding boxes.
-     * \param[in] tolerance Minimum size tolerance for bounding boxes.
-     */
-    void
-    set_min_size_tolerance( Real const tolerance ) {
-      AABBTREE_ASSERT(
-        tolerance >= 0,
-        "NonRecursive::min_size_tolerance(...): input must be a non-negative real number."
-      );
-      m_min_size_tolerance = tolerance;
-    }
-
-    /*
-    //  _        __
-    // (_)_ __  / _| ___
-    // | | '_ \| |_ / _ \
-    // | | | | |  _| (_) |
-    // |_|_| |_|_|  \___/
+    * Get the minimum size for bounding boxes.
+    * \return The minimum size for bounding boxes.
     */
+    Real min_box_size() const {return this->m_min_box_size;}
 
     /**
-     * Get the maximum number of objects per node.
-     * \return The maximum number of objects per node.
-     */
-    Integer max_nodes_objects() const { return this->m_max_nodal_objects; }
-
-    /**
-     * Get the long edge ratio tolerance for bounding boxes separation.
-     * \return .
-     */
-    Real separation_ratio_tolerance() const { return m_separation_ratio_tolerance; }
-
-    /**
-     * Get the overlap tolerance for bounding boxes.
-     * \return The overlap tolerance for bounding boxes.
-     */
-    Real collision_tolerance() const { return m_collision_tolerance; }
-
-    /**
-     * Get the minimum size tolerance for bounding boxes.
-     * \return The minimum size tolerance for bounding boxes.
-     */
-    Real min_size_tolerance() const { return m_min_size_tolerance; }
-
-    /*
-    //  ____  _   _       _        _      _
-    // | __ )| \ | |     | |_ _ __(_) ___| | __
-    // |  _ \|  \| |_____| __| '__| |/ __| |/ /
-    // | |_) | |\  |_____| |_| |  | | (__|   <
-    // |____/|_| \_|      \__|_|  |_|\___|_|\_\
+    * Check if tree is empty.
+    * \return True if the tree is empty, false otherwise.
     */
+    bool is_empty() const {return THIS()->is_empty_impl();}
 
     /**
-     * Build the tree given the bounding boxes.
-     * \param[in] boxes Bounding boxes to build the tree from.
-     * \return True if the tree was built successfully, false otherwise.
-     */
-    void build( unique_ptr<BoxUPtrVec> boxes ) { m_boxes = std::move(boxes); return THIS()->build_impl(); }
-
-    /**
-     * Clear the tree.
-     */
-    void clear() { THIS()->clear_impl(); }
-
-    /**
-     * Check if tree is empty.
-     * \return True if the tree is empty, false otherwise.
-     */
-    bool is_empty() const { return THIS()->is_empty_impl(); }
-
-    /**
-     * Print the tree internal structure in an output stream.
-     * \param[in] os Output stream to print the tree to.
-     */
-    void print( ostream_type & os ) const { THIS()->print_impl(os); }
-
-    /*
-    //  _       _                          _
-    // (_)_ __ | |_ ___ _ __ ___  ___  ___| |_
-    // | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|
-    // | | | | | ||  __/ |  \__ \  __/ (__| |_
-    // |_|_| |_|\__\___|_|  |___/\___|\___|\__|
+    * Clear the tree.
     */
-    
-    /**
-     * Intersect the tree with a point.
-     * \param[in] point Point to intersect with.
-     * \param[out] candidates Intersection result (bounding box indexes).
-     * \return True if the point intersects the tree, false otherwise.
-     */
-    bool intersect( Point const & point, Set & candidates ) const { return THIS()->intersect_impl(point, candidates); }
+    void clear() {THIS()->clear_impl();}
 
     /**
-     * Intersect the tree with an axis-aligned box.
-     * \param[in] box Axis-aligned box to intersect with.
-     * \param[out] candidates Intersection result (bounding box indexes).
-     * \return True if the point intersects the tree, false otherwise.
-     */
-    bool intersect( Box const & box, Set & candidates ) const { return THIS()->intersect_impl(box, candidates); }
-
-    /**
-     * Intersect the tree with another tree.
-     * \param[in] tree Tree to intersect with.
-     * \param[out] candidates Intersection result (bounding box indexes).
-     * \return True if the point intersects the tree, false otherwise.
-     */
-    bool intersect( DerivedTree const & tree, Set & candidates ) const { return THIS()->intersect_impl(tree, candidates); }
-
-    /*
-    //      _ _     _
-    //   __| (_)___| |_ __ _ _ __   ___ ___
-    //  / _` | / __| __/ _` | '_ \ / __/ _ \
-    // | (_| | \__ \ || (_| | | | | (_|  __/
-    //  \__,_|_|___/\__\__,_|_| |_|\___\___|
+    * Print the tree internal structure in an output stream.
+    * \param[in] os Output stream to print the tree to.
     */
+    void print(OutStream & os) const {THIS()->print_impl(os);}
 
     /**
-     * Minimum distance between a point and the tree.
-     * \param[in] point Point to compute the minimum distance to.
-     * \param[out] candidates Minimum distance candidates.
-     * \return The minimum distance between the point and the tree.
-     */
-    Real min_distance( Point const & point, Set & candidates ) const { return THIS()->min_distance_impl(point, candidates); }
+    * Build the tree given the bounding boxes.
+    * \param[in] boxes Bounding boxes to build the tree from.
+    */
+    void build(std::unique_ptr<BoxUniquePtrList> boxes)
+    {this->m_boxes = std::move(boxes); return THIS()->build_impl();}
+
+    /**
+    * Intersect the tree with a point.
+    * \param[in] point Point to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
+    bool intersect(Point const & point, IndexSet & candidates) const
+    {return THIS()->intersect_impl(point, candidates);}
+
+    /**
+    * Intersect the tree with an axis-aligned box.
+    * \param[in] box Axis-aligned box to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
+    bool intersect(Box const & box, IndexSet & candidates) const
+    {return THIS()->intersect_impl(box, candidates);}
+
+    /**
+    * Intersect the tree with another tree.
+    * \param[in] tree Tree to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
+    bool intersect(DerivedTree const & tree, IndexSet & candidates) const
+    {return THIS()->intersect_impl(tree, candidates);}
+
+    /**
+    * Minimum distance between a point and the tree.
+    * \param[in] point Point to compute the minimum distance to.
+    * \param[out] candidates Minimum distance candidates.
+    * \return The minimum distance between the point and the tree.
+    */
+    Real min_distance(Point const & point, IndexSet & candidates) const
+    {return THIS()->min_distance_impl(point, candidates);}
 
     /**
     * Minimum distance between an axis-aligned box and the tree.
@@ -259,39 +206,44 @@ namespace AABBtree {
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the box and the tree.
     */
-    Real min_distance( Box const & box, Set & candidates ) const { return THIS()->min_distance_impl(box, candidates); }
+    Real min_distance(Box const & box, IndexSet & candidates) const
+    {return THIS()->min_distance_impl(box, candidates);}
 
     /**
-     * Minimum distance between an current tree and another tree.
-     * \param[in] tree Tree to compute the minimum distance to.
-     * \param[out] candidates Minimum distance candidates.
-     * \return The minimum distance between the trees.
-     */
-    Real min_distance( DerivedTree const & tree, Set & candidates ) const { return THIS()->min_distance_impl(tree, candidates); }
+    * Minimum distance between an current tree and another tree.
+    * \param[in] tree Tree to compute the minimum distance to.
+    * \param[out] candidates Minimum distance candidates.
+    * \return The minimum distance between the trees.
+    */
+    Real min_distance(DerivedTree const & tree, IndexSet & candidates) const
+    {return THIS()->min_distance_impl(tree, candidates);}
 
     /**
-     * Maximum distance between a point and the tree.
-     * \param[in] point Point to compute the maximum distance to.
-     * \param[out] candidates Maximum distance candidates.
-     * \return The maximum distance between the point and the tree.
-     */
-    Real max_distance( Point const & point, Set & candidates ) const { return THIS()->max_distance_impl(point, candidates); }
+    * Maximum distance between a point and the tree.
+    * \param[in] point Point to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \return The maximum distance between the point and the tree.
+    */
+    Real max_distance(Point const & point, IndexSet & candidates) const
+    {return THIS()->max_distance_impl(point, candidates);}
 
     /**
-     * Maximum distance between an axis-aligned box and the tree.
-     * \param[in] box Axis-aligned box to compute the maximum distance to.
-     * \param[out] candidates Maximum distance candidates.
-     * \return The maximum distance between the box and the tree.
-     */
-    Real max_distance( Box const & box, Set & candidates ) const { return THIS()->max_distance_impl(box, candidates); }
+    * Maximum distance between an axis-aligned box and the tree.
+    * \param[in] box Axis-aligned box to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \return The maximum distance between the box and the tree.
+    */
+    Real max_distance(Box const & box, IndexSet & candidates) const
+    {return THIS()->max_distance_impl(box, candidates);}
 
     /**
-     * Maximum distance between an current tree and another tree.
-     * \param[in] tree Tree to compute the maximum distance to.
-     * \param[out] candidates Maximum distance candidates.
-     * \return The maximum distance between the trees.
-     */
-    Real max_distance( DerivedTree const & tree, Set & candidates ) const { return THIS()->max_distance_impl(tree, candidates); }
+    * Maximum distance between an current tree and another tree.
+    * \param[in] tree Tree to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \return The maximum distance between the trees.
+    */
+    Real max_distance(DerivedTree const & tree, IndexSet & candidates) const
+    {return THIS()->max_distance_impl(tree, candidates);}
 
   }; // Tree
 

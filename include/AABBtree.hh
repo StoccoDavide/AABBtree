@@ -62,24 +62,8 @@
 *
 * The AABBtree namespace contains all the classes and functions of the AABBtree library.
 */
-namespace AABBtree {
-
-  using std::sqrt;
-  using std::swap;
-  using std::numeric_limits;
-  using std::is_floating_point;
-  using std::is_integral;
-  using std::is_same;
-  using std::distance;
-  using std::max_element;
-  using std::min_element;
-
-  using std::vector;
-  using std::set;
-  using std::map;
-
-  using std::unique_ptr;
-  using std::make_unique;
+namespace AABBtree
+{
 
   /**
   * \brief The Integer type used in the AABBtree class.
@@ -88,28 +72,24 @@ namespace AABBtree {
   * default value is \c int.
   */
   using Integer = AABBTREE_DEFAULT_INTEGER_TYPE;
-  using Set     = set<Integer>;        /**< Set of indexes. */
-  using MapSet  = map<Integer,Set>;    /**< Map of Set of indexes. */
-  using Indexes = vector<Integer>;     /**< Vector of indexes. */
+  static_assert(std::is_integral<Integer>::value, "AABBTREE_DEFAULT_INTEGER_TYPE must be an integral type.");
 
-  using istream_type = std::basic_istream<char>;
-  using ostream_type = std::basic_ostream<char>;
+  using IndexSet = std::set<Integer>; /**< A set of unique indexes. */
+  using IndexList = std::vector<Integer>; /**< A sequential list of indexes. */
+  using OutStream = std::basic_ostream<char>; /**< Stream type for output operations. */
 
-  static_assert( is_integral<Integer>::value, "Integer must be an integer type." );
-
-  template <typename Real, Integer N>                       class Box;
-  template <typename Real, Integer N, typename DerivedTree> class Tree;
-
-  template <typename Real, Integer N> using BoxUPtr    = unique_ptr<Box<Real,N>>;
-  template <typename Real, Integer N> using BoxUPtrVec = vector<BoxUPtr<Real,N>>;
-  template <typename Real, Integer N> using Vector     = Eigen::Vector<Real,N>; /**> Eigen column vector of real numbers. */
-  template <typename Real, Integer N> using Point      = Eigen::Vector<Real,N>; /**> Point in the ambient space (Eigen column vector of real numbers). */
+  // Type aliases
+  template <typename Real, Integer N> class Box;
+  template <typename Real, Integer N> using BoxUniquePtr = std::unique_ptr<Box<Real, N>>; /**< Unique pointer to a box. */
+  template <typename Real, Integer N> using BoxUniquePtrList = std::vector<BoxUniquePtr<Real, N>>; /**< List of unique pointers to boxes. */
+  template <typename Real, Integer N> using Vector = Eigen::Vector<Real, N>; /**< Eigen column vector of real numbers. */
+  template <typename Real, Integer N> using Point = Eigen::Vector<Real, N>; /**< A geometric point in the ND space. */
 
 } // namespace AABBtree
 
 #include "AABBtree/Box.hxx"
 #include "AABBtree/Tree.hxx"
-#include "AABBtree/RecursiveTree.hxx"
-#include "AABBtree/NonRecursiveTree.hxx"
+//#include "AABBtree/Recursive.hxx"
+#include "AABBtree/NonRecursive.hxx"
 
 #endif // INCLUDE_AABBTREE_HH

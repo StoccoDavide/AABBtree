@@ -10,10 +10,6 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-if(POLICY CMP0177)
-  cmake_policy(SET CMP0177 NEW)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(AABBtreeVersion)
@@ -104,7 +100,7 @@ endif()
 if(MSVC)
   target_compile_options(AABBtree INTERFACE /W4 /WX)
 else()
-  target_compile_options(AABBtree INTERFACE -Wall -Wextra -pedantic) #  -Werror)
+  target_compile_options(AABBtree INTERFACE -Wall -Wextra -pedantic -Werror -Wno-narrowing)
 endif()
 
 # Installation
