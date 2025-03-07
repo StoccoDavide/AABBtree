@@ -50,7 +50,7 @@ namespace AABBtree {
     std::unique_ptr<BoxUniquePtrList> m_boxes{nullptr};
 
     // Tree parameters
-    Integer m_max_nodal_objects{16}; /**< Maximum number of objects per node. */
+    Integer m_max_nodal_objects{1}; /**< Maximum number of objects per node. */
     Real m_separation_ratio_tolerance{0.1}; /**< Tolerance for bounding boxes separation. */
     Real m_balance_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes balance. */
     Real m_min_box_size{0.0}; /**< Minimum size tolerance for bounding boxes. */
@@ -188,7 +188,7 @@ namespace AABBtree {
     * \param[out] candidates Intersection result (bounding box indexes).
     * \return True if the point intersects the tree, false otherwise.
     */
-    bool intersect(DerivedTree const & tree, IndexSet & candidates) const
+    bool intersect(DerivedTree const & tree, IndexMap & candidates) const
     {return THIS()->intersect_impl(tree, candidates);}
 
     /**

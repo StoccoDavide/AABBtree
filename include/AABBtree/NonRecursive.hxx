@@ -127,32 +127,64 @@ namespace AABBtree {
     */
     void print_impl(OutStream & os) const
     {
-      Integer leafs{0};
-      for (Integer i{0}; i < this->m_tree_structure.size(); ++i ) {
+      // Count the number of leafs
+      Integer leafs{0}, long_boxes{0};
+      for (Integer i{0}; i < this->size(); ++i ) {
         if (this->m_tree_structure[i].child_l == -1) {++leafs;}
         if (this->m_tree_structure[i].child_r == -1) {++leafs;}
+        if (this->m_tree_structure[i].child_l > 0 && this->m_tree_structure[i].child_r > 0)
+          {long_boxes += this->m_tree_structure[i].box_num;}
       }
+
+      // Count the number of left nodes
+      Integer left_nodes{0};
+      Integer left_leafs{0};
+      this->m_stack.clear();
+      this->m_stack.reserve(2*this->size() + 1);
+      this->m_stack.emplace_back(this->m_tree_structure[0].child_l);
+      while (!this->m_stack.empty())
+      {
+        Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
+        AABBnode const & node {this->m_tree_structure[id]};
+        if (node.child_l == -1) {++left_leafs;}
+        else {this->m_stack.emplace_back(node.child_l);}
+        if (node.child_r == -1) {++left_leafs;}
+        else {this->m_stack.emplace_back(node.child_r);}
+        ++left_nodes;
+      }
+
+      // Count the number of right nodes
+      Integer right_nodes{0};
+      Integer right_leafs{0};
+      this->m_stack.clear();
+      this->m_stack.reserve(2*this->size() + 1);
+      this->m_stack.emplace_back(this->m_tree_structure[0].child_r);
+      while (!this->m_stack.empty())
+      {
+        Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
+        AABBnode const & node {this->m_tree_structure[id]};
+        if (node.child_l == -1) {++right_leafs;}
+        else {this->m_stack.emplace_back(node.child_l);}
+        if (node.child_r == -1) {++right_leafs;}
+        else {this->m_stack.emplace_back(node.child_r);}
+        ++right_nodes;
+      }
+
       os <<
-        "AABB tree internal structure" << std::endl <<
-        "\tAmbient dimension : " + std::to_string(N) << std::endl <<
-        "\tBasic type        : " + std::string(typeid(Real).name()) << std::endl <<
-        "\tNumber of nodes   : " + std::to_string(this->m_tree_structure.size()) << std::endl <<
-        "\tNumber of leafs   : " + std::to_string(leafs) << std::endl <<
-        "\tNumber of objects : " + std::to_string(this->m_boxes.size()) << std::endl;
+        "AABB tree internal structure ---------" << std::endl <<
+        "  Ambient dimension     : " << N << std::endl <<
+        "  Basic type            : " << typeid(Real).name() << std::endl <<
+        "  Number of nodes       : " << this->size() << std::endl <<
+        "  Number of leafs       : " << leafs << std::endl <<
+        "  Number of long boxes  : " << long_boxes << std::endl <<
+        "  Number of left nodes  : " << left_nodes << std::endl <<
+        "  Number of left leafs  : " << left_leafs << std::endl <<
+        "  Number of right nodes : " << right_nodes << std::endl <<
+        "  Number of right leafs : " << right_leafs << std::endl <<
+        "  Balance ratio         : " << static_cast<Real>(left_leafs)/static_cast<Real>(left_nodes) << std::endl <<
+        "  Number of objects     : " << this->m_boxes->size() << std::endl <<
+        "--------------------------------------" << std::endl;
     }
-
-    /*
-                                              m_tree_structure
-                     ┌──────┐                  ┌──────┐
-                     │      │                  │ CD1  │
-                     │      │                  │ CD2  │
-                     │      │                  │ CD1  │
-    m_nodes_id   --> │ BBOX │    m_children -> │ CD2  │
-                     │      │                  │      │
-                     │      │                  │      │
-                     └──────┘
-
-    */
 
     /**
     * Build the tree given a set of bounding boxes internally stored.
@@ -174,16 +206,16 @@ namespace AABBtree {
       root.child_r = -1;
       root.box_ptr = 0;
       root.box_num = 0;
-      this->m_tree_structure.emplace_back(root);
 
       // Setup the boxes map and compute the root box
       Integer depth{std::ceil(std::log2(num_boxes))};
       root.box.set_empty();
       this->m_tree_boxes_map.reserve(2*depth);
-      for (auto const & b : boxes) {
-        root.box.extend(b);
+      for (BoxUniquePtr const & box : boxes) {
+        root.box.extend(*box);
         this->m_tree_boxes_map.emplace_back(root.box_num++);
       }
+      this->m_tree_structure.emplace_back(root);
 
       // Setup the stack
       this->m_stack.clear();
@@ -234,7 +266,7 @@ namespace AABBtree {
         }
         barycenter /= 2.0*node.box_num;
 
-        // Check if the leaves are balanced, if not try to separate boxes on a new separation line
+        // Check if the leafs are balanced, if not try to separate boxes on a new separation line
         if (n_long > this->m_max_nodal_objects ||
             std::min(n_left, n_right) < this->m_balance_ratio_tolerance * std::max(n_left, n_right) ) {
 
@@ -260,8 +292,11 @@ namespace AABBtree {
         // If the left and right children are yet not balanced, dump the splitting axis
         if (this->m_dumping_mode && n_long > this->m_max_nodal_objects) {
           if (std::min(n_left, n_right) < this->m_balance_ratio_tolerance * std::max(n_left, n_right)) {
-            if (++dump < N) {this->m_stack.push_back(id); {continue;}}
+            if (dump < N-1) {++dump; this->m_stack.push_back(id); {continue;}}
         }}
+
+        // Reset the dump counter
+        dump = 0;
 
         // Separate the left and right boxes
         n_left = n_right = 0;
@@ -277,12 +312,12 @@ namespace AABBtree {
           }
         }
 
-        // If the left and right children have few boxes, they are leaves
+        // If the left and right children have few boxes, they are leafs
         if (n_left <= this->m_max_nodal_objects && n_right <= this->m_max_nodal_objects) {continue;}
 
         // Set the left and right children indexes
-        node.child_l = static_cast<Integer>(this->m_tree_structure.size() + 0);
-        node.child_r = static_cast<Integer>(this->m_tree_structure.size() + 1);
+        node.child_l = static_cast<Integer>(this->size() + 0);
+        node.child_r = static_cast<Integer>(this->size() + 1);
 
         // Finalize the root node setup (left and right children)
         AABBnode node_l;
@@ -314,11 +349,7 @@ namespace AABBtree {
         // Push children on stack
         this->m_stack.emplace_back(node.child_l);
         this->m_stack.emplace_back(node.child_r);
-
-        // Reset the dump counter
-        dump = 0;
       }
-
     }
 
     /**
@@ -330,18 +361,17 @@ namespace AABBtree {
     bool intersect_impl(Point const & point, IndexSet & candidates) const
     {
       // Reset statistics
-      this->m_num_check = 0;
+      this->m_check_counter = 0;
 
       // Return if the tree is empty
       if (this->is_empty()) {return false;}
 
       // Collect the original object boxes
-      const BoxUniquePtrList & boxes {*this->m_boxes};
-      Integer num_boxes{boxes.size()};
+      BoxUniquePtrList const & boxes {*this->m_boxes};
 
       // Setup the stack
       this->m_stack.clear();
-      this->m_stack.reserve(2*num_boxes + 1);
+      this->m_stack.reserve(2*this->size() + 1);
       this->m_stack.emplace_back(0);
 
       // Main loop that checks the intersection iteratively
@@ -351,23 +381,22 @@ namespace AABBtree {
         Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
 
         // Get the node
-        AABBnode & node {this->m_tree_structure[id]};
+        AABBnode const & node {this->m_tree_structure[id]};
 
         // If the point is not in the bounding box, skip the node
-        ++this->m_num_check;
+        ++this->m_check_counter;
         if (!node.box.contains(point)) {continue;}
 
-        // Intersect the point with the long boxes on the leaves
+        // Intersect the point with the long boxes on the leafs
         Integer const id_ini{node.box_ptr};
         Integer const id_end{node.box_ptr + node.box_num};
         for (Integer i{id_ini}; i < id_end; ++i) {
           Integer const pos{this->m_tree_boxes_map[i]};
-          Box const & box_i {*boxes[pos]};
-          ++this->m_num_check;
-          if (box_i.contains(point)) {candidates.insert(pos);}
+          ++this->m_check_counter;
+          if (boxes[pos]->contains(point)) {candidates.insert(pos);}
         }
 
-        // Push children on the stack if thay are not leaves
+        // Push children on the stack if thay are not leafs
         if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
         if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
       }
@@ -383,18 +412,17 @@ namespace AABBtree {
     bool intersect_impl(Box const & box, IndexSet & candidates) const
     {
       // Reset statistics
-      this->m_num_check = 0;
+      this->m_check_counter = 0;
 
       // Collect the original object boxes
-      const BoxUniquePtrList & boxes {*this->m_boxes};
-      Integer num_boxes{boxes.size()};
+      BoxUniquePtrList const & boxes {*this->m_boxes};
 
       // Return if the tree is empty
       if (this->is_empty()) {return false;}
 
       // Setup the stack
       this->m_stack.clear();
-      this->m_stack.reserve(2*num_boxes + 1);
+      this->m_stack.reserve(2*this->size() + 1);
       this->m_stack.emplace_back(0);
 
       // Main loop that checks the intersection iteratively
@@ -404,25 +432,55 @@ namespace AABBtree {
         Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
 
         // Get the node
-        AABBnode & node {this->m_tree_structure[id]};
+        AABBnode const & node {this->m_tree_structure[id]};
 
         // If the point is not in the bounding box, skip the node
-        ++this->m_num_check;
+        ++this->m_check_counter;
         if (!node.box.intersects(box)) {continue;}
 
-        // Intersect the box with the long boxes on the leaves
+        // Intersect the box with the long boxes on the leafs
         Integer const id_ini{node.box_ptr};
         Integer const id_end{node.box_ptr + node.box_num};
         for (Integer i{id_ini}; i < id_end; ++i) {
           Integer const pos{this->m_tree_boxes_map[i]};
-          Box const & box_i {*boxes[pos]};
-          ++this->m_num_check;
-          if (box_i.intersects(box)) {candidates.insert(pos);}
+          ++this->m_check_counter;
+          if (boxes[pos]->intersects(box)) {candidates.insert(pos);}
         }
 
-        // Push children on the stack if thay are not leaves
+        // Push children on the stack if thay are not leafs
         if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
         if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
+      }
+      return !candidates.empty();
+    }
+
+    /**
+    * Intersect the tree with another tree.
+    * \param[in] tree Tree to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
+    bool intersect_impl(NonRecursive const & tree, IndexMap & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return if the tree is empty
+      if (this->is_empty() || tree.is_empty()) {return false;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(this->size() + tree.size() + 2);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      while (!this->m_stack.empty())
+      {
+        // TODO
       }
       return !candidates.empty();
     }

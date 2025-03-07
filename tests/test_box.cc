@@ -53,11 +53,13 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_1(-1.0, -1.0, 2.0, 2.0);
     Box box_2(-2.0, -2.0, 1.0, 1.0);
     Box box_3 = box_1.intersection(box_2);
+    #ifdef AABBTREE_ENABLE_PLOTTING
     SET_PLOT
     title(ax, "Intersection");
     plot_box<TestType, 2>(box_1, colors[0], 1.0); ax->hold(true);
     plot_box<TestType, 2>(box_2, colors[1], 1.0);
     plot_box<TestType, 2>(box_3, colors[2], 2.0); ax->hold(false); show(fig);
+    #endif
     REQUIRE(box_3.min().isApprox(Vector(-1.0, -1.0)));
     REQUIRE(box_3.max().isApprox(Vector(1.0, 1.0)));
     REQUIRE(box_1.intersects(box_2));
@@ -73,11 +75,13 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_2(-2.5, 0.5, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.interior_distance(box_2, p_1, p_2)};
+    #ifdef AABBTREE_ENABLE_PLOTTING
     SET_PLOT
     title(ax, "Interior distance");
     plot_box<TestType, 2>(box_1, colors[0], 1.0); ax->hold(true);
     plot_box<TestType, 2>(box_2, colors[1], 1.0);
     plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0); ax->hold(false); show(fig);
+    #endif
     REQUIRE_THAT(d, WithinAbs(box_1.interior_distance(box_2), 1.0e-8));
   }
 
@@ -88,11 +92,13 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_2(0.0, 0.0, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.exterior_distance(box_2, p_1, p_2)};
+    #ifdef AABBTREE_ENABLE_PLOTTING
     SET_PLOT
     title(ax, "Exterior distance");
     plot_box<TestType, 2>(box_1, colors[0], 1.0); ax->hold(true);
     plot_box<TestType, 2>(box_2, colors[1], 1.0);
     plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0); ax->hold(false); show(fig);
+    #endif
     REQUIRE_THAT(d, WithinAbs(box_1.exterior_distance(box_2), 1.0e-8));
     REQUIRE(p_1.isApprox(Vector(-2.0, -2.0)));
     REQUIRE(p_2.isApprox(Vector(2.0, 2.0)));

@@ -75,6 +75,7 @@ namespace AABBtree
   static_assert(std::is_integral<Integer>::value, "AABBTREE_DEFAULT_INTEGER_TYPE must be an integral type.");
 
   using IndexSet = std::set<Integer>; /**< A set of unique indexes. */
+  using IndexMap = std::map<Integer, IndexSet>; /**< A mapping from an index to a set of indexes. */
   using IndexList = std::vector<Integer>; /**< A sequential list of indexes. */
   using OutStream = std::basic_ostream<char>; /**< Stream type for output operations. */
 

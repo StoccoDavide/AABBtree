@@ -66,8 +66,7 @@ namespace AABBtree {
     /**
      * Clear the tree.
      */
-    void
-    clear_impl() {
+    void clear_impl() {
       this->m_objects.clear();
       this->m_children.first.release();
       this->m_children.second.release();
@@ -79,8 +78,7 @@ namespace AABBtree {
      * Check if tree is empty.
      * \return True if the tree is empty, false otherwise.
      */
-    bool
-    is_empty_impl() const {
+    bool is_empty_impl() const {
       return !this->m_children.first && !this->m_children.second && this->m_box.is_empty();
     }
 
@@ -89,8 +87,7 @@ namespace AABBtree {
      * \param[in] boxes Bounding boxes to build the tree from.
      * \return True if the tree was built successfully, false otherwise.
      */
-    void
-    build_impl(BoxUniquePtrList const & boxes) {
+    void build_impl(BoxUniquePtrList const & boxes) {
       // Check if the input vector is empty
       if (boxes.empty() ) return;
 
@@ -111,7 +108,6 @@ namespace AABBtree {
       Real    x_cut{ (x_max + x_min)/2.0};
 
       // Collect the boxes that have a size similar to the current box
-      // CHECKME
      this->m_objects.clear();
      for (Box const & box : boxes)
      {
@@ -142,8 +138,7 @@ namespace AABBtree {
      * \param[in] boxes Bounding boxes to build the tree from.
      * \return True if the tree was built successfully, false otherwise.
      */
-    void
-    build_impl(vector<Box> const & boxes) {
+    void build_impl(vector<Box> const & boxes) {
       this->build_impl(BoxUniquePtrList(boxes.begin(), boxes.end()));
     }
 
@@ -153,8 +148,7 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (bounding box indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool
-    intersect_impl(Point const & point, Set & candidates) const {
+    bool intersect_impl(Point const & point, Set & candidates) const {
       return true;
     }
 
@@ -164,8 +158,7 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (bounding box indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool
-    intersect_impl(Box const & box, Set & candidates ) const {
+    bool intersect_impl(Box const & box, Set & candidates ) const {
       return true;
     }
 
@@ -175,8 +168,7 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (bounding box indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool
-    intersect_impl(Recursive const & tree, Set & candidates) const {
+    bool intersect_impl(Recursive const & tree, Set & candidates) const {
       return true;
     }
 

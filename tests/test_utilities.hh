@@ -43,10 +43,8 @@ public:
   Vector2 & p_2() {return this->m_p_2;}
   Box<Real, 2> box() const {
     return Box<Real, 2>(
-      std::min(this->m_p_1[0], this->m_p_2[0]),
-      std::min(this->m_p_1[1], this->m_p_2[1]),
-      std::max(this->m_p_1[0], this->m_p_2[0]),
-      std::max(this->m_p_1[1], this->m_p_2[1])
+      std::min(this->m_p_1[0], this->m_p_2[0]), std::min(this->m_p_1[1], this->m_p_2[1]),
+      std::max(this->m_p_1[0], this->m_p_2[0]), std::max(this->m_p_1[1], this->m_p_2[1])
     );;
   }
   bool intersect (Segment const & segment, Vector2 & point) const {
@@ -67,31 +65,28 @@ public:
   }
 };
 
+#ifdef AABBTREE_ENABLE_PLOTTING
+
 // Plot a box
 template <typename Real, Integer N>
 void plot_box(Box<Real, N> const & box, std::string const & color, Real const line_width = 1) {
   static_assert(N == 2, "Plotting is only supported for 2D objects.");
   std::vector<Real> min(box.min().data(), box.min().data() + N);
   std::vector<Real> max(box.max().data(), box.max().data() + N);
-  #ifdef AABBTREE_ENABLE_PLOTTING
   if (ax) {
-    plot(ax, {min[0], max[0], max[0], min[0], min[0]},
+    ax->plot({min[0], max[0], max[0], min[0], min[0]},
       {min[1], min[1], max[1], max[1], min[1]})->line_width(line_width).color(color);
   }
-  #endif
 }
 
 // Plot a tree
 template <typename Real, Integer N>
 void plot_tree(NonRecursive<Real, N> const & tree, std::string const & color, Real const line_width = 1) {
   static_assert(N == 2, "Plotting is only supported for 2D objects.");
-  #ifdef AABBTREE_ENABLE_PLOTTING
   for (Integer i{0}; i < static_cast<Integer>(tree.size()); ++i) {
-    Box<Real, N> const & box{tree.node(i).box};
-    std::cout << "Box " << i << ": " << box.min().transpose() << " " << box.max().transpose() << std::endl;
-    plot_box<Real, N>(box, color, line_width);
+    plot_box<Real, N>(tree.node(i).box, color, line_width);
+    plot_box<Real, N>(tree.node(i).box_long, color, 2.0*line_width);
   }
-  #endif
 }
 
 // Plot a point
@@ -100,11 +95,9 @@ void plot_point(AABBtree::Vector<Real, N> const & point, std::string const & col
   Real const marker_size = 0.5) {
   static_assert(N == 2, "Plotting is only supported for 2D objects.");
   std::vector<Real> p(point.data(), point.data() + N);
-  #ifdef AABBTREE_ENABLE_PLOTTING
   if (ax) {
-    plot(ax, {p[0]}, {p[1]}, "o")->marker_size(marker_size).color(color).marker_face(true);
+    ax->plot({p[0]}, {p[1]}, "o")->marker_size(marker_size).color(color).marker_face(true);
   }
-  #endif
 }
 
 // Plot a segment
@@ -114,12 +107,10 @@ void plot_segment(AABBtree::Vector<Real, N> const & p_1, AABBtree::Vector<Real, 
   static_assert(N == 2, "Plotting is only supported for 2D objects.");
   std::vector<Real> v_1(p_1.data(), p_1.data() + N);
   std::vector<Real> v_2(p_2.data(), p_2.data() + N);
-  #ifdef AABBTREE_ENABLE_PLOTTING
   if (ax) {
-    plot(ax, {v_1[0], v_2[0]}, {v_1[1], v_2[1]}, "-o")->color(color).line_width(line_width).
+    ax->plot({v_1[0], v_2[0]}, {v_1[1], v_2[1]}, "-o")->color(color).line_width(line_width).
       marker_size(2.0*line_width).marker_face(true);
   }
-  #endif
 }
 
 // Plot a segment
@@ -127,5 +118,7 @@ template <typename Real>
 void plot_segment(Segment<Real> const & segment, std::string const & color, Real const line_width = 1) {
   plot_segment<Real, 2>(segment.p_1(), segment.p_2(), color, line_width);
 }
+
+#endif // AABBTREE_ENABLE_PLOTTING
 
 #endif // INCLUDE_TEST_UTILITIES_HH

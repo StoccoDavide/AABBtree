@@ -54,64 +54,91 @@ TEMPLATE_TEST_CASE("NonRecursive", "[template]", float, double) {
   using Box = AABBtree::Box<TestType, 2>;
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<TestType, 2>;
 
+  #ifdef AABBTREE_ENABLE_PLOTTING
   SET_PLOT
   title(ax, "Build");
+  #endif
 
   // Build segments
-  Integer const n{10};
-  TestType const scale{2.0};
-  TestType const length{0.5};
+  Integer const n{2000};
+  TestType const scale{10.0};
+  TestType const length{0.1};
   std::vector<Segment<TestType>> segments(n);
+  #ifdef AABBTREE_ENABLE_PLOTTING
   ax->hold(true);
+  #endif
   Eigen::Matrix<TestType, 2, 2> R;
   for (Integer i{0}; i < n; ++i) {
     segments[i].p_1() = scale*Vector::Random();
     R = Eigen::Matrix<TestType, 2, 2>::Random();
     R.col(0).normalize(); R.col(1).normalize();
     segments[i].p_2() = segments[i].p_1() + R*Vector(length, 0.0);
+    #ifdef AABBTREE_ENABLE_PLOTTING
     plot_segment<TestType>(segments[i].p_1(), segments[i].p_2(), colors[6], 1.0);
+    #endif
   }
-  show(fig);
 
   // Intersect segments
-  std::vector<Vector> points;
+  std::vector<Vector> segment_points;
   for (Integer i{0}; i < n; ++i) {
     for (Integer j{i+1}; j < n; ++j) {
       Vector point;
       if (segments[i].intersect(segments[j], point)) {
-        points.push_back(point);
+        segment_points.push_back(point);
+        #ifdef AABBTREE_ENABLE_PLOTTING
         plot_point<TestType, 2>(point, colors[0], 5.0);
+        #endif
       }
   }}
-  show(fig);
 
   // Segments boxes
   std::unique_ptr<BoxUniquePtrList> boxes = std::make_unique<BoxUniquePtrList>();
   for (Integer i{0}; i < n; ++i) {
     Box const box{segments[i].box()};
     boxes->push_back(std::make_unique<Box>(box));
+    #ifdef AABBTREE_ENABLE_PLOTTING
     plot_box<TestType, 2>(box, colors[3], 0.25);
+    #endif
   }
-  show(fig);
 
   // Build tree
   AABBtree::NonRecursive<TestType, 2> tree;
   tree.build(std::move(boxes));
+  tree.print(std::cout);
+  #ifdef AABBTREE_ENABLE_PLOTTING
   plot_tree<TestType, 2>(tree, colors[2], 0.5);
   show(fig);
+  #endif
 
   // Intersect tree
-  //IndexSet candidates;
-  //for (Integer i{0}; i < n; ++i) {
-  //  for (Integer j{i+1}; j < n; ++j) {
-  //    Vector point;
-  //    if (tree.intersect(segments[i])) {
-  //      points.push_back(point);
-  //      plot_point<TestType, 2>(point, colors[3], 0.5);
-  //    }
-  //}}
-  //plot_tree<TestType, 2>(tree, colors[1], 1.0); show(fig);
-
-  ax->hold(false);
+  IndexSet candidates;
+  std::vector<Vector> tree_points;
+  for (Integer i{0}; i < n; ++i) {
+    Vector point;
+    if (tree.intersect(segments[i].box(), candidates)) {
+      std::vector<Integer> candidates_vec(candidates.begin(), candidates.end());
+      for (Integer i{0}; i < static_cast<Integer>(candidates_vec.size()); ++i) {
+        for (Integer j{i+1}; j < static_cast<Integer>(candidates_vec.size()); ++j) {
+          if (segments[candidates_vec[i]].intersect(segments[candidates_vec[j]], point)) {
+            tree_points.push_back(point);
+            #ifdef AABBTREE_ENABLE_PLOTTING
+            plot_point<TestType, 2>(point, colors[1], 5.0);
+            #endif
+          }
+        }
+      }
+    }
+  }
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  show(fig);
   ax->clear();
+  #endif
+
+
+
+  // Check results
+  //REQUIRE(segment_points.size() == tree_points.size());
+  //for (Integer i{0}; i < static_cast<Integer>(segment_points.size()); ++i) {
+  //  REQUIRE_THAT(segment_points[i], IsApprox(tree_points[i]));
+  //}
 }

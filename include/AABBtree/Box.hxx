@@ -56,9 +56,8 @@ namespace AABBtree {
     */
     Box()
     {
-      this->m_min.fill(MAX);
-      this->m_max.fill(MIN);
-      this->set_empty();
+      this->m_min.setConstant(MAX);
+      this->m_max.setConstant(MIN);
     }
 
     /**
@@ -250,10 +249,11 @@ namespace AABBtree {
     * \param[out] ipos Indices of the sizes.
     * \return The longest axis of the box.
     */
-    void sort_axes_length(Vector & sizes, Eigen::Vector<Integer, N> ipos) const
+    void sort_axes_length(Vector & sizes, Eigen::Vector<Integer, N> & ipos) const
     {
       sizes = this->m_max - this->m_min;
-      ipos = Eigen::Vector<Integer, N>::LinSpaced(N, 0, N-1);
+      ipos = Eigen::Vector<Integer, N>::LinSpaced(N, 0, N - 1);
+      std::sort(ipos.data(), ipos.data() + N, [&sizes](Integer i, Integer j) {return sizes[i] > sizes[j];});
     }
 
     /**
@@ -431,31 +431,6 @@ namespace AABBtree {
     {
       this->m_min = this->m_min.cwiseMin(b.m_min);
       this->m_max = this->m_max.cwiseMax(b.m_max);
-      return *this;
-    }
-
-    /**
-    * Extend the current box such that it contains a given box.
-    * \param[in] b Box to extend the box to.
-    * \return A reference to the current box.
-    * \note Merging with an empty box may result in a box bigger than \c *this.
-    */
-    Box & extend(BoxUniquePtr const & b)
-    {
-      this->m_min = this->m_min.cwiseMin(b->m_min);
-      this->m_max = this->m_max.cwiseMax(b->m_max);
-      return *this;
-    }
-
-    /**
-    * Extend the current box such that it contains the given boxes.
-    * \param[in] b Boxes to extend the box to.
-    * \return A reference to the current box.
-    * \note Merging with an empty box may result in a box bigger than \c *this.
-    */
-    Box & extend(BoxUniquePtrList const & bvec)
-    {
-      for (auto const & box : bvec) {this->extend(box);}
       return *this;
     }
 
