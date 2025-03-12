@@ -15,6 +15,10 @@ file(GLOB_RECURSE TEST_BOX "${CMAKE_CURRENT_SOURCE_DIR}/test_box.cc")
 add_executable(test_box ${TEST_BOX})
 target_link_libraries(test_box PRIVATE AABBtree Catch2::Catch2WithMain Matplot++::matplot)
 
+file(GLOB_RECURSE TEST_RAY "${CMAKE_CURRENT_SOURCE_DIR}/test_ray.cc")
+add_executable(test_ray ${TEST_RAY})
+target_link_libraries(test_ray PRIVATE AABBtree Catch2::Catch2WithMain Matplot++::matplot)
+
 #file(GLOB_RECURSE TEST_RECURSIVE "${CMAKE_CURRENT_SOURCE_DIR}/test_recursive.cc")
 #add_executable(test_recursive ${TEST_RECURSIVE})
 #target_link_libraries(test_recursive PRIVATE AABBtree Catch2::Catch2WithMain Matplot++::matplot)

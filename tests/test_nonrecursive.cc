@@ -48,11 +48,10 @@ TEMPLATE_TEST_CASE("NonRecursive", "[template]", float, double) {
 
   std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
 
-  //using IndexSet = AABBtree::IndexSet;
-
+  using BoxUniquePtrList = AABBtree::BoxUniquePtrList<TestType, 2>;
   using Vector = AABBtree::Vector<TestType, 2>;
   using Box = AABBtree::Box<TestType, 2>;
-  using BoxUniquePtrList = AABBtree::BoxUniquePtrList<TestType, 2>;
+  using Ray = AABBtree::Ray<TestType, 2>;
 
   #ifdef AABBTREE_ENABLE_PLOTTING
   SET_PLOT
@@ -119,6 +118,7 @@ TEMPLATE_TEST_CASE("NonRecursive", "[template]", float, double) {
       std::vector<Integer> candidates_vec(candidates.begin(), candidates.end());
       for (Integer i{0}; i < static_cast<Integer>(candidates_vec.size()); ++i) {
         for (Integer j{i+1}; j < static_cast<Integer>(candidates_vec.size()); ++j) {
+          std::cout << "Segment " << i << " intersects with segment " << j << std::endl;
           if (segments[candidates_vec[i]].intersect(segments[candidates_vec[j]], point)) {
             tree_points.push_back(point);
             #ifdef AABBTREE_ENABLE_PLOTTING
@@ -133,27 +133,34 @@ TEMPLATE_TEST_CASE("NonRecursive", "[template]", float, double) {
   show(fig);
   #endif
 
-  // Minimum distance
+  // Intersect ray
+  Ray ray(0.0, 0.0, 1.0, 1.0);
+  for (Integer i{0}; i < n; ++i) {
+    if (tree.intersect(ray, candidates)) {
+      for (const auto& i : candidates) {
+        #ifdef AABBTREE_ENABLE_PLOTTING
+        plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+        #endif
+      }
+    }
+  }
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  plot_ray<TestType, 2>(ray, colors[0], 1.0);
+  show(fig);
+  #endif
+
+  // Box distance
   Vector const point(0.0, 0.0);
   #ifdef AABBTREE_ENABLE_PLOTTING
   plot_point<TestType, 2>(point, colors[0], 5.0);
   #endif
-  TestType const min_distance{tree.min_distance(point, candidates)};
-  std::cout << "Minimum distance: " << min_distance << std::endl;
-    for (const auto& i : candidates) {
-      #ifdef AABBTREE_ENABLE_PLOTTING
-      plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
-      #endif
-    }
-
-  // Maximum distance
-  TestType const max_distance{tree.max_distance(point, candidates)};
-  std::cout << "Maximum distance: " << max_distance << std::endl;
-    for (const auto& i : candidates) {
-      #ifdef AABBTREE_ENABLE_PLOTTING
-      plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
-      #endif
-    }
+  TestType const distance{tree.distance(point, candidates)};
+  std::cout << "Distance: " << distance << std::endl;
+  for (const auto& i : candidates) {
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+    #endif
+  }
   #ifdef AABBTREE_ENABLE_PLOTTING
   show(fig);
   ax->clear();

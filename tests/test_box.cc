@@ -45,15 +45,16 @@ grid(ax, true);
 
 TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
 
+  using Vector = Eigen::Matrix<TestType, 2, 1>;
+  using Box = AABBtree::Box<TestType, 2>;
+
   std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
   TestType const tol{1.0e-8};
 
   SECTION("Intersection") {
-    using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
     Box box_1(-1.0, -1.0, 2.0, 2.0);
     Box box_2(-2.0, -2.0, 1.0, 1.0);
-    Box box_3 = box_1.intersection(box_2);
+    Box box_3; box_1.intersection(box_2, box_3);
     #ifdef AABBTREE_ENABLE_PLOTTING
     SET_PLOT
     title(ax, "Intersection");
@@ -70,8 +71,6 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
   }
 
   SECTION("Point distance") {
-    using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
     Vector pnt(0.0, 0.0);
     Box box(-2.5, 0.5, 2.0, 2.0);
     Vector c, f;
@@ -89,8 +88,6 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
   }
 
   SECTION("Interior distance") {
-    using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
     Box box_1(-2.0, -2.0, -0.5, -0.5);
     Box box_2(-2.5, 0.5, 2.0, 2.0);
     Vector p_1, p_2;
@@ -106,8 +103,6 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
   }
 
   SECTION("Exterior distance") {
-    using Vector = Eigen::Matrix<TestType, 2, 1>;
-    using Box = AABBtree::Box<TestType, 2>;
     Box box_1(-2.0, -2.0, 0.0, 0.0);
     Box box_2(0.0, 0.0, 2.0, 2.0);
     Vector p_1, p_2;

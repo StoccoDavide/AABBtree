@@ -52,10 +52,10 @@ namespace AABBtree {
     Ray() = default;
 
     /**
-    * Copy constructor for a ray given another box.
+    * Copy constructor for a ray.
     * \param[in] r Ray to copy.
     */
-    Ray(Ray const & b) : m_origin(b.m_origin), m_direction(b.m_direction) {}
+    Ray(Ray const & r) : m_origin(r.m_origin), m_direction(r.m_direction) {}
 
     /**
     * Class constructor for a ray given an origin and a direction.
@@ -71,8 +71,8 @@ namespace AABBtree {
     * \tparam T Type of the scalar coefficients.
     * \note This constructor is only available for 1D rays.
     */
-    template <typename T = Real>
-    Ray<T, 1>(Real const o, Real const d) : m_origin(o), m_direction(d) {}
+    template <typename = std::enable_if<N == 1>>
+    Ray(Real const o, Real const d) : m_origin(o), m_direction(d) {}
 
     /**
     * Class constructor for the 2D ray.
@@ -83,8 +83,8 @@ namespace AABBtree {
     * \tparam T Type of the scalar coefficients.
     * \note This constructor is only available for 2D rays.
     */
-    template <typename T = Real>
-    Ray<T, 2>(Real const o_x, Real const o_y, Real const d_x, Real const d_y)
+    template <typename = std::enable_if<N == 2>>
+    Ray(Real const o_x, Real const o_y, Real const d_x, Real const d_y)
       : m_origin(o_x, o_y), m_direction(d_x, d_y) {}
 
     /**
@@ -98,8 +98,8 @@ namespace AABBtree {
     * \tparam T Type of the scalar coefficients.
     * \note This constructor is only available for 3D rays.
     */
-    template <typename T = Real>
-    Ray<T, 3>(Real const o_x, Real const o_y, Real const o_z, Real const d_x, Real const d_y, Real const d_z)
+    template <typename = std::enable_if<N == 3>>
+    Ray(Real const o_x, Real const o_y, Real const o_z, Real const d_x, Real const d_y, Real const d_z)
       : m_origin(o_x, o_y, o_z), m_direction(d_x, d_y, d_z) {}
 
     /**
@@ -225,13 +225,10 @@ namespace AABBtree {
     */
     bool intersects(Box<Real, N> const & b, Real tol = DUMMY_TOL) const
     {
-      // If origin is inside the box, then the ray intersects the box
-      if (b.contains(this->m_origin, tol)) {return true;}
-
-      // For each dimension, the ray enters and exits the bounding box at t_min and t_max
+      if (b.contains(this->m_origin)) {return true;}
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
-      Vector t_min, t_max;
+      Vector t_min, t_max; t_min.setConstant(-MAX), t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
         if (std::abs(this->m_direction[i]) > tol) {
           t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
@@ -241,7 +238,9 @@ namespace AABBtree {
           return false;
         }
       }
-      return true;
+      Real t_entry{t_min.maxCoeff()};
+      Real t_exit{t_max.minCoeff()};
+      return t_entry <= t_exit && t_exit >= -tol;
     }
 
     /**
@@ -254,13 +253,10 @@ namespace AABBtree {
     */
     bool intersection(Box<Real, N> const & b, Point & c, Point & f, Real tol = DUMMY_TOL) const
     {
-      // If origin is inside the box, then the ray intersects the box
-      if (b.contains(this->m_origin, tol)) {return true;}
-
-      // For each dimension, the ray enters and exits the bounding box at t_min and t_max
+      if (b.contains(this->m_origin)) {return true;}
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
-      Vector t_min, t_max; t_min.setConstant(MIN), t_max.setConstant(MAX);
+      Vector t_min, t_max; t_min.setConstant(-MAX), t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
         if (std::abs(this->m_direction[i]) > tol) {
           t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
@@ -270,187 +266,238 @@ namespace AABBtree {
           return false;
         }
       }
-      c = this->m_origin + t_min.maxCoeff()*this->m_direction;
-      f = this->m_origin + t_max.minCoeff()*this->m_direction;
+      Real t_entry{t_min.maxCoeff()};
+      Real t_exit{t_max.minCoeff()};
+      if (t_entry > t_exit && t_exit < -tol) {return false;}
+      c = this->m_origin + t_entry*this->m_direction;
+      f = this->m_origin + t_exit*this->m_direction;
       return true;
     }
 
     /**
-    * Compute the squared distance between the current ray a given ray.
-    * \param[in] r Ray to compute the squared distance to.
-    * \param[in] tol Tolerance to use for the distance computation.
-    * \return The squared distance between the rays.
-    */
-    Real squared_distance(Ray const & r, Real tol = DUMMY_TOL) const
-    {
-      // Alias variables
-      Point const & p1{this->m_origin};
-      Vector const & d1{this->m_direction};
-      Point const & p2{r.m_origin};
-      Vector const & d2{r.m_direction};
-
-      // Compute common terms
-      Vector p2_p1(p2 - p1);
-      Real d1_d2(d1.dot(d2));
-      Real p2_p1_d1(p2_p1.dot(d1));
-      Real p2_p1_d2(p2_p1.dot(d2));
-
-      // Compute t and s using least-squares solution
-      Real t, s, denom{1.0 - d1_d2*d1_d2};
-      if (std::abs(denom) < tol) {
-        t = 0.0;
-        s = std::max(0.0, p2_p1_d1);
-      } else {
-        t = std::max(0.0, p2_p1_d1 - p2_p1_d2*d1_d2);
-        s = std::max(0.0, p2_p1_d2 - p2_p1_d1*d1_d2);
-      }
-
-      // Compute distance
-      return (this->m_origin + t*d1 - r.m_origin + s*d2).squaredNorm();
-    }
-
-    /**
-    * Compute the squared distance between the current ray a given ray, returning a point at the given distance.
-    * \param[in] r Ray to compute the squared distance to.
-    * \param[out] p1 First point at the minimum distance (on the current ray).
-    * \param[out] p2 Second point at the minimum distance (on the given ray).
-    * \param[in] tol Tolerance to use for the distance computation.
-    * \return The squared distance between the rays.
-    */
-    Real squared_distance(Ray const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
-    {
-      // Convert to numpy arrays
-      Point const & o1{this->m_origin};
-      Vector const & d1{this->m_direction};
-      Point const & o2{r.m_origin};
-      Vector const & d2{r.m_direction};
-
-      // Compute common terms
-      Vector o2_o1(o2 - o1);
-      Real d1_d2{d1.dot(d2)};
-      Real o2_o1_d1{o2_o1.dot(d1)};
-      Real o2_o1_d2{o2_o1.dot(d2)};
-
-      // Compute t and s using least-squares solution
-      Real t, s, denom{1.0 - d1_d2*d1_d2};
-      if (std::abs(denom) < tol) {
-        t = 0.0;
-        s = std::max(0.0, o2_o1_d1);
-      } else {
-        t = std::max(0.0, o2_o1_d1 - o2_o1_d2*d1_d2);
-        s = std::max(0.0, o2_o1_d2 - o2_o1_d1*d1_d2);
-      }
-
-      // Compute closest points
-      p1 = o1 + t*d1;
-      p2 = o2 + s*d2;
-
-      // Compute distance
-      return (p1 - p2).squaredNorm();
-    }
-
-    /**
-    * Compute the distance between the current ray a given ray, returning a point at the given distance.
-    * \param[in] r Ray to compute the squared distance to.
-    * \param[out] c Closest point on the ray.
-    * \return The distance between the rays.
-    */
-    Real distance(Ray const & r, Point & c) const {return std::sqrt(this->squared_distance(r, c));}
-
-    /**
     * Compute the squared distance between the current ray a given point.
     * \param[in] p Point to compute the squared distance to.
+    * \param[in] tol Tolerance to use for the intersection.
     * \return The squared distance between the ray and the point.
     */
-    Real squared_distance(Point const & p) const
+    Real squared_distance(Point const & p, Real tol = DUMMY_TOL) const
     {
-      Real t{std::max(0.0, (p - this->m_origin).dot(this->m_direction)/this->m_direction.squaredNorm())};
-      return (this->m_origin + t * this->m_direction - p).squaredNorm();
+      Real t{(p - this->m_origin).dot(this->m_direction)/this->m_direction.squaredNorm()};
+      return (this->m_origin + std::max(static_cast<Real>(-tol), t) * this->m_direction - p).squaredNorm();
     }
 
     /**
     * Compute the squared distance between the current ray a given point, returning a point at the given distance.
     * \param[in] p Point to compute the distance to.
     * \param[out] c Closest point on the ray.
+    * \param[in] tol Tolerance to use for the intersection.
     * \return The squared distance between the ray and the point.
     */
-    Real squared_distance(Point const & p, Point & c) const
+    Real squared_distance(Point const & p, Point & c, Real tol = DUMMY_TOL) const
     {
-      Real t{std::max(0.0, (p - this->m_origin).dot(this->m_direction) / this->m_direction.squaredNorm())};
-      c = this->m_origin + t * this->m_direction;
+      Real t{(p - this->m_origin).transpose().dot(this->m_direction)/this->m_direction.squaredNorm()};
+      c = this->m_origin + std::max(static_cast<Real>(-tol), t) * this->m_direction;
       return (c - p).squaredNorm();
     }
 
     /**
     * Compute the distance between the current ray a given point.
     * \param[in] p Point to compute the distance to.
+    * \param[in] tol Tolerance to use for the intersection.
     * \return The distance between the ray and the point.
     */
-    Real distance(Point const & p) const {return std::sqrt(this->squared_distance(p));}
+    Real distance(Point const & p, Real tol = DUMMY_TOL) const
+    {return std::sqrt(this->squared_distance(p, tol));}
 
     /**
     * Compute the distance between the current ray a given point, returning a point at the given distance.
     * \param[in] p Point to compute the distance to.
     * \param[out] c Closest point on the ray.
+    * \param[in] tol Tolerance to use for the intersection.
     * \return The distance between the ray and the point.
     */
-    Real distance(Point const & p, Point & c) const {return std::sqrt(this->squared_distance(p, c));}
+    Real distance(Point const & p, Point & c, Real tol = DUMMY_TOL) const
+    {return std::sqrt(this->squared_distance(p, c, tol));}
+
 
     /**
-    * Compute the squared distance between the current ray a given axis-aligned box.
+    * Compute the squared \em interior (or \em minimum) distance between the current ray a given box.
     * \param[in] b Box to compute the squared distance to.
-    * \return The squared distance between the ray and the axis-aligned box.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    * \note The squared distance is positive if the ray and the box do not intersect, zero otherwise.
     */
-    Real squared_distance(Box<Real, N> const & b, Real tol = DUMMY_TOL) const
-    {
-      if (b.contains(this->m_origin, tol)) {return -1.0;}
+    Real squared_interior_distance(Box<Real, N> const & b, Real tol = DUMMY_TOL) const
+    {Point p1, p2; return this->squared_interior_distance(b, p1, p2, tol);}
 
-      // For each dimension, the ray enters and exits the bounding box at t_min and t_max
+    /**
+    * Compute the squared \em interior (or \em minimum) distance between the current ray a given box,
+    * returning two points at the minimum distance.
+    * \param[in] b Box to compute the squared distance to.
+    * \param[out] p1 First point at the minimum distance (on the current ray).
+    * \param[out] p2 Second point at the minimum distance (on the box).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    * \note The squared distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real squared_interior_distance(Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {
+      if (b.contains(this->m_origin)) {return 0.0;}
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
-      Vector t_min, t_max; t_min.setConstant(MIN), t_max.setConstant(MAX);
+
+      // Compute intersection parameters
+      Vector t_min, t_max; t_min.setConstant(-MAX); t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
         if (std::abs(this->m_direction[i]) > tol) {
           t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
           t_max[i] = (b_max[i] - this->m_origin[i])/this->m_direction[i];
           if (t_min[i] > t_max[i]) {std::swap(t_min[i], t_max[i]);}
         } else if (this->m_origin[i] < b_min[i] || this->m_origin[i] > b_max[i]) {
-          return false;
+          // Ray is parallel and outside the box and non-intersecting
+          b.interior_distance(this->m_origin, p2);
+          Vector sides{b_max - b_min};
+          this->distance(p2, p1);
+          for (Integer j{0}; j < N; ++j){
+            if (j == i) {continue;}
+            if (this->m_direction[j] > 0.0) {p1[j] += 0.5*sides[j]; p2[j] += 0.5*sides[j];}
+            else {p1[j] -= 0.5*sides[j]; p2[j] -= 0.5*sides[j];}
+          }
+          return (p2 - this->m_origin).norm();
         }
       }
-      return (this->m_origin + t_min.maxCoeff()*this->m_direction -
-              this->m_origin + t_max.minCoeff()*this->m_direction).norm();
+
+      // Compute global intersection range
+      Real t_entry{t_min.maxCoeff()}, t_exit{t_max.minCoeff()};
+      if (t_entry <= t_exit && t_exit >= 0) {return 0.0;}
+
+      // Compute closest point if no intersection
+      for (Integer i{0}; i < N; ++i) {
+        if (this->m_origin[i] < b_min[i]) {p2[i] = b_min[i];}
+        else if (this->m_origin[i] > b_max[i]) {p2[i] = b_max[i];}
+        else {p2[i] = this->m_origin[i];}
+      }
+
+      // Project closest point onto the ray
+      Vector v(p2 - this->m_origin);
+      Real t_proj{v.dot(this->m_direction)/this->m_direction.squaredNorm()};
+      if (t_proj < 0.0) {p1 = this->m_origin; return v.norm();}
+
+      p1 = this->m_origin + t_proj * this->m_direction;;
+      return (p2 - p1).squaredNorm();
     }
 
     /**
-    * Compute the distance between the current ray a given axis-aligned box, returning a point at the given distance.
+    * Compute the \em interior (or \em minimum) distance between the current ray a given box.
+    * \param[in] b Box to compute the distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real interior_distance(Box<Real, N> const & b, Real tol = DUMMY_TOL) const
+    {return std::sqrt(this->squared_interior_distance(b, tol));}
+
+    /**
+    * Compute the \em interior (or \em minimum) distance between the current ray a given box,
+    * returning two points at the minimum distance.
     * \param[in] b Box to compute the distance to.
     * \param[out] p1 First point at the minimum distance (on the current ray).
-    * \param[out] p2 Second point at the minimum distance (on the given box).
-    * \return The distance between the ray and the axis-aligned box. The returned value is positive
-    * if the ray origin is outside the box, negative otherwise.
+    * \param[out] p2 Second point at the minimum distance (on the box).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
     */
-    Real distance(Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
-    {
-      if (b.contains(this->m_origin, tol)) {return -1.0;}
+    Real interior_distance(Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {return std::sqrt(static_cast<Real>(this->squared_interior_distance(b, p1, p2, tol)));}
 
-      // For each dimension, the ray enters and exits the bounding box at t_min and t_max
+    /**
+    * Compute the squared \em exterior (or \em maximum) distance between the current ray a given box.
+    * \param[in] b Box to compute the squared distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    * \note The squared distance is positive if one box is not contained in the other, zero otherwise.
+    */
+    Real squared_exterior_distance(Box<Real, N> const & b, Real tol = DUMMY_TOL) const
+    {Point p1, p2; return this->squared_exterior_distance(b, p1, p2, tol);}
+
+    /**
+    * Compute the squared \em exterior (or \em maximum) distance between the current ray a given box,
+    * returning two points at the maximum distance.
+    * \param[in] b Box to compute the squared distance to.
+    * \param[out] p1 First point at the maximum distance (on the current ray).
+    * \param[out] p2 Second point at the maximum distance (on the box).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    */
+    Real squared_exterior_distance(Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {
+      if (b.contains(this->m_origin)) {return 0.0;}
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
-      Vector t_min, t_max; t_min.setConstant(MIN), t_max.setConstant(MAX);
+
+      // Compute intersection parameters
+      Vector t_min, t_max; t_min.setConstant(-MAX); t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
         if (std::abs(this->m_direction[i]) > tol) {
           t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
           t_max[i] = (b_max[i] - this->m_origin[i])/this->m_direction[i];
           if (t_min[i] > t_max[i]) {std::swap(t_min[i], t_max[i]);}
         } else if (this->m_origin[i] < b_min[i] || this->m_origin[i] > b_max[i]) {
-          return false;
+          // Ray is parallel and outside the box and non-intersecting
+          b.exterior_distance(this->m_origin, p2);
+          Vector sides{b_max - b_min};
+          this->distance(p2, p1);
+          for (Integer j{0}; j < N; ++j){
+            if (j == i) {continue;}
+            if (this->m_direction[j] > 0.0) {p1[j] -= 0.5*sides[j]; p2[j] -= 0.5*sides[j];}
+            else {p1[j] += 0.5*sides[j]; p2[j] += 0.5*sides[j];}
+          }
+          return (p2 - this->m_origin).norm();
         }
       }
-      p1 = this->m_origin + t_min.maxCoeff()*this->m_direction;
-      p2 = this->m_origin + t_max.minCoeff()*this->m_direction;
-      return (p1 - p2).norm();
+
+      // Compute global intersection range
+      Real t_entry{t_min.maxCoeff()}, t_exit{t_max.minCoeff()};
+      if (t_entry <= t_exit && t_exit >= 0) {return 0.0;}
+
+      // Compute closest point if no intersection
+      for (Integer i{0}; i < N; ++i) {
+        if (this->m_origin[i] < b_min[i]) {p2[i] = b_max[i];}
+        else if (this->m_origin[i] > b_max[i]) {p2[i] = b_min[i];}
+        else {p2[i] = this->m_origin[i];}
+      }
+
+      // Project closest point onto the ray
+      Vector v(p2 - this->m_origin);
+      Real t_proj{v.dot(this->m_direction)/this->m_direction.squaredNorm()};
+      if (t_proj < 0.0) {p1 = this->m_origin; return v.norm();}
+
+      p1 = this->m_origin + t_proj * this->m_direction;;
+      return (p2 - p1).squaredNorm();
     }
+
+    /**
+    * Compute the \em exterior (or \em maximum) distance between the current ray a given box.
+    * \param[in] b Box to compute the distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real exterior_distance(Box<Real, N> const & b, Real tol = DUMMY_TOL) const
+    {return std::sqrt(this->squared_exterior_distance(b, tol));}
+
+    /**
+    * Compute the \em exterior (or \em maximum) distance between the current ray a given box,
+    * and return two points at the maximum distance.
+    * \param[in] b Box to compute the distance to.
+    * \param[out] p1 First point at the maximum distance (on the current ray).
+    * \param[out] p2 Second point at the maximum distance (on the box).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real exterior_distance(Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {return std::sqrt(this->squared_exterior_distance(b, p1, p2, tol));}
 
   }; // class Ray
 

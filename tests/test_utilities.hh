@@ -113,6 +113,14 @@ void plot_segment(AABBtree::Vector<Real, N> const & p_1, AABBtree::Vector<Real, 
   }
 }
 
+// Plot a ray
+template <typename Real, Integer N>
+void plot_ray(AABBtree::Ray<Real, N> const & ray, std::string const & color, Real const line_width = 1) {
+  static_assert(N == 2, "Plotting is only supported for 2D objects.");
+  Real t{1000.0};
+  plot_segment<Real, N>(ray.origin(), ray.origin() + t*ray.direction(), color, line_width);
+}
+
 // Plot a segment
 template <typename Real>
 void plot_segment(Segment<Real> const & segment, std::string const & color, Real const line_width = 1) {

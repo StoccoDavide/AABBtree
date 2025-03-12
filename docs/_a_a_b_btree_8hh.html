@@ -156,12 +156,17 @@ $(function(){initNavTree('_a_a_b_btree_8hh.html',''); initResizable(true); });
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
 <code>#include &lt;Eigen/Dense&gt;</code><br />
-<code>#include &quot;<a class="el" href="_aligned_box_8hxx_source.html">AABBtree/AlignedBox.hxx</a>&quot;</code><br />
+<code>#include &lt;Eigen/Geometry&gt;</code><br />
+<code>#include &quot;<a class="el" href="_box_8hxx_source.html">AABBtree/Box.hxx</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_ray_8hxx_source.html">AABBtree/Ray.hxx</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_tree_8hxx_source.html">AABBtree/Tree.hxx</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_non_recursive_8hxx_source.html">AABBtree/NonRecursive.hxx</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for AABBtree.hh:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="_a_a_b_btree_8hh__incl.svg" width="1140" height="111"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="_a_a_b_btree_8hh__incl.svg" width="1642" height="258"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="_a_a_b_btree_8hh_source.html">Go to the source code of this file.</a></p>
@@ -169,7 +174,7 @@ Include dependency graph for AABBtree.hh:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html">AABBtree</a></td></tr>
-<tr class="memdesc:namespace_a_a_b_btree"><td class="mdescLeft">&#160;</td><td class="mdescRight">Namespace for the <a class="el" href="class_a_a_b_btree_1_1_a_a_b_btree.html" title="A class representing an axis-aligned bounding box tree (AABBtree).">AABBtree</a> library. <br /></td></tr>
+<tr class="memdesc:namespace_a_a_b_btree"><td class="mdescLeft">&#160;</td><td class="mdescRight">Namespace for the <a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a> library. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -190,8 +195,28 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:afe8ed3e31de700bac488261556f28fb2" id="r_afe8ed3e31de700bac488261556f28fb2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">AABBtree::Integer</a> = <a class="el" href="#a3466e818a9a7c380026c49cc8132caab">AABBTREE_DEFAULT_INTEGER_TYPE</a></td></tr>
-<tr class="memdesc:afe8ed3e31de700bac488261556f28fb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2" title="The Integer type used in the AABBtree class.">Integer</a> type used in the <a class="el" href="class_a_a_b_btree_1_1_a_a_b_btree.html" title="A class representing an axis-aligned bounding box tree (AABBtree).">AABBtree</a> class.  <br /></td></tr>
+<tr class="memdesc:afe8ed3e31de700bac488261556f28fb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2" title="The Integer type used in the AABBtree class.">Integer</a> type used in the <a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a> class.  <br /></td></tr>
 <tr class="separator:afe8ed3e31de700bac488261556f28fb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aa2d6a7939cd105ef18d0b5ea476cca" id="r_a7aa2d6a7939cd105ef18d0b5ea476cca"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">AABBtree::IndexSet</a> = std::set&lt;<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&gt;</td></tr>
+<tr class="separator:a7aa2d6a7939cd105ef18d0b5ea476cca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46a02a2772464805830f5ca336094870" id="r_a46a02a2772464805830f5ca336094870"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#a46a02a2772464805830f5ca336094870">AABBtree::IndexMap</a> = std::map&lt;<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a>&gt;</td></tr>
+<tr class="separator:a46a02a2772464805830f5ca336094870"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7f50fe1e8fa820f8be13ac74c244cc5" id="r_ab7f50fe1e8fa820f8be13ac74c244cc5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#ab7f50fe1e8fa820f8be13ac74c244cc5">AABBtree::IndexList</a> = std::vector&lt;<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&gt;</td></tr>
+<tr class="separator:ab7f50fe1e8fa820f8be13ac74c244cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c3f1cf50895b1ca2e990a35626cada4" id="r_a2c3f1cf50895b1ca2e990a35626cada4"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">AABBtree::OutStream</a> = std::basic_ostream&lt;char&gt;</td></tr>
+<tr class="separator:a2c3f1cf50895b1ca2e990a35626cada4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e5702de99d3fcf4ad607f3e85584e62" id="r_a9e5702de99d3fcf4ad607f3e85584e62"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
+<tr class="memitem:a9e5702de99d3fcf4ad607f3e85584e62"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#a9e5702de99d3fcf4ad607f3e85584e62">AABBtree::BoxUniquePtr</a> = std::unique_ptr&lt;<a class="el" href="class_a_a_b_btree_1_1_box.html">Box</a>&lt;Real, N&gt;&gt;</td></tr>
+<tr class="separator:a9e5702de99d3fcf4ad607f3e85584e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab51fda1565368b57db9aa1db9f5cd623" id="r_ab51fda1565368b57db9aa1db9f5cd623"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
+<tr class="memitem:ab51fda1565368b57db9aa1db9f5cd623"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#ab51fda1565368b57db9aa1db9f5cd623">AABBtree::BoxUniquePtrList</a> = std::vector&lt;<a class="el" href="namespace_a_a_b_btree.html#a9e5702de99d3fcf4ad607f3e85584e62">BoxUniquePtr</a>&lt;Real, N&gt;&gt;</td></tr>
+<tr class="separator:ab51fda1565368b57db9aa1db9f5cd623"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec5095c0d6cc99712196e5eb635249d5" id="r_aec5095c0d6cc99712196e5eb635249d5"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
+<tr class="memitem:aec5095c0d6cc99712196e5eb635249d5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5">AABBtree::Vector</a> = Eigen::Vector&lt;Real, N&gt;</td></tr>
+<tr class="separator:aec5095c0d6cc99712196e5eb635249d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3076e2acccd9d95fea5910dea68e2fa9" id="r_a3076e2acccd9d95fea5910dea68e2fa9"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
+<tr class="memitem:a3076e2acccd9d95fea5910dea68e2fa9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_a_a_b_btree.html#a3076e2acccd9d95fea5910dea68e2fa9">AABBtree::Point</a> = Eigen::Vector&lt;Real, N&gt;</td></tr>
+<tr class="separator:a3076e2acccd9d95fea5910dea68e2fa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a1f3111afdf68b79f9ceda049544ba89f" name="a1f3111afdf68b79f9ceda049544ba89f"></a>
@@ -213,7 +238,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (!(COND)) {<a class="code hl_define" href="#af5818f5b107e3b761bad6a7911e24480">AABBTREE_ERROR</a>(MSG);}</div>
-<div class="ttc" id="a_a_a_b_btree_8hh_html_af5818f5b107e3b761bad6a7911e24480"><div class="ttname"><a href="#af5818f5b107e3b761bad6a7911e24480">AABBTREE_ERROR</a></div><div class="ttdeci">#define AABBTREE_ERROR(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:33</div></div>
+<div class="ttc" id="a_a_a_b_btree_8hh_html_af5818f5b107e3b761bad6a7911e24480"><div class="ttname"><a href="#af5818f5b107e3b761bad6a7911e24480">AABBTREE_ERROR</a></div><div class="ttdeci">#define AABBTREE_ERROR(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:35</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -236,7 +261,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (!(COND)) {<a class="code hl_define" href="#a6ea9ae947f7a5c7f7e7883441106bfc7">AABBTREE_WARNING</a>(MSG);}</div>
-<div class="ttc" id="a_a_a_b_btree_8hh_html_a6ea9ae947f7a5c7f7e7883441106bfc7"><div class="ttname"><a href="#a6ea9ae947f7a5c7f7e7883441106bfc7">AABBTREE_WARNING</a></div><div class="ttdeci">#define AABBTREE_WARNING(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:46</div></div>
+<div class="ttc" id="a_a_a_b_btree_8hh_html_a6ea9ae947f7a5c7f7e7883441106bfc7"><div class="ttname"><a href="#a6ea9ae947f7a5c7f7e7883441106bfc7">AABBTREE_WARNING</a></div><div class="ttdeci">#define AABBTREE_WARNING(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:48</div></div>
 </div><!-- fragment -->
 </div>
 </div>

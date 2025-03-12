@@ -202,75 +202,39 @@ namespace AABBtree {
 
     /**
     * Minimum distance between a point and the tree.
-    * \param[in] point Point to compute the minimum distance to.
+    * \param[in] point Point to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the point and the tree.
     */
-    Real min_distance(Point const & point, IndexSet & candidates) const
-    {return THIS()->min_distance_impl(point, candidates);}
+    Real distance(Point const & point, IndexSet & candidates) const
+    {return THIS()->distance_impl(point, candidates);}
 
     /**
     * Minimum distance between an axis-aligned box and the tree.
-    * \param[in] box Axis-aligned box to compute the minimum distance to.
+    * \param[in] box Axis-aligned box to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the box and the tree.
     */
-    Real min_distance(Box const & box, IndexSet & candidates) const
-    {return THIS()->min_distance_impl(box, candidates);}
+    Real distance(Box const & box, IndexSet & candidates) const
+    {return THIS()->distance_impl(box, candidates);}
 
     /**
     * Minimum distance between a ray and the tree.
-    * \param[in] ray Ray to compute the minimum distance to.
+    * \param[in] ray Ray to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the box and the tree.
     */
-    Real min_distance(Ray<Real, N> const & ray, IndexSet & candidates) const
-    {return THIS()->min_distance_impl(ray, candidates);}
+    Real distance(Ray<Real, N> const & ray, IndexSet & candidates) const
+    {return THIS()->distance_impl(ray, candidates);}
 
     /**
     * Minimum distance between an current tree and another tree.
-    * \param[in] tree Tree to compute the minimum distance to.
+    * \param[in] tree Tree to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the trees.
     */
-    Real min_distance(DerivedTree const & tree, IndexSet & candidates) const
-    {return THIS()->min_distance_impl(tree, candidates);}
-
-    /**
-    * Maximum distance between a point and the tree.
-    * \param[in] point Point to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the point and the tree.
-    */
-    Real max_distance(Point const & point, IndexSet & candidates) const
-    {return THIS()->max_distance_impl(point, candidates);}
-
-    /**
-    * Maximum distance between an axis-aligned box and the tree.
-    * \param[in] box Axis-aligned box to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the box and the tree.
-    */
-    Real max_distance(Box const & box, IndexSet & candidates) const
-    {return THIS()->max_distance_impl(box, candidates);}
-
-    /**
-    * Maximum distance between a ray and the tree.
-    * \param[in] ray Ray to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the box and the tree.
-    */
-    Real max_distance(Ray<Real, N> const & ray, IndexSet & candidates) const
-    {return THIS()->max_distance_impl(ray, candidates);}
-
-    /**
-    * Maximum distance between an current tree and another tree.
-    * \param[in] tree Tree to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the trees.
-    */
-    Real max_distance(DerivedTree const & tree, IndexSet & candidates) const
-    {return THIS()->max_distance_impl(tree, candidates);}
+    Real distance(DerivedTree const & tree, IndexSet & candidates) const
+    {return THIS()->distance_impl(tree, candidates);}
 
   }; // Tree
 

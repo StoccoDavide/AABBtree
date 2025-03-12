@@ -52,20 +52,20 @@ namespace AABBtree {
     Recursive & operator=(Recursive const &) = delete; /**< Copy assignment operator. */
 
     /**
-     * Class destructor for the \em recursive axis-aligned bounding box tree.
-     */
+    * Class destructor for the \em recursive axis-aligned bounding box tree.
+    */
     ~Recursive() = default;
 
     /**
-     * Class constructor for the \em recursive axis-aligned bounding box tree.
-     */
+    * Class constructor for the \em recursive axis-aligned bounding box tree.
+    */
     Recursive() : m_children(nullptr, nullptr) {
       this->m_objects.reserve(this->m_max_nodal_objects);
     };
 
     /**
-     * Clear the tree.
-     */
+    * Clear the tree.
+    */
     void clear_impl() {
       this->m_objects.clear();
       this->m_children.first.release();
@@ -75,17 +75,16 @@ namespace AABBtree {
     }
 
     /**
-     * Check if tree is empty.
-     * \return True if the tree is empty, false otherwise.
-     */
+    * Check if tree is empty.
+    * \return True if the tree is empty, false otherwise.
+    */
     bool is_empty_impl() const
     {return !this->m_children.first && !this->m_children.second && this->m_box.is_empty();}
 
     /**
-     * Build the tree given the bounding boxes.
-     * \param[in] boxes Bounding boxes to build the tree from.
-     * \return True if the tree was built successfully, false otherwise.
-     */
+    * Build the tree given the bounding boxes.
+    * \param[in] boxes Bounding boxes to build the tree from.
+    */
     void build_impl(BoxUniquePtrList const & boxes) {
       // Check if the input vector is empty
       if (boxes.empty() ) return;
@@ -133,100 +132,65 @@ namespace AABBtree {
     }
 
     /**
-     * Build the tree given the bounding boxes.
-     * \param[in] boxes Bounding boxes to build the tree from.
-     * \return True if the tree was built successfully, false otherwise.
-     */
-    void build_impl(vector<Box> const & boxes) {
-      this->build_impl(BoxUniquePtrList(boxes.begin(), boxes.end()));
-    }
+    * Build the tree given the bounding boxes.
+    * \param[in] boxes Bounding boxes to build the tree from.
+    */
+    void build_impl(vector<Box> const & boxes)
+    {this->build_impl(BoxUniquePtrList(boxes.begin(), boxes.end()));}
 
     /**
-     * Intersect the tree with a point.
-     * \param[in] point Point to intersect with.
-     * \param[out] candidates Intersection result (bounding box indexes).
-     * \return True if the point intersects the tree, false otherwise.
-     */
+    * Intersect the tree with a point.
+    * \param[in] point Point to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
     bool intersect_impl(Point const & point, Set & candidates) const {return true;}
 
     /**
-     * Intersect the tree with an axis-aligned box.
-     * \param[in] box Axis-aligned box to intersect with.
-     * \param[out] candidates Intersection result (bounding box indexes).
-     * \return True if the point intersects the tree, false otherwise.
-     */
+    * Intersect the tree with an axis-aligned box.
+    * \param[in] box Axis-aligned box to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
     bool intersect_impl(Box const & box, Set & candidates ) const {return true;}
 
     /**
-     * Intersect the tree with another tree.
-     * \param[in] tree Tree to intersect with.
-     * \param[out] candidates Intersection result (bounding box indexes).
-     * \return True if the point intersects the tree, false otherwise.
-     */
+    * Intersect the tree with another tree.
+    * \param[in] tree Tree to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
     bool intersect_impl(Recursive const & tree, Set & candidates) const {return true;}
 
     /**
     * Minimum distance between a point and the tree.
-    * \param[in] point Point to compute the minimum distance to.
+    * \param[in] point Point to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the point and the tree.
     */
-    Real min_distance_impl(Point const & point, Set & candidates) const
+    Real distance_impl(Point const & point, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
 
     /**
     * Minimum distance between an axis-aligned box and the tree.
-    * \param[in] box Axis-aligned box to compute the minimum distance to.
+    * \param[in] box Axis-aligned box to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the box and the tree.
     */
-    Real min_distance_impl(Box const & box, Set & candidates) const
+    Real distance_impl(Box const & box, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }
 
     /**
     * Minimum distance between an current tree and another tree.
-    * \param[in] tree Tree to compute the minimum distance to.
+    * \param[in] tree Tree to compute the distance to.
     * \param[out] candidates Minimum distance candidates.
     * \return The minimum distance between the trees.
     */
-    Real min_distance_impl(Recursive const & tree, Set & candidates) const
-    {
-      return static_cast<Real>(0.0);
-    }
-
-    /**
-    * Maximum distance between a point and the tree.
-    * \param[in] point Point to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the point and the tree.
-    */
-    Real max_distance_impl(Point const & point, Set & candidates) const
-    {
-      return static_cast<Real>(0.0);
-    }
-
-    /**
-    * Maximum distance between an axis-aligned box and the tree.
-    * \param[in] box Axis-aligned box to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the box and the tree.
-    */
-    Real max_distance_impl(Box const & box, Set & candidates) const
-    {
-      return static_cast<Real>(0.0);
-    }
-
-    /**
-    * Maximum distance between an current tree and another tree.
-    * \param[in] tree Tree to compute the maximum distance to.
-    * \param[out] candidates Maximum distance candidates.
-    * \return The maximum distance between the trees.
-    */
-    Real max_distance_impl(Recursive const & tree, Set & candidates) const
+    Real distance_impl(Recursive const & tree, Set & candidates) const
     {
       return static_cast<Real>(0.0);
     }

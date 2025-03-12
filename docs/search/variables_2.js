@@ -1,22 +1,4 @@
 var searchData=
 [
-  ['m_5fcheck_5fcounter_0',['m_check_counter',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a0c4a75fca25268b42786549cfe75e9ad',1,'AABBtree::AABBtree']]],
-  ['m_5fchild_1',['m_child',['../class_a_a_b_btree_1_1_a_a_b_btree.html#af1a5de5dae0c91d5914059220cbae5bf',1,'AABBtree::AABBtree']]],
-  ['m_5fcollision_5ftolerance_2',['m_collision_tolerance',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a49ec5c98b2f5022fc54e8054de48d3aa',1,'AABBtree::AABBtree']]],
-  ['m_5ffather_3',['m_father',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a6aeffecd0be4fdd0de027111ffb83a5e',1,'AABBtree::AABBtree']]],
-  ['m_5fid_5fnodes_4',['m_id_nodes',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a6bd89508a930683924e21f73074a9564',1,'AABBtree::AABBtree']]],
-  ['m_5fimem_5',['m_imem',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a0c0c70f1fd2b3ade41456db9d2191696',1,'AABBtree::AABBtree']]],
-  ['m_5flong_5fedge_5fratio_6',['m_long_edge_ratio',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a8dc0cd0a48c0949d54e72e07effeab76',1,'AABBtree::AABBtree']]],
-  ['m_5fmax_7',['m_max',['../class_a_a_b_btree_1_1_aligned_box.html#a27c18fac44ae9265720cab9a6a49a8f7',1,'AABBtree::AlignedBox']]],
-  ['m_5fmax_5fnodal_5fobjects_8',['m_max_nodal_objects',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a921240afd5dd2af072cb38cfd32057d2',1,'AABBtree::AABBtree']]],
-  ['m_5fmin_9',['m_min',['../class_a_a_b_btree_1_1_aligned_box.html#abb00e38e4db0e55884b48d85977f6a5e',1,'AABBtree::AlignedBox']]],
-  ['m_5fmin_5fsize_5ftolerance_10',['m_min_size_tolerance',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a82fcf42940712ad20770016967d76d63',1,'AABBtree::AABBtree']]],
-  ['m_5fnum_5fnodes_11',['m_num_nodes',['../class_a_a_b_btree_1_1_a_a_b_btree.html#ad2e43f0baf4adf917397188b26fc3c8a',1,'AABBtree::AABBtree']]],
-  ['m_5fobjs_5fbbox_12',['m_objs_bbox',['../class_a_a_b_btree_1_1_a_a_b_btree.html#af5486058abd079cd4391abe0f0fa2949',1,'AABBtree::AABBtree']]],
-  ['m_5fptr_5fnodes_13',['m_ptr_nodes',['../class_a_a_b_btree_1_1_a_a_b_btree.html#abdc68e983d4e2c406b4961f1e944c5ab',1,'AABBtree::AABBtree']]],
-  ['m_5frmem_14',['m_rmem',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a196c0991df2174f5563aa9114a1e7d12',1,'AABBtree::AABBtree']]],
-  ['m_5fstack_15',['m_stack',['../class_a_a_b_btree_1_1_a_a_b_btree.html#a20717fbb62a7eea2ccc439a67de02066',1,'AABBtree::AABBtree']]],
-  ['m_5ftree_5fbbox_16',['m_tree_bbox',['../class_a_a_b_btree_1_1_a_a_b_btree.html#ae423f28320c16bb57eee4bc9773d8ab9',1,'AABBtree::AABBtree']]],
-  ['max_17',['MAX',['../class_a_a_b_btree_1_1_aligned_box.html#a9818bb1412b88580989abcb8e7b7c5eb',1,'AABBtree::AlignedBox']]],
-  ['min_18',['MIN',['../class_a_a_b_btree_1_1_aligned_box.html#acce07e84e0c3038b0302d3d000b32293',1,'AABBtree::AlignedBox']]]
+  ['dummy_5ftol_0',['DUMMY_TOL',['../class_a_a_b_btree_1_1_box.html#a4c829dc9c264319f837c63de1a314e58',1,'AABBtree::Box::DUMMY_TOL'],['../class_a_a_b_btree_1_1_ray.html#a030b65b627cc28039f51cf304483fed5',1,'AABBtree::Ray::DUMMY_TOL']]]
 ];

@@ -17,6 +17,9 @@
 
 namespace AABBtree {
 
+  // Forward declaration of the Ray class
+  template <typename Real, Integer N> class Ray;
+
   /**
   * \brief Class container for an axis-aligned box.
   *
@@ -86,7 +89,7 @@ namespace AABBtree {
     * \tparam T Type of the scalar coefficients.
     * \note This constructor is only available for 1D boxes.
     */
-    template <typename = std::enable_if_t<N == 1>>
+    template <typename = std::enable_if<N == 1>>
     Box(Real const x_min, Real const x_max) : m_min(x_min), m_max(x_max) {}
 
     /**
@@ -98,7 +101,7 @@ namespace AABBtree {
     * \tparam T Type of the scalar coefficients.
     * \note This constructor is only available for 2D boxes.
     */
-    template <typename = std::enable_if_t<N == 2>>
+    template <typename = std::enable_if<N == 2>>
     Box(Real const x_min, Real const y_min, Real const x_max, Real const y_max)
       : m_min(x_min, y_min), m_max(x_max, y_max) {}
 
@@ -113,10 +116,9 @@ namespace AABBtree {
     * \tparam T Type of the scalar coefficients.
     * \note This constructor is only available for 3D boxes.
     */
-    template <typename = std::enable_if_t<N == 3>>
+    template <typename = std::enable_if<N == 3>>
     Box(Real const x_min, Real const y_min, Real const z_min, Real const x_max, Real const y_max,
       Real const z_max) : m_min(x_min, y_min, z_min), m_max(x_max, y_max, z_max) {}
-
 
     /**
     * Copy constructor for a axis-aligned box given another box with a different scalar type.
@@ -185,7 +187,7 @@ namespace AABBtree {
     * \param[in] b Box to compare with.
     * \param[in] tol Tolerance to use for the comparison.
     */
-    bool is_approx(Box const & b, Real const tol = DUMMY_TOL) const
+    bool is_approx(Box const & b, Real const tol /*= DUMMY_TOL*/) const
     {return this->m_min.isApprox(b.m_min, tol) && this->m_max.isApprox(b.m_max, tol);}
 
     /**
@@ -193,7 +195,7 @@ namespace AABBtree {
     * \param[in] tol Tolerance to use for the comparison.
     * \return True if the box is degenerate, false otherwise.
     */
-    bool is_degenerate(Real const tol = DUMMY_TOL) const
+    bool is_degenerate(Real const tol /*= DUMMY_TOL*/) const
     {return this->m_min.isApprox(this->m_max, tol);}
 
     /**
@@ -227,7 +229,6 @@ namespace AABBtree {
     * Get the longest axis of the box.
     * \param[out] sizes Sizes of the box.
     * \param[out] ipos Indices of the sizes.
-    * \return The longest axis of the box.
     */
     void sort_axes_length(Vector & sizes, Eigen::Vector<Integer, N> & ipos) const
     {
@@ -303,13 +304,25 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the intersection of the current box and another box.
-    * \param[in] b Box to intersect with.
-    * \return The intersection of the current box and the given box.
-    * \note If the boxes do not intersect, the resulting box is empty.
+    * Check if the current box intersects a given box.
+    * \param[in] b Box to check.
+    * \return True if the current box intersects the given box, false otherwise.
     */
-    Box intersection(Box const & b) const
-    {return Box(this->m_min.cwiseMax(b.m_min), this->m_max.cwiseMin(b.m_max));}
+    bool intersects(Box const & b) const
+    {return (this->m_min.array() <= b.m_max.array()).all() && (b.m_min.array() <= this->m_max.array()).all();}
+
+    /**
+    * Compute the intersection of the current box and another box.
+    * \param[in] b_in Box to intersect with.
+    * \param[out] b_out Intersection of the current box and the given box.
+    * \return True if the current box intersects the given box, false otherwise.
+    */
+    bool intersection(Box const & b_in, Box & b_out) const
+    {
+      b_out.m_min = this->m_min.cwiseMax(b_in.m_min);
+      b_out.m_max = this->m_max.cwiseMin(b_in.m_max);
+      return (b_out.m_min.array() <= b_out.m_max.array()).all();
+    }
 
     /**
     * Compute the union of the current box and another box.
@@ -364,11 +377,12 @@ namespace AABBtree {
     enum class Side : Integer {LEFT = -1, INSIDE = 0, RIGHT = +1}; /**< Enum class for the box sides. */
 
     /**
-    * Find whether a point is on the left, inside, or on the right of the box.
-    * \param[in] p Point to classify.
+    * Find whether a coordinate is on the left, inside, or on the right of the box.
+    * \param[in] x Coordinate to classify.
     * \param[in] tol Tolerance to use for the classification.
-    * \return -1 if the point is on the left of the box, 0 if the point is inside the box, and +1 if
-    * the point is on the right of the box.
+    * \param[in] dim Dimension to classify.
+    * \return An enumeration: -1 if the point is on the left of the box, 0 if the point is inside
+    * the box, and +1 if the point is on the right of the box.
     */
     Side which_side(Real const x, Real const tol, Integer const dim) const
     {
@@ -386,20 +400,20 @@ namespace AABBtree {
     {return (this->m_min.array() <= p.array()).all() && (p.array() <= this->m_max.array()).all();}
 
     /**
+    * Check if the point is intersects the box.
+    * \param[in] p Point to check.
+    * \return True if the point is intersects the box, false otherwise.
+    */
+    bool intersects(Point const & p) const
+    {return (this->m_min.array() <= p.array()).all() && (p.array() <= this->m_max.array()).all();}
+
+    /**
     * Check if the current box contains a given box.
     * \param[in] b Box to check.
     * \return True if the current box contains the given box, false otherwise.
     */
     bool contains(Box const & b) const
     {return (this->m_min.array() <= b.m_min.array()).all() && (b.m_max.array() <= this->m_max.array()).all();}
-
-    /**
-    * Check if the current box intersects a given box.
-    * \param[in] b Box to check.
-    * \return True if the current box intersects the given box, false otherwise.
-    */
-    bool intersects(Box const & b) const
-    {return (this->m_min.array() <= b.m_max.array()).all() && (b.m_min.array() <= this->m_max.array()).all();}
 
     /**
     * Extend the current box such that it contains a given point.
@@ -428,7 +442,7 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the \em interior (or \em minimum) squared distance between the current box a given point.
+    * Compute the squared \em interior (or \em minimum) distance between the current box a given point.
     * \param[in] p Point to compute the squared distance to.
     * \return The squared distance between the box and the point.
     * \note The returned value is positive if the point is outside the box, zero otherwise.
@@ -444,7 +458,7 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the \em interior (or \em minimum) squared distance between the current box a given point,
+    * Compute the squared \em interior (or \em minimum) distance between the current box a given point,
     * returning a point at the given distance.
     * \param[in] p Point to compute the squared distance to.
     * \param[out] c Closest point to the box.
@@ -479,7 +493,7 @@ namespace AABBtree {
     {return std::sqrt(this->squared_interior_distance(p, c));}
 
     /**
-    * Compute the \em exterior (or \em minimum) squared distance between the current box a given point.
+    * Compute the squared \em exterior (or \em maximum) distance between the current box a given point.
     * \param[in] p Point to compute the squared distance to.
     * \return The squared distance between the box and the point.
     * \note The returned value is positive if the point is outside the box, zero otherwise.
@@ -496,7 +510,7 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the \em exterior (or \em maximum) squared distance between the current box a given point,
+    * Compute the squared \em exterior (or \em maximum) distance between the current box a given point,
     * returning a point at the given distance.
     * \param[in] p Point to compute the squared distance to.
     * \param[out] f Farthest point to the box.
@@ -639,6 +653,118 @@ namespace AABBtree {
     */
     Real exterior_distance(Box const & b, Point & p1, Point & p2) const
     {return std::sqrt(this->squared_exterior_distance(b, p1, p2));}
+
+    /**
+    * Check if the current box intersects a given ray.
+    * \param[in] r Ray to check.
+    * \param[in] tol Tolerance to use for the intersection.
+    * \return True if the current box intersects the given ray, false otherwise.
+    */
+    bool intersects(Ray<Real, N> const & r, Real tol = DUMMY_TOL) const
+    {return r.intersects(*this, tol);}
+
+    /**
+    * Check if the current box intersects a given ray.
+    * \param[in] r Ray to check.
+    * \param[out] c Closest intersection point.
+    * \param[out] f Farthest intersection point.
+    * \param[in] tol Tolerance to use for the intersection.
+    * \return True if the current box intersects the given ray, false otherwise.
+    */
+    bool intersection(Ray<Real, N> const & r, Point & c, Point & f, Real tol = DUMMY_TOL) const
+    {return r.intersection(*this, c, f, tol);}
+
+
+    /**
+    * Compute the squared \em interior (or \em minimum) distance between the current box a given ray.
+    * \param[in] r Ray to compute the squared distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    * \note The squared distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real squared_interior_distance(Ray<Real, N> const & r, Real tol = DUMMY_TOL) const
+    {return r.squared_interior_distance(*this, tol);}
+
+    /**
+    * Compute the squared \em interior (or \em minimum) distance between the current box a given ray,
+    * returning two points at the minimum distance.
+    * \param[in] r Ray to compute the squared distance to.
+    * \param[out] p1 First point at the minimum distance (on the current box).
+    * \param[out] p2 Second point at the minimum distance (on the ray).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    * \note The squared distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real squared_interior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {return r.squared_interior_distance(*this, p1, p2, tol);}
+
+    /**
+    * Compute the \em interior (or \em minimum) distance between the current box a given ray.
+    * \param[in] r Ray to compute the distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real interior_distance(Ray<Real, N> const & r, Real tol = DUMMY_TOL) const
+    {return r.interior_distance(*this, tol);}
+
+    /**
+    * Compute the \em interior (or \em minimum) distance between the current box a given ray,
+    * returning two points at the minimum distance.
+    * \param[in] r Ray to compute the distance to.
+    * \param[out] p1 First point at the minimum distance (on the current box).
+    * \param[out] p2 Second point at the minimum distance (on the ray).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real interior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {return r.interior_distance(*this, p1, p2, tol);}
+
+    /**
+    * Compute the squared \em exterior (or \em maximum) distance between the current box a given ray.
+    * \param[in] r Ray to compute the squared distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    * \note The squared distance is positive if one box is not contained in the other, zero otherwise.
+    */
+    Real squared_exterior_distance(Ray<Real, N> const & r, Real tol = DUMMY_TOL) const
+    {return r.squared_exterior_distance(*this, tol);}
+
+    /**
+    * Compute the squared \em exterior (or \em maximum) distance between the current box a given ray,
+    * returning two points at the maximum distance.
+    * \param[in] r Ray to compute the squared distance to.
+    * \param[out] p1 First point at the maximum distance (on the current box).
+    * \param[out] p2 Second point at the maximum distance (on the ray).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The squared distance between the ray and the box.
+    */
+    Real squared_exterior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {return r.squared_exterior_distance(*this, p1, p2, tol);}
+
+    /**
+    * Compute the \em exterior (or \em maximum) distance between the current box a given ray.
+    * \param[in] r Ray to compute the distance to.
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real exterior_distance(Ray<Real, N> const & r, Real tol = DUMMY_TOL) const
+    {return r.exterior_distance(*this, tol);}
+
+    /**
+    * Compute the \em exterior (or \em maximum) distance between the current box a given ray,
+    * and return two points at the maximum distance.
+    * \param[in] r Ray to compute the distance to.
+    * \param[out] p1 First point at the maximum distance (on the current box).
+    * \param[out] p2 Second point at the maximum distance (on the ray).
+    * \param[in] tol Tolerance to use for the distance computation.
+    * \return The distance between the ray and the box.
+    * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
+    */
+    Real exterior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
+    {return r.exterior_distance(*this, p1, p2, tol);}
 
   }; // class Box
 

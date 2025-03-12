@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['_7ealignedbox_0',['~AlignedBox',['../class_a_a_b_btree_1_1_aligned_box.html#afd0c3da273cd7f08435bcf5c08780809',1,'AABBtree::AlignedBox']]]
+  ['ray_0',['Ray',['../class_a_a_b_btree_1_1_ray.html#a86532c5496a5e5246ef7d3a432a9712d',1,'AABBtree::Ray::Ray()=default'],['../class_a_a_b_btree_1_1_ray.html#a2837ecf695695c104c7c15f8df82e6f9',1,'AABBtree::Ray::Ray(Ray const &amp;r)'],['../class_a_a_b_btree_1_1_ray.html#a637137e78231ff34adf2f8fb1a602119',1,'AABBtree::Ray::Ray(Point const &amp;o, Vector const &amp;d)'],['../class_a_a_b_btree_1_1_ray.html#a860c702534a0266582954c863c377725',1,'AABBtree::Ray::Ray(Real const o, Real const d)'],['../class_a_a_b_btree_1_1_ray.html#ab2f97dadab64bf97ec0d270285e2041e',1,'AABBtree::Ray::Ray(Real const o_x, Real const o_y, Real const d_x, Real const d_y)'],['../class_a_a_b_btree_1_1_ray.html#a9cd9a240e16394e78c807999f800190f',1,'AABBtree::Ray::Ray(Real const o_x, Real const o_y, Real const o_z, Real const d_x, Real const d_y, Real const d_z)'],['../class_a_a_b_btree_1_1_ray.html#a50490aa94258c3506dac04da729fd6ea',1,'AABBtree::Ray::Ray(Ray&lt; OtherReal, N &gt; const &amp;r)']]],
+  ['recursive_1',['Recursive',['../class_a_a_b_btree_1_1_recursive.html#ab85c34d56dd18765555507d0322c46b8',1,'AABBtree::Recursive::Recursive(Recursive const &amp;)=delete'],['../class_a_a_b_btree_1_1_recursive.html#aa8019f856874d16f7661443df9960031',1,'AABBtree::Recursive::Recursive()']]],
+  ['reorder_2',['reorder',['../class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5',1,'AABBtree::Box']]]
 ];
