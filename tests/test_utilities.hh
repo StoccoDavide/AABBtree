@@ -81,7 +81,7 @@ void plot_box(Box<Real, N> const & box, std::string const & color, Real const li
 
 // Plot a tree
 template <typename Real, Integer N>
-void plot_tree(NonRecursive<Real, N> const & tree, std::string const & color, Real const line_width = 1) {
+void plot_tree(Tree<Real, N> const & tree, std::string const & color, Real const line_width = 1) {
   static_assert(N == 2, "Plotting is only supported for 2D objects.");
   for (Integer i{0}; i < static_cast<Integer>(tree.size()); ++i) {
     plot_box<Real, N>(tree.node(i).box, color, line_width);

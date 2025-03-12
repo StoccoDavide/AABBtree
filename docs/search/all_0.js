@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['aabbnode_0',['AABBnode',['../class_a_a_b_btree_1_1_non_recursive.html#a8788be9bc45a110a2f03983b4cc326ff',1,'AABBtree::NonRecursive']]],
-  ['aabbsubtree_1',['AABBsubtree',['../struct_a_a_b_btree_1_1_non_recursive_1_1_a_a_b_bsubtree.html',1,'AABBtree::NonRecursive']]],
+  ['aabbnode_0',['AABBnode',['../class_a_a_b_btree_1_1_tree.html#a16e2aafdc2ccb54856ce6a578dc208b7',1,'AABBtree::Tree']]],
+  ['aabbsubtree_1',['AABBsubtree',['../struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html',1,'AABBtree::Tree']]],
   ['aabbtree_2',['AABBtree',['../namespace_a_a_b_btree.html',1,'AABBtree'],['../index.html',1,'AABBtree']]],
   ['aabbtree_2ehh_3',['AABBtree.hh',['../_a_a_b_btree_8hh.html',1,'']]],
   ['aabbtree_5fassert_4',['AABBTREE_ASSERT',['../_a_a_b_btree_8hh.html#a1f3111afdf68b79f9ceda049544ba89f',1,'AABBtree.hh']]],

@@ -147,23 +147,26 @@ $(function(){initNavTree('_tree_8hxx.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_box_8hxx_source.html">AABBtree/Box.hxx</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_tree_8hxx_source.html">AABBtree/Tree.hxx</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Tree.hxx:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="_tree_8hxx__incl.svg" width="191" height="111"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="_tree_8hxx__incl.svg" width="215" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="_tree_8hxx__dep__incl.svg" width="515" height="184"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="_tree_8hxx__dep__incl.svg" width="215" height="111"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="_tree_8hxx_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree&lt; Real, N, DerivedTree &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree&lt; Real, N &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class representing a <em>non-recursive</em> axis-aligned bounding box tree (<a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a>).  <a href="class_a_a_b_btree_1_1_tree.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBtree::Tree&lt; Real, N &gt;::AABBsubtree</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -176,11 +179,11 @@ Namespaces</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a85418910e9f780f88c4a7f4163f09afd" id="r_a85418910e9f780f88c4a7f4163f09afd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85418910e9f780f88c4a7f4163f09afd">INCLUDE_AABBTREE_TREE_HXX</a></td></tr>
 <tr class="separator:a85418910e9f780f88c4a7f4163f09afd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a5ceb9ceb914e08d345410b561cb37a" id="r_a0a5ceb9ceb914e08d345410b561cb37a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a5ceb9ceb914e08d345410b561cb37a">CMD</a>&#160;&#160;&#160;&quot;AABBtree::NonRecursive::max_nodal_objects(...): &quot;</td></tr>
+<tr class="memitem:a0a5ceb9ceb914e08d345410b561cb37a" id="r_a0a5ceb9ceb914e08d345410b561cb37a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a5ceb9ceb914e08d345410b561cb37a">CMD</a>&#160;&#160;&#160;&quot;AABBtree::Tree::max_nodal_objects(...): &quot;</td></tr>
 <tr class="separator:a0a5ceb9ceb914e08d345410b561cb37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a5ceb9ceb914e08d345410b561cb37a" id="r_a0a5ceb9ceb914e08d345410b561cb37a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a5ceb9ceb914e08d345410b561cb37a">CMD</a>&#160;&#160;&#160;&quot;AABBtree::NonRecursive::separation_ratio_tolerance(...): &quot;</td></tr>
+<tr class="memitem:a0a5ceb9ceb914e08d345410b561cb37a" id="r_a0a5ceb9ceb914e08d345410b561cb37a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a5ceb9ceb914e08d345410b561cb37a">CMD</a>&#160;&#160;&#160;&quot;AABBtree::Tree::separation_ratio_tolerance(...): &quot;</td></tr>
 <tr class="separator:a0a5ceb9ceb914e08d345410b561cb37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a5ceb9ceb914e08d345410b561cb37a" id="r_a0a5ceb9ceb914e08d345410b561cb37a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a5ceb9ceb914e08d345410b561cb37a">CMD</a>&#160;&#160;&#160;&quot;AABBtree::NonRecursive::min_box_size(...): &quot;</td></tr>
+<tr class="memitem:a0a5ceb9ceb914e08d345410b561cb37a" id="r_a0a5ceb9ceb914e08d345410b561cb37a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a5ceb9ceb914e08d345410b561cb37a">CMD</a>&#160;&#160;&#160;&quot;AABBtree::Tree::min_box_size(...): &quot;</td></tr>
 <tr class="separator:a0a5ceb9ceb914e08d345410b561cb37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -191,7 +194,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define CMD&#160;&#160;&#160;&quot;AABBtree::NonRecursive::max_nodal_objects(...): &quot;</td>
+          <td class="memname">#define CMD&#160;&#160;&#160;&quot;AABBtree::Tree::max_nodal_objects(...): &quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -205,7 +208,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define CMD&#160;&#160;&#160;&quot;AABBtree::NonRecursive::separation_ratio_tolerance(...): &quot;</td>
+          <td class="memname">#define CMD&#160;&#160;&#160;&quot;AABBtree::Tree::separation_ratio_tolerance(...): &quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -219,7 +222,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define CMD&#160;&#160;&#160;&quot;AABBtree::NonRecursive::min_box_size(...): &quot;</td>
+          <td class="memname">#define CMD&#160;&#160;&#160;&quot;AABBtree::Tree::min_box_size(...): &quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">

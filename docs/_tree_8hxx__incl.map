@@ -1,5 +1,6 @@
 <map id="include/AABBtree/Tree.hxx" name="include/AABBtree/Tree.hxx">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,185,31"/>
-<area shape="rect" id="Node000002" href="$_box_8hxx.html" title=" " alt="" coords="29,79,161,105"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,31,98,63,92,63,92,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,7,185,32"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="155,4,193,6,206,11,211,20,208,27,198,32,170,36,169,31,197,27,204,24,206,20,203,15,192,11,154,9"/>
+<area shape="rect" id="Node000002" href="$_box_8hxx.html" title=" " alt="" coords="29,80,161,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,33,98,65,92,65,92,33"/>
 </map>

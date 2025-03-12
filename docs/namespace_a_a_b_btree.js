@@ -1,9 +1,7 @@
 var namespace_a_a_b_btree =
 [
     [ "Box", "class_a_a_b_btree_1_1_box.html", "class_a_a_b_btree_1_1_box" ],
-    [ "NonRecursive", "class_a_a_b_btree_1_1_non_recursive.html", "class_a_a_b_btree_1_1_non_recursive" ],
     [ "Ray", "class_a_a_b_btree_1_1_ray.html", "class_a_a_b_btree_1_1_ray" ],
-    [ "Recursive", "class_a_a_b_btree_1_1_recursive.html", "class_a_a_b_btree_1_1_recursive" ],
     [ "Tree", "class_a_a_b_btree_1_1_tree.html", "class_a_a_b_btree_1_1_tree" ],
     [ "BoxUniquePtr", "namespace_a_a_b_btree.html#a9e5702de99d3fcf4ad607f3e85584e62", null ],
     [ "BoxUniquePtrList", "namespace_a_a_b_btree.html#ab51fda1565368b57db9aa1db9f5cd623", null ],

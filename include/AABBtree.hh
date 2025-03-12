@@ -92,7 +92,5 @@ namespace AABBtree
 #include "AABBtree/Box.hxx"
 #include "AABBtree/Ray.hxx"
 #include "AABBtree/Tree.hxx"
-//#include "AABBtree/Recursive.hxx"
-#include "AABBtree/NonRecursive.hxx"
 
 #endif // INCLUDE_AABBTREE_HH
