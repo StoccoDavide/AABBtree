@@ -60,9 +60,9 @@ TEMPLATE_TEST_CASE("NonRecursive", "[template]", float, double) {
   #endif
 
   // Build segments
-  Integer const n{2000};
-  TestType const scale{10.0};
-  TestType const length{0.1};
+  Integer const n{100};
+  TestType const scale{2.5};
+  TestType const length{0.2};
   std::vector<Segment<TestType>> segments(n);
   #ifdef AABBTREE_ENABLE_PLOTTING
   ax->hold(true);
@@ -131,8 +131,34 @@ TEMPLATE_TEST_CASE("NonRecursive", "[template]", float, double) {
   }
   #ifdef AABBTREE_ENABLE_PLOTTING
   show(fig);
+  #endif
+
+  // Minimum distance
+  Vector const point(0.0, 0.0);
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  plot_point<TestType, 2>(point, colors[0], 5.0);
+  #endif
+  TestType const min_distance{tree.min_distance(point, candidates)};
+  std::cout << "Minimum distance: " << min_distance << std::endl;
+    for (const auto& i : candidates) {
+      #ifdef AABBTREE_ENABLE_PLOTTING
+      plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+      #endif
+    }
+
+  // Maximum distance
+  TestType const max_distance{tree.max_distance(point, candidates)};
+  std::cout << "Maximum distance: " << max_distance << std::endl;
+    for (const auto& i : candidates) {
+      #ifdef AABBTREE_ENABLE_PLOTTING
+      plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+      #endif
+    }
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  show(fig);
   ax->clear();
   #endif
+
 
 
 

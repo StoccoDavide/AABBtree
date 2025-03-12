@@ -78,9 +78,8 @@ namespace AABBtree {
      * Check if tree is empty.
      * \return True if the tree is empty, false otherwise.
      */
-    bool is_empty_impl() const {
-      return !this->m_children.first && !this->m_children.second && this->m_box.is_empty();
-    }
+    bool is_empty_impl() const
+    {return !this->m_children.first && !this->m_children.second && this->m_box.is_empty();}
 
     /**
      * Build the tree given the bounding boxes.
@@ -102,16 +101,16 @@ namespace AABBtree {
       this->m_box->extend(boxes);
 
       // Cut on longest edge of the bounding box
-      Integer n_cut{ this->m_box->max_dimension()};
-      Real    x_min{ this->m_box->min(n_cut)};
-      Real    x_max{ this->m_box->max(n_cut)};
-      Real    x_cut{ (x_max + x_min)/2.0};
+      Integer n_cut{this->m_box->max_dimension()};
+      Real x_min{this->m_box->min(n_cut)};
+      Real x_max{this->m_box->max(n_cut)};
+      Real x_cut{0.5*(x_max + x_min)};
 
       // Collect the boxes that have a size similar to the current box
      this->m_objects.clear();
      for (Box const & box : boxes)
      {
-        Real x_mid{(box->min(n_cut) + box->max(n_cut))/2.0};
+        Real x_mid{0.5*(box->min(n_cut) + box->max(n_cut))};
         if (x_mid > x_cut) {this->m_objects.emplace_back(box);}
       }
 
@@ -148,9 +147,7 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (bounding box indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool intersect_impl(Point const & point, Set & candidates) const {
-      return true;
-    }
+    bool intersect_impl(Point const & point, Set & candidates) const {return true;}
 
     /**
      * Intersect the tree with an axis-aligned box.
@@ -158,9 +155,7 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (bounding box indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool intersect_impl(Box const & box, Set & candidates ) const {
-      return true;
-    }
+    bool intersect_impl(Box const & box, Set & candidates ) const {return true;}
 
     /**
      * Intersect the tree with another tree.
@@ -168,9 +163,7 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (bounding box indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool intersect_impl(Recursive const & tree, Set & candidates) const {
-      return true;
-    }
+    bool intersect_impl(Recursive const & tree, Set & candidates) const {return true;}
 
     /**
     * Minimum distance between a point and the tree.

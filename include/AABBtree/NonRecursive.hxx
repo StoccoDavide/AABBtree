@@ -242,16 +242,16 @@ namespace AABBtree {
         Eigen::Vector<Integer, N> sorting;
         node.box.sort_axes_length(sizes, sorting);
         Integer axis{sorting[dump]};
-        Real separation_line{node.box.barycenter(axis)};
+        Real separation_line{node.box.baricenter(axis)};
         Real separation_tolerance{sizes[axis] * this->m_separation_ratio_tolerance};
 
-        // Separate short and long boxes and compute short boxes barycenter
+        // Separate short and long boxes and compute short boxes baricenter
         Integer n_long{0};
         Integer n_left{0};
         Integer n_right{0};
         Integer id_ini{node.box_ptr};
         Integer id_end{node.box_ptr + node.box_num};
-        Real barycenter {0.0};
+        Real baricenter {0.0};
         while (id_ini < id_end) {
           Box const & box_id{*boxes[this->m_tree_boxes_map[id_ini]]};
           Integer side{static_cast<Integer>(box_id.which_side(separation_line, separation_tolerance, axis))};
@@ -262,22 +262,22 @@ namespace AABBtree {
               std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]); break;
             default: ++n_long; ++id_ini;
           }
-          barycenter += box_id.max(axis) + box_id.min(axis);
+          baricenter += box_id.max(axis) + box_id.min(axis);
         }
-        barycenter /= 2.0*node.box_num;
+        baricenter /= 2.0*node.box_num;
 
         // Check if the leafs are balanced, if not try to separate boxes on a new separation line
         if (n_long > this->m_max_nodal_objects ||
             std::min(n_left, n_right) < this->m_balance_ratio_tolerance * std::max(n_left, n_right) ) {
 
-          // Perform coputation only if barycenter is well separated from the previous separation line
-          if (std::abs(barycenter - separation_line) > separation_tolerance) {
+          // Perform coputation only if baricenter is well separated from the previous separation line
+          if (std::abs(baricenter - separation_line) > separation_tolerance) {
             n_long = n_left = n_right = 0;
             id_ini = node.box_ptr;
             id_end = node.box_ptr + node.box_num;
             while (id_ini < id_end) {
               Box const & box_id{*boxes[this->m_tree_boxes_map[id_ini]]};
-              Integer side{static_cast<Integer>(box_id.which_side(barycenter, separation_tolerance, axis))};
+              Integer side{static_cast<Integer>(box_id.which_side(baricenter, separation_tolerance, axis))};
               switch (side) {
                 case static_cast<Integer>(Box::Side::LEFT): ++n_left;
                   std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]); break;
@@ -304,7 +304,7 @@ namespace AABBtree {
         id_end = node.box_ptr + node.box_num;
         while (id_ini < id_end) {
           Integer ipos{this->m_tree_boxes_map[id_ini]};
-          if (boxes[ipos]->barycenter(axis) < separation_line) {
+          if (boxes[ipos]->baricenter(axis) < separation_line) {
             ++id_ini; ++n_left; // In right position do nothing
           } else {
             --id_end; ++n_right; // In right position swap the current box with the last one
@@ -375,6 +375,7 @@ namespace AABBtree {
       this->m_stack.emplace_back(0);
 
       // Main loop that checks the intersection iteratively
+      candidates.clear();
       while (!this->m_stack.empty())
       {
         // Pop the node from stack
@@ -387,7 +388,7 @@ namespace AABBtree {
         ++this->m_check_counter;
         if (!node.box.contains(point)) {continue;}
 
-        // Intersect the point with the long boxes on the leafs
+        // Intersect the point with the long boxes on the node
         Integer const id_ini{node.box_ptr};
         Integer const id_end{node.box_ptr + node.box_num};
         for (Integer i{id_ini}; i < id_end; ++i) {
@@ -400,6 +401,8 @@ namespace AABBtree {
         if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
         if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
       }
+
+      // Return true if the point intersects the tree
       return !candidates.empty();
     }
 
@@ -426,6 +429,7 @@ namespace AABBtree {
       this->m_stack.emplace_back(0);
 
       // Main loop that checks the intersection iteratively
+      candidates.clear();
       while (!this->m_stack.empty())
       {
         // Pop the node from stack
@@ -438,7 +442,7 @@ namespace AABBtree {
         ++this->m_check_counter;
         if (!node.box.intersects(box)) {continue;}
 
-        // Intersect the box with the long boxes on the leafs
+        // Intersect the box with the long boxes on the node
         Integer const id_ini{node.box_ptr};
         Integer const id_end{node.box_ptr + node.box_num};
         for (Integer i{id_ini}; i < id_end; ++i) {
@@ -451,6 +455,8 @@ namespace AABBtree {
         if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
         if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
       }
+
+      // Return true if the box intersects the tree
       return !candidates.empty();
     }
 
@@ -478,11 +484,338 @@ namespace AABBtree {
       this->m_stack.emplace_back(0);
 
       // Main loop that checks the intersection iteratively
+      candidates.clear();
       while (!this->m_stack.empty())
       {
         // TODO
       }
+
+      // Return true if the trees intersect
       return !candidates.empty();
+    }
+
+    /**
+    * Minimum distance between a point and the tree.
+    * \param[in] point Point to compute the minimum distance to.
+    * \param[out] candidates Minimum distance candidates.
+    * \param[in] distance Maximum distance to consider.
+    * \return The minimum distance between the point and the tree.
+    */
+    Real min_distance_impl(Point const & point, IndexSet & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return a negative value if the tree is empty
+      if (this->is_empty() || this->is_empty()) {return -1.0;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(2*this->size() + 1);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      Real min_distance{std::numeric_limits<Real>::max()};
+      candidates.clear();
+      while (!this->m_stack.empty())
+      {
+        // Pop the node from stack
+        Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
+
+        // Get the node
+        AABBnode const & node {this->m_tree_structure[id]};
+
+        // Compute the distance between the point and the bounding box
+        ++this->m_check_counter;
+        Real tmp_distance{node.box.interior_distance(point)};
+
+        // If the distance is greater than the temporary minimum distance, skip the node
+        if (tmp_distance > min_distance) {continue;}
+
+        // Compute the distance between the point and the long boxes on the node
+        Integer const id_ini{node.box_ptr};
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{id_ini}; i < id_end; ++i) {
+          Integer const pos{this->m_tree_boxes_map[i]};
+          ++this->m_check_counter;
+          tmp_distance = boxes[pos]->interior_distance(point);
+          if (tmp_distance == min_distance) {candidates.insert(pos);}
+          else if (tmp_distance < min_distance) {
+            candidates.clear(); candidates.insert(pos); min_distance = tmp_distance;
+          }
+        }
+
+        // Push children on the stack if thay are not leafs
+        if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
+        if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
+      }
+
+      // Return the minimum distance between the point and the tree
+      return min_distance;
+    }
+
+    /**
+    * Minimum distance between an axis-aligned box and the tree.
+    * \param[in] box Axis-aligned box to compute the minimum distance to.
+    * \param[out] candidates Minimum distance candidates.
+    * \return The minimum distance between the box and the tree.
+    */
+    Real min_distance_impl(Box const & box, IndexSet & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return a negative value if the tree is empty
+      if (this->is_empty() || this->is_empty()) {return -1.0;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(2*this->size() + 1);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      Real min_distance{std::numeric_limits<Real>::max()};
+      candidates.clear();
+      while (!this->m_stack.empty())
+      {
+        // Pop the node from stack
+        Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
+
+        // Get the node
+        AABBnode const & node {this->m_tree_structure[id]};
+
+        // Compute the distance between the boxes
+        ++this->m_check_counter;
+        Real tmp_distance{node.box.interior_distance(box)};
+
+        // If the distance is greater than the temporary minimum distance, skip the node
+        if (tmp_distance > min_distance) {continue;}
+
+        // Compute the distance between the box and the long boxes on the node
+        Integer const id_ini{node.box_ptr};
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{id_ini}; i < id_end; ++i) {
+          Integer const pos{this->m_tree_boxes_map[i]};
+          ++this->m_check_counter;
+          tmp_distance = boxes[pos]->interior_distance(box);
+          if (tmp_distance == min_distance) {candidates.insert(pos);}
+          else if (tmp_distance < min_distance) {
+            candidates.clear(); candidates.insert(pos); min_distance = tmp_distance;
+          }
+        }
+
+        // Push children on the stack if thay are not leafs
+        if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
+        if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
+      }
+
+      // Return the minimum distance between the box and the tree
+      return min_distance;
+    }
+
+    /**
+    * Minimum distance between an current tree and another tree.
+    * \param[in] tree Tree to compute the minimum distance to.
+    * \param[out] candidates Minimum distance candidates.
+    * \return The minimum distance between the trees.
+    */
+    Real min_distance_impl(NonRecursive const & tree, IndexSet & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return if the tree is empty
+      if (this->is_empty() || tree.is_empty()) {return false;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(this->size() + tree.size() + 2);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      Real min_distance{std::numeric_limits<Real>::max()};
+      candidates.clear();
+      while (!this->m_stack.empty())
+      {
+        // TODO
+      }
+
+      // Return minimum distance between the trees
+      return min_distance;
+    }
+
+    /**
+    * Maximum distance between a point and the tree.
+    * \param[in] point Point to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \param[in] distance Maximum distance to consider.
+    * \return The maximum distance between the point and the tree.
+    */
+    Real max_distance_impl(Point const & point, IndexSet & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return a negative value if the tree is empty
+      if (this->is_empty() || this->is_empty()) {return -1.0;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(2*this->size() + 1);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      Real max_distance{0.0};
+      candidates.clear();
+      while (!this->m_stack.empty())
+      {
+        // Pop the node from stack
+        Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
+
+        // Get the node
+        AABBnode const & node {this->m_tree_structure[id]};
+
+        // Compute the distance between the point and the bounding box
+        ++this->m_check_counter;
+        Real tmp_distance{node.box.exterior_distance(point)};
+
+        // If the distance is smaller than the temporary maximum distance, skip the node
+        if (tmp_distance < max_distance) {continue;}
+
+        // Compute the distance between the point and the long boxes on the node
+        Integer const id_ini{node.box_ptr};
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{id_ini}; i < id_end; ++i) {
+          Integer const pos{this->m_tree_boxes_map[i]};
+          ++this->m_check_counter;
+          tmp_distance = boxes[pos]->exterior_distance(point);
+          if (tmp_distance == max_distance) {candidates.insert(pos);}
+          else if (tmp_distance > max_distance) {
+            candidates.clear(); candidates.insert(pos); max_distance = tmp_distance;
+          }
+        }
+
+        // Push children on the stack if thay are not leafs
+        if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
+        if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
+      }
+
+      // Return the maximum distance between the point and the tree
+      return max_distance;
+    }
+
+    /**
+    * Maximum distance between an axis-aligned box and the tree.
+    * \param[in] box Axis-aligned box to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \return The maximum distance between the box and the tree.
+    */
+    Real max_distance_impl(Box const & box, IndexSet & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return a negative value if the tree is empty
+      if (this->is_empty() || this->is_empty()) {return -1.0;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(2*this->size() + 1);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      Real max_distance{0.0};
+      candidates.clear();
+      while (!this->m_stack.empty())
+      {
+        // Pop the node from stack
+        Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
+
+        // Get the node
+        AABBnode const & node {this->m_tree_structure[id]};
+
+        // Compute the distance between the boxes
+        ++this->m_check_counter;
+        Real tmp_distance{node.box.exterior_distance(box)};
+
+        // If the distance is smaller than the temporary minimum distance, skip the node
+        if (tmp_distance < max_distance) {continue;}
+
+        // Compute the distance between the box and the long boxes on the node
+        Integer const id_ini{node.box_ptr};
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{id_ini}; i < id_end; ++i) {
+          Integer const pos{this->m_tree_boxes_map[i]};
+          ++this->m_check_counter;
+          tmp_distance = boxes[pos]->exterior_distance(box);
+          if (tmp_distance == max_distance) {candidates.insert(pos);}
+          else if (tmp_distance > max_distance) {
+            candidates.clear(); candidates.insert(pos); max_distance = tmp_distance;
+          }
+        }
+
+        // Push children on the stack if thay are not leafs
+        if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
+        if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
+      }
+
+      // Return the maximum distance between the box and the tree
+      return max_distance;
+    }
+
+    /**
+    * Maximum distance between an current tree and another tree.
+    * \param[in] tree Tree to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \return The maximum distance between the trees.
+    */
+    Real max_distance_impl(NonRecursive const & tree, IndexSet & candidates) const
+    {
+      // Reset statistics
+      this->m_check_counter = 0;
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes {*this->m_boxes};
+
+      // Return if the tree is empty
+      if (this->is_empty() || tree.is_empty()) {return false;}
+
+      // Setup the stack
+      this->m_stack.clear();
+      this->m_stack.reserve(this->size() + tree.size() + 2);
+      this->m_stack.emplace_back(0);
+      this->m_stack.emplace_back(0);
+
+      // Main loop that checks the intersection iteratively
+      Real max_distance{std::numeric_limits<Real>::max()};
+      candidates.clear();
+      while (!this->m_stack.empty())
+      {
+        // TODO
+      }
+
+      // Return maximum distance between the trees
+      return max_distance;
     }
 
   }; // NonRecursive

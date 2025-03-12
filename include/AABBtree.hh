@@ -28,6 +28,7 @@
 
 // Eigen library
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 // Print AABBtree errors
 #ifndef AABBTREE_ERROR
@@ -89,6 +90,7 @@ namespace AABBtree
 } // namespace AABBtree
 
 #include "AABBtree/Box.hxx"
+#include "AABBtree/Ray.hxx"
 #include "AABBtree/Tree.hxx"
 //#include "AABBtree/Recursive.hxx"
 #include "AABBtree/NonRecursive.hxx"

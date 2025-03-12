@@ -46,6 +46,7 @@ grid(ax, true);
 TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
 
   std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
+  TestType const tol{1.0e-8};
 
   SECTION("Intersection") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
@@ -68,6 +69,25 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     REQUIRE_FALSE(box_2.contains(box_1));
   }
 
+  SECTION("Point distance") {
+    using Vector = Eigen::Matrix<TestType, 2, 1>;
+    using Box = AABBtree::Box<TestType, 2>;
+    Vector pnt(0.0, 0.0);
+    Box box(-2.5, 0.5, 2.0, 2.0);
+    Vector c, f;
+    TestType d_int{box.interior_distance(pnt, c)};
+    TestType d_ext{box.exterior_distance(pnt, f)};
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    SET_PLOT
+    title(ax, "Point distance");
+    plot_box<TestType, 2>(box, colors[0], 1.0); ax->hold(true);
+    plot_segment<TestType, 2>(pnt, c, colors[1], 2.0);
+    plot_segment<TestType, 2>(pnt, f, colors[2], 2.0); ax->hold(false); show(fig);
+    #endif
+    REQUIRE_THAT(d_int, WithinAbs(box.interior_distance(pnt), tol));
+    REQUIRE_THAT(d_ext, WithinAbs(box.exterior_distance(pnt), tol));
+  }
+
   SECTION("Interior distance") {
     using Vector = Eigen::Matrix<TestType, 2, 1>;
     using Box = AABBtree::Box<TestType, 2>;
@@ -82,7 +102,7 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     plot_box<TestType, 2>(box_2, colors[1], 1.0);
     plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0); ax->hold(false); show(fig);
     #endif
-    REQUIRE_THAT(d, WithinAbs(box_1.interior_distance(box_2), 1.0e-8));
+    REQUIRE_THAT(d, WithinAbs(box_1.interior_distance(box_2), tol));
   }
 
   SECTION("Exterior distance") {
@@ -99,7 +119,7 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     plot_box<TestType, 2>(box_2, colors[1], 1.0);
     plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0); ax->hold(false); show(fig);
     #endif
-    REQUIRE_THAT(d, WithinAbs(box_1.exterior_distance(box_2), 1.0e-8));
+    REQUIRE_THAT(d, WithinAbs(box_1.exterior_distance(box_2), tol));
     REQUIRE(p_1.isApprox(Vector(-2.0, -2.0)));
     REQUIRE(p_2.isApprox(Vector(2.0, 2.0)));
     REQUIRE(box_1.intersects(box_2));

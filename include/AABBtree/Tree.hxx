@@ -183,6 +183,15 @@ namespace AABBtree {
     {return THIS()->intersect_impl(box, candidates);}
 
     /**
+    * Intersect the tree with a ray.
+    * \param[in] ray Ray to intersect with.
+    * \param[out] candidates Intersection result (bounding box indexes).
+    * \return True if the point intersects the tree, false otherwise.
+    */
+    bool intersect(Ray<Real, N> const & ray, IndexSet & candidates) const
+    {return THIS()->intersect_impl(ray, candidates);}
+
+    /**
     * Intersect the tree with another tree.
     * \param[in] tree Tree to intersect with.
     * \param[out] candidates Intersection result (bounding box indexes).
@@ -210,6 +219,15 @@ namespace AABBtree {
     {return THIS()->min_distance_impl(box, candidates);}
 
     /**
+    * Minimum distance between a ray and the tree.
+    * \param[in] ray Ray to compute the minimum distance to.
+    * \param[out] candidates Minimum distance candidates.
+    * \return The minimum distance between the box and the tree.
+    */
+    Real min_distance(Ray<Real, N> const & ray, IndexSet & candidates) const
+    {return THIS()->min_distance_impl(ray, candidates);}
+
+    /**
     * Minimum distance between an current tree and another tree.
     * \param[in] tree Tree to compute the minimum distance to.
     * \param[out] candidates Minimum distance candidates.
@@ -235,6 +253,15 @@ namespace AABBtree {
     */
     Real max_distance(Box const & box, IndexSet & candidates) const
     {return THIS()->max_distance_impl(box, candidates);}
+
+    /**
+    * Maximum distance between a ray and the tree.
+    * \param[in] ray Ray to compute the maximum distance to.
+    * \param[out] candidates Maximum distance candidates.
+    * \return The maximum distance between the box and the tree.
+    */
+    Real max_distance(Ray<Real, N> const & ray, IndexSet & candidates) const
+    {return THIS()->max_distance_impl(ray, candidates);}
 
     /**
     * Maximum distance between an current tree and another tree.
