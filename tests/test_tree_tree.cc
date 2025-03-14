@@ -173,13 +173,14 @@ TEMPLATE_TEST_CASE("Tree-Tree", "[template]", float, double) {
   }}}
   TestType const distance{tree_1.distance(tree_2, candidates)};
   if (distance >= 0.0) {
+    #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & [key, value] : candidates) {
       for (auto const & val : value) {
-        #ifdef AABBTREE_ENABLE_PLOTTING
         plot_box<TestType, 2>(*tree_1.box(key), colors[1], 1.0);
         plot_box<TestType, 2>(*tree_2.box(val), colors[1], 1.0);
-        #endif
-  }}}
+    }}
+    #endif
+  }
   #ifdef AABBTREE_ENABLE_PLOTTING
   show(fig);
   ax->clear();

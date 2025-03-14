@@ -151,11 +151,12 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
   Ray ray(0.0, 0.0, 1.0, 1.0);
   for (Integer i{0}; i < n; ++i) {
     if (tree.intersect(ray, candidates)) {
-      for (const auto& i : candidates) {
-        #ifdef AABBTREE_ENABLE_PLOTTING
+      #ifdef AABBTREE_ENABLE_PLOTTING
+      for (const auto & i : candidates) {
         plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
-        #endif
-  }}}
+      }
+      #endif
+  }}
   #ifdef AABBTREE_ENABLE_PLOTTING
   plot_ray<TestType, 2>(ray, colors[0], 1.0);
   show(fig);
@@ -168,11 +169,12 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
   #endif
   TestType const distance{tree.distance(point, candidates)};
   if (distance > 0.0) {
-    for (const auto& i : candidates) {
-      #ifdef AABBTREE_ENABLE_PLOTTING
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    for (const auto & i : candidates) {
       plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
-      #endif
-  }}
+    }
+    #endif
+  }
   #ifdef AABBTREE_ENABLE_PLOTTING
   show(fig);
   ax->clear();

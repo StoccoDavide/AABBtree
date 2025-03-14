@@ -18,13 +18,6 @@
 #include "AABBtree.hh"
 using namespace AABBtree;
 
-// Catch2 library
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/generators/catch_generators_range.hpp>
-#include <catch2/catch_template_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
-using namespace Catch::Matchers;
-
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
 #include <matplot/matplot.h>
@@ -69,11 +62,13 @@ int main() {
   using Box = AABBtree::Box<Real, 2>;
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 2>;
   using Segment = BenchmarkUtilities::Segment<Real>;
+  using TicToc = BenchmarkUtilities::TicToc<Real>;
 
-  //std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
+  // Start the timer
+  TicToc timer;
 
   // Define the sampling points
-  Integer const n_points{101};
+  Integer const n_points{1001};
   Real const bound{2.0};
   VectorX x_f1 = VectorX::LinSpaced(n_points, -bound, bound);
   VectorX y_f2 = VectorX::LinSpaced(n_points, -bound, bound);
@@ -87,10 +82,10 @@ int main() {
   std::vector<Segment> segments_1(n_points-1);
   std::vector<Segment> segments_2(n_points-1);
   for (Integer i{0}; i < n_points; ++i) {
-    segments_1[i].point(0) = Vector2(x_f1(i), y_f1(i));
-    segments_1[i].point(1) = Vector2(x_f1(i+1), y_f1(i+1));
-    segments_2[i].point(0) = Vector2(x_f2(i), y_f2(i));
-    segments_2[i].point(1) = Vector2(x_f2(i+1), y_f2(i+1));
+    segments_1[i].point(0) << x_f1(i), y_f1(i);
+    segments_1[i].point(1) << x_f1(i+1), y_f1(i+1);
+    segments_2[i].point(0) << x_f2(i), y_f2(i);
+    segments_2[i].point(1) << x_f2(i+1), y_f2(i+1);
   }
 
   // Build trees
@@ -104,8 +99,10 @@ int main() {
   }
   AABBtree::Tree<Real, 2> tree_1;
   AABBtree::Tree<Real, 2> tree_2;
-  tree_1.build(std::move(boxes_1));
-  tree_2.build(std::move(boxes_2));
+  timer.tic(); tree_1.build(std::move(boxes_1)); timer.toc();
+  std::cout << std::fixed << "Tree 1 built in " << timer.elapsed_us() << " us" << std::endl;
+  timer.tic(); tree_2.build(std::move(boxes_2)); timer.toc();
+  std::cout << "Tree 2 built in " << timer.elapsed_us() << " us" << std::endl;
   tree_1.print(std::cout);
   tree_2.print(std::cout);
 
@@ -121,19 +118,88 @@ int main() {
   show(fig);
   #endif
 
+  // Create a box
+  Box box(-0.05, -0.05, 0.05, 0.05);
+
+  // Intersect box with tree 1
+  IndexSet candidates_set;
+  bool do_intersect;
+  timer.tic(); do_intersect = tree_1.intersect(box, candidates_set); timer.toc();
+  std::cout << "Box intersects tree 1 in " << timer.elapsed_us() << " us" << std::endl;
+  if (do_intersect) {
+    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    for (auto const & i : candidates_set) {
+      plot_box<Real, 2>(*tree_1.box(i), "r", 0.25);
+    }
+    #endif
+  }
+
+  // Intersect box with tree 2
+  timer.tic(); do_intersect = tree_2.intersect(box, candidates_set); timer.toc();
+  std::cout << "Box intersects tree 2 in " << timer.elapsed_us() << " us" << std::endl;
+  if (do_intersect) {
+    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    for (auto const & i : candidates_set) {
+      plot_box<Real, 2>(*tree_2.box(i), "g", 0.25);
+    }
+    #endif
+  }
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  show(fig);
+  #endif
+
+  // Create a ray
+  Ray<Real, 2> ray(-2.0, -2.0, 1.0, 1.0);
+  ray.direction().normalize();
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  SET_PLOT
+  plot_ray<Real, 2>(ray, "b", 1.0);
+  #endif
+
+  // Intersect ray with tree 1
+  timer.tic(); do_intersect = tree_1.intersect(ray, candidates_set); timer.toc();
+  std::cout << "Ray intersects tree 1 in " << timer.elapsed_us() << " us" << std::endl;
+  if (do_intersect) {
+    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    for (auto const & i : candidates_set) {
+      plot_box<Real, 2>(*tree_1.box(i), "r", 0.25);
+    }
+    #endif
+  }
+
+  // Intersect ray with tree 2
+  timer.tic(); do_intersect = tree_2.intersect(ray, candidates_set); timer.toc();
+  std::cout << "Ray intersects tree 2 in " << timer.elapsed_us() << " us" << std::endl;
+  if (do_intersect) {
+    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    for (auto const & i : candidates_set) {
+      plot_box<Real, 2>(*tree_1.box(i), "r", 0.25);
+    }
+    #endif
+  }
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  show(fig);
+  #endif
+
   // Intersect tree 1 with tree 2
-  IndexMap candidates;
-  if (tree_1.intersect(tree_2, candidates)) {
-    std::cout << "Candidates: " << candidates.size() << std::endl;
+  IndexMap candidates_map;
+  timer.tic(); do_intersect = tree_1.intersect(tree_2, candidates_map); timer.toc();
+  std::cout << "Trees intersect in " << timer.elapsed_us() << " us" << std::endl;
+  if (do_intersect) {
+    std::cout << "Candidates: " << candidates_map.size() << std::endl;
     std::vector<Vector2> tree_points;
     Vector2 point;
-    for (auto const & [key, value] : candidates) {
+    for (auto const & [key, value] : candidates_map) {
       for (auto const & val : value) {
         if (segments_1[key].intersect(segments_2[val], point)) {
           tree_points.push_back(point);
           #ifdef AABBTREE_ENABLE_PLOTTING
-          plot_box<Real, 2>(*tree_1.box(key), "r", 2.0);
-          plot_box<Real, 2>(*tree_2.box(val), "g", 2.0);
+          plot_box<Real, 2>(*tree_1.box(key), "r", 0.25);
+          plot_box<Real, 2>(*tree_2.box(val), "g", 0.25);
           //ax->plot({point.x()}, {point.y()}, "o");
           #endif
   }}}}
