@@ -20,8 +20,8 @@ end
 # Configuration of the build
 BUILD_DEBUG      = false
 BUILD_TESTS      = true
-BUILD_EXAMPLES   = false
-BUILD_BENCHMARKS = false
+BUILD_EXAMPLES   = true
+BUILD_BENCHMARKS = true
 ENABLE_PLOTTING  = true
 
 case RUBY_PLATFORM
@@ -87,6 +87,26 @@ desc "Run tests"
 task :run do
   puts "run test".yellow
   Dir.glob('build/tests/test_*') do |cmd|
+    next if cmd =~ /.manifest$|.dSYM$/
+    puts "execute: #{cmd}".yellow
+    sh cmd
+  end
+end
+
+desc "Run examples"
+task :examples do
+  puts "run test".yellow
+  Dir.glob('build/examples/example_*') do |cmd|
+    next if cmd =~ /.manifest$|.dSYM$/
+    puts "execute: #{cmd}".yellow
+    sh cmd
+  end
+end
+
+desc "Run benchmarks"
+task :benchmarks do
+  puts "run benchmarks".yellow
+  Dir.glob('build/benchmarks/benchmark_*') do |cmd|
     next if cmd =~ /.manifest$|.dSYM$/
     puts "execute: #{cmd}".yellow
     sh cmd

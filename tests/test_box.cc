@@ -32,7 +32,8 @@ static axes_handle ax{fig->current_axes()};
 #endif
 
 // Test utilities
-#include "test_utilities.hh"
+#include "TestUtilities.hh"
+using namespace TestUtilities;
 
 #ifdef AABBTREE_ENABLE_PLOTTING
 #ifndef SET_PLOT
@@ -54,7 +55,7 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
   SECTION("Intersection") {
     Box box_1(-1.0, -1.0, 2.0, 2.0);
     Box box_2(-2.0, -2.0, 1.0, 1.0);
-    Box box_3; box_1.intersection(box_2, box_3);
+    Box box_3; box_1.intersect(box_2, box_3);
     #ifdef AABBTREE_ENABLE_PLOTTING
     SET_PLOT
     title(ax, "Intersection");

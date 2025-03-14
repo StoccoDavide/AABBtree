@@ -251,7 +251,7 @@ namespace AABBtree {
     * \param[in] tol Tolerance to use for the intersection.
     * \return True if the current ray intersects the given box, false otherwise.
     */
-    bool intersection(Box<Real, N> const & b, Point & c, Point & f, Real tol = DUMMY_TOL) const
+    bool intersect(Box<Real, N> const & b, Point & c, Point & f, Real tol = DUMMY_TOL) const
     {
       if (b.contains(this->m_origin)) {return true;}
       Point const & b_min{b.min()};

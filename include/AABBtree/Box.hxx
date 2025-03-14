@@ -317,7 +317,7 @@ namespace AABBtree {
     * \param[out] b_out Intersection of the current box and the given box.
     * \return True if the current box intersects the given box, false otherwise.
     */
-    bool intersection(Box const & b_in, Box & b_out) const
+    bool intersect(Box const & b_in, Box & b_out) const
     {
       b_out.m_min = this->m_min.cwiseMax(b_in.m_min);
       b_out.m_max = this->m_max.cwiseMin(b_in.m_max);
@@ -671,8 +671,8 @@ namespace AABBtree {
     * \param[in] tol Tolerance to use for the intersection.
     * \return True if the current box intersects the given ray, false otherwise.
     */
-    bool intersection(Ray<Real, N> const & r, Point & c, Point & f, Real tol = DUMMY_TOL) const
-    {return r.intersection(*this, c, f, tol);}
+    bool intersect(Ray<Real, N> const & r, Point & c, Point & f, Real tol = DUMMY_TOL) const
+    {return r.intersect(*this, c, f, tol);}
 
 
     /**
@@ -696,7 +696,7 @@ namespace AABBtree {
     * \note The squared distance is positive if the ray and the box do not intersect, zero otherwise.
     */
     Real squared_interior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
-    {return r.squared_interior_distance(*this, p1, p2, tol);}
+    {return r.squared_interior_distance(*this, p2, p1, tol);}
 
     /**
     * Compute the \em interior (or \em minimum) distance between the current box a given ray.
@@ -719,7 +719,7 @@ namespace AABBtree {
     * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
     */
     Real interior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
-    {return r.interior_distance(*this, p1, p2, tol);}
+    {return r.interior_distance(*this, p2, p1, tol);}
 
     /**
     * Compute the squared \em exterior (or \em maximum) distance between the current box a given ray.
@@ -741,7 +741,7 @@ namespace AABBtree {
     * \return The squared distance between the ray and the box.
     */
     Real squared_exterior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
-    {return r.squared_exterior_distance(*this, p1, p2, tol);}
+    {return r.squared_exterior_distance(*this, p2, p1, tol);}
 
     /**
     * Compute the \em exterior (or \em maximum) distance between the current box a given ray.
@@ -764,10 +764,10 @@ namespace AABBtree {
     * \note The distance is positive if the ray and the box do not intersect, zero otherwise.
     */
     Real exterior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
-    {return r.exterior_distance(*this, p1, p2, tol);}
+    {return r.exterior_distance(*this, p2, p1, tol);}
 
   }; // class Box
 
 } // namespace AABBtree
 
-#endif // AABBTREE_Box_HXX
+#endif // AABBTREE_BOX_HXX

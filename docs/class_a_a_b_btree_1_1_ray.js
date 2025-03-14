@@ -20,7 +20,7 @@ var class_a_a_b_btree_1_1_ray =
     [ "exterior_distance", "class_a_a_b_btree_1_1_ray.html#ab3093f3de89cf1f4f29d7015075236e1", null ],
     [ "interior_distance", "class_a_a_b_btree_1_1_ray.html#a418c96375bcdb18801df55f4a8e57264", null ],
     [ "interior_distance", "class_a_a_b_btree_1_1_ray.html#a8fa0ece3fd24d2744ee2f3396250913c", null ],
-    [ "intersection", "class_a_a_b_btree_1_1_ray.html#ac9d854636b39deba4abb0664977ef563", null ],
+    [ "intersect", "class_a_a_b_btree_1_1_ray.html#aa40eadc8cba6dc6f890ef6ab92e79a4f", null ],
     [ "intersects", "class_a_a_b_btree_1_1_ray.html#a2f81fdde11007b834f8727b6eb47a529", null ],
     [ "is_approx", "class_a_a_b_btree_1_1_ray.html#a4e572f8de637a82cbdb844924a14f263", null ],
     [ "normalize", "class_a_a_b_btree_1_1_ray.html#aa25bacb795453c1f95b9f437f407e8da", null ],

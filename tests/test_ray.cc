@@ -32,7 +32,8 @@ static axes_handle ax{fig->current_axes()};
 #endif
 
 // Test utilities
-#include "test_utilities.hh"
+#include "TestUtilities.hh"
+using namespace TestUtilities;
 
 #ifdef AABBTREE_ENABLE_PLOTTING
 #ifndef SET_PLOT
@@ -55,7 +56,7 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
   SECTION("Intersection") {
     Ray ray(-1.0, 2.0, 0.0, -1.0);
     Box box(-2.0, -2.0, 1.0, 1.0);
-    Point c, f; ray.intersection(box, c, f, tol);
+    Point c, f; ray.intersect(box, c, f, tol);
     TestType d_int{ray.interior_distance(box, tol)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     SET_PLOT
