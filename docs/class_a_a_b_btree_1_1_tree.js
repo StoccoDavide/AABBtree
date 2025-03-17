@@ -1,7 +1,7 @@
 var class_a_a_b_btree_1_1_tree =
 [
-    [ "AABBsubtree", "struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html", "struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree" ],
-    [ "AABBnode", "class_a_a_b_btree_1_1_tree.html#a16e2aafdc2ccb54856ce6a578dc208b7", null ],
+    [ "Node", "struct_a_a_b_btree_1_1_tree_1_1_node.html", "struct_a_a_b_btree_1_1_tree_1_1_node" ],
+    [ "Statistics", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html", "struct_a_a_b_btree_1_1_tree_1_1_statistics" ],
     [ "Box", "class_a_a_b_btree_1_1_tree.html#af16ebe0542be4ec2bae7900059cac8d9", null ],
     [ "BoxUniquePtr", "class_a_a_b_btree_1_1_tree.html#a5a5357aaaf9967c60038806a561682aa", null ],
     [ "BoxUniquePtrList", "class_a_a_b_btree_1_1_tree.html#a5ad0dbaee8687f3986ffcee744b42e3f", null ],
@@ -13,6 +13,7 @@ var class_a_a_b_btree_1_1_tree =
     [ "boxes", "class_a_a_b_btree_1_1_tree.html#ae2dd1d764202f1fad879db777c2c9545", null ],
     [ "build", "class_a_a_b_btree_1_1_tree.html#a536762af87d60a91c9b412b3968882ac", null ],
     [ "clear", "class_a_a_b_btree_1_1_tree.html#a5026296ed41a346a5a6a774e7b0ef481", null ],
+    [ "depth", "class_a_a_b_btree_1_1_tree.html#a8a159ce0f28a69b58a63ea09abac3150", null ],
     [ "disable_dumping_mode", "class_a_a_b_btree_1_1_tree.html#a784451f1b28ab9ef8903dad728acae27", null ],
     [ "distance", "class_a_a_b_btree_1_1_tree.html#ac1aa9bbca13e25ebcea21dcf991fc248", null ],
     [ "distance", "class_a_a_b_btree_1_1_tree.html#ad1deed7eb803e029487abc3e30d4c608", null ],
@@ -25,13 +26,16 @@ var class_a_a_b_btree_1_1_tree =
     [ "max_nodal_objects", "class_a_a_b_btree_1_1_tree.html#a0ee26263ee075b280817c950d12d3ff9", null ],
     [ "min_box_size", "class_a_a_b_btree_1_1_tree.html#abe154a6341fea201bb1cbcc0ee129a93", null ],
     [ "min_box_size", "class_a_a_b_btree_1_1_tree.html#a77341a1e517d0fcf9755f665b685a347", null ],
-    [ "node", "class_a_a_b_btree_1_1_tree.html#a24583218b8984b32a274c24f08af4faf", null ],
+    [ "node", "class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec", null ],
+    [ "nodes", "class_a_a_b_btree_1_1_tree.html#a72b47a92dcabaf12d494767721ca7b3d", null ],
     [ "print", "class_a_a_b_btree_1_1_tree.html#aca1a357714752e27e3494fa1dcd4f6ea", null ],
     [ "self_intersect", "class_a_a_b_btree_1_1_tree.html#a4aa660f520a915fe6abc6e64a0ba01f6", null ],
     [ "separation_ratio_tolerance", "class_a_a_b_btree_1_1_tree.html#a756c32cb2ba8e1920ffe41784a16961d", null ],
     [ "separation_ratio_tolerance", "class_a_a_b_btree_1_1_tree.html#ae0309bfb1daf5bcd7874d91e99659644", null ],
     [ "size", "class_a_a_b_btree_1_1_tree.html#a153e0efe09a795de410dd43c52c8fcf2", null ],
-    [ "structure", "class_a_a_b_btree_1_1_tree.html#af95357ecf63d793490bed3ace2507a4a", null ],
+    [ "stats", "class_a_a_b_btree_1_1_tree.html#ad9abb2e3c734ba5f61b966e434f0907a", null ],
+    [ "structure", "class_a_a_b_btree_1_1_tree.html#a9c18388fd405601fdbab667a6e3c6561", null ],
+    [ "within_distance", "class_a_a_b_btree_1_1_tree.html#a5efaccf46a0d96bdb44b3068bbdcdb11", null ],
     [ "m_balance_ratio_tolerance", "class_a_a_b_btree_1_1_tree.html#a97f20a4e5de491a063825ca59013f0b3", null ],
     [ "m_boxes", "class_a_a_b_btree_1_1_tree.html#afc5ddd8137d0ca67d4243541cd39b80a", null ],
     [ "m_check_counter", "class_a_a_b_btree_1_1_tree.html#a0b4eb43367220af367546926322388b1", null ],
@@ -42,5 +46,5 @@ var class_a_a_b_btree_1_1_tree =
     [ "m_separation_ratio_tolerance", "class_a_a_b_btree_1_1_tree.html#aa8910734f7976650755d164f238e1186", null ],
     [ "m_stack", "class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808", null ],
     [ "m_tree_boxes_map", "class_a_a_b_btree_1_1_tree.html#abdf0751289c44c1563c9fb62cf9bfde3", null ],
-    [ "m_tree_structure", "class_a_a_b_btree_1_1_tree.html#a24f6b3036eed12117f50fa4c7ebfc031", null ]
+    [ "m_tree_structure", "class_a_a_b_btree_1_1_tree.html#afa8009bf7ddf296eb7cd30281e981b88", null ]
 ];

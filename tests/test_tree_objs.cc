@@ -51,6 +51,7 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
 
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<TestType, 2>;
   using Vector = AABBtree::Vector<TestType, 2>;
+  using Point = AABBtree::Point<TestType, 2>;
   using Box = AABBtree::Box<TestType, 2>;
   using Ray = AABBtree::Ray<TestType, 2>;
 
@@ -172,6 +173,29 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (const auto & i : candidates) {
       plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+    }
+    #endif
+  }
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  show(fig);
+  #endif
+
+  // Within distance
+  TestType const max_distance{1.0};
+  auto distance_func = [](Point const & p, Box const & b) -> TestType {return b.interior_distance(p);};
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  for (auto const & b : tree.boxes()) {
+    if (distance_func(point, *b) <= max_distance) {
+      plot_box<TestType, 2>(*b, colors[0], 5.0);
+    }
+  }
+  #endif
+  TestType const distance_within{tree.within_distance(point, max_distance, candidates, distance_func)};
+  if (distance_within > 0.0) {
+    #ifdef AABBTREE_ENABLE_PLOTTING
+    plot_circle<TestType, 2>(point, max_distance, colors[0], 2.0);
+    for (const auto & i : candidates) {
+      plot_box<TestType, 2>(*tree.box(i), colors[1], 2.5);
     }
     #endif
   }

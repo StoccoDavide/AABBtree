@@ -15,6 +15,8 @@
 #ifndef AABBTREE_RAY_HXX
 #define AABBTREE_RAY_HXX
 
+#include "AABBtree/Box.hxx"
+
 namespace AABBtree {
 
   /**
@@ -499,7 +501,31 @@ namespace AABBtree {
     Real exterior_distance(Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
     {return std::sqrt(this->squared_exterior_distance(b, p1, p2, tol));}
 
+    /**
+    * Print the ray info to an output stream.
+    * \param[in] os Output stream to print the ray info to.
+    */
+    void print(std::ostream & os) const
+    {
+      os <<
+        "────────────────────────────────────────────────────────────────────────────────" << std::endl <<
+        "RAY INFO" << std::endl <<
+        "\to = " << this->m_origin.transpose() << std::endl <<
+        "\td = " << this->m_direction.transpose()  << std::endl <<
+        "────────────────────────────────────────────────────────────────────────────────" << std::endl;
+    }
+
   }; // class Ray
+
+  /**
+  * Print the ray info to an output stream.
+  * \param[in] os Output stream to print the ray info to.
+  * \param[in] r Ray to print.
+  * \tparam Real Type of the scalar coefficients.
+  * \tparam N Dimension of the ambient space.
+  */
+  template <typename Real, Integer N>
+  std::ostream & operator<<(std::ostream & os, Ray<Real, N> const & r) {r.print(os); return os;}
 
 } // namespace AABBtree
 

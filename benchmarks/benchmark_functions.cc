@@ -24,13 +24,7 @@ using namespace AABBtree;
 using namespace matplot;
 static auto fig{figure(true)};
 static axes_handle ax{fig->current_axes()};
-#endif
 
-// Benchmark utilities
-#include "BenchmarkUtilities.hh"
-using namespace BenchmarkUtilities;
-
-#ifdef AABBTREE_ENABLE_PLOTTING
 #ifndef SET_PLOT
 #define SET_PLOT \
 xlim(ax, {-3.0, 3.0}); xlabel(ax, "x"); \
@@ -38,6 +32,10 @@ ylim(ax, {-3.0, 3.0}); ylabel(ax, "y"); \
 grid(ax, true);
 #endif
 #endif
+
+// Benchmark utilities
+#include "BenchmarkUtilities.hh"
+using namespace BenchmarkUtilities;
 
 // High-frequency sine function
 template <typename Real>

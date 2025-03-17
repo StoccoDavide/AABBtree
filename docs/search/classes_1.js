@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['box_0',['Box',['../class_a_a_b_btree_1_1_box.html',1,'AABBtree']]]
+  ['node_0',['Node',['../struct_a_a_b_btree_1_1_tree_1_1_node.html',1,'AABBtree::Tree']]]
 ];

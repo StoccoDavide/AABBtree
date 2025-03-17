@@ -59,7 +59,7 @@ TEMPLATE_TEST_CASE("Tree-Tree", "[template]", float, double) {
   #endif
 
   // Build segments batch 1
-  Integer const n_1{50};
+  Integer const n_1{75};
   TestType const scale_1{2.0};
   TestType const length_1{0.125};
   std::vector<Segment<TestType>> segments_1(n_1);
@@ -78,7 +78,7 @@ TEMPLATE_TEST_CASE("Tree-Tree", "[template]", float, double) {
   }
 
   // Build segments batch 2
-  Integer const n_2{50};
+  Integer const n_2{75};
   TestType const scale_2{2.0};
   TestType const length_2{0.25};
   std::vector<Segment<TestType>> segments_2(n_2);
@@ -124,7 +124,7 @@ TEMPLATE_TEST_CASE("Tree-Tree", "[template]", float, double) {
     Box const box{segments_2[i].bounding_box()};
     boxes_2->push_back(std::make_unique<Box>(box));
     #ifdef AABBTREE_ENABLE_PLOTTING
-    plot_box<TestType, 2>(box, colors[3], 0.25);
+    plot_box<TestType, 2>(box, colors[4], 0.25);
     #endif
   }
 
@@ -175,8 +175,8 @@ TEMPLATE_TEST_CASE("Tree-Tree", "[template]", float, double) {
   if (distance >= 0.0) {
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & [key, value] : candidates) {
+      plot_box<TestType, 2>(*tree_1.box(key), colors[1], 1.0);
       for (auto const & val : value) {
-        plot_box<TestType, 2>(*tree_1.box(key), colors[1], 1.0);
         plot_box<TestType, 2>(*tree_2.box(val), colors[1], 1.0);
     }}
     #endif

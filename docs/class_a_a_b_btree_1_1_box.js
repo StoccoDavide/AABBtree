@@ -53,6 +53,7 @@ var class_a_a_b_btree_1_1_box =
     [ "merged", "class_a_a_b_btree_1_1_box.html#affb0818565339d76daeb751e0cf39142", null ],
     [ "min", "class_a_a_b_btree_1_1_box.html#ae47ee2a4b0d7bbbe598b4fbdc997dc7a", null ],
     [ "min", "class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c", null ],
+    [ "print", "class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9", null ],
     [ "reorder", "class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5", null ],
     [ "set_degenerate", "class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2", null ],
     [ "set_empty", "class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3", null ],

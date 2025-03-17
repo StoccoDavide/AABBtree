@@ -149,14 +149,16 @@ $(function(){initNavTree('class_a_a_b_btree_1_1_tree.html',''); initResizable(tr
 </div><!--header-->
 <div class="contents">
 
-<p>A class representing a <em>non-recursive</em> axis-aligned bounding box tree (<a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a>).  
+<p>A class representing a <em>non-recursive</em> axis-aligned bounding box tree (AABB tree).  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_tree_8hxx_source.html">Tree.hxx</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_statistics.html">Statistics</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -181,10 +183,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a77341a1e517d0fcf9755f665b685a347"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe154a6341fea201bb1cbcc0ee129a93" id="r_abe154a6341fea201bb1cbcc0ee129a93"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe154a6341fea201bb1cbcc0ee129a93">min_box_size</a> () const</td></tr>
 <tr class="separator:abe154a6341fea201bb1cbcc0ee129a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af95357ecf63d793490bed3ace2507a4a" id="r_af95357ecf63d793490bed3ace2507a4a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a> &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af95357ecf63d793490bed3ace2507a4a">structure</a> () const</td></tr>
-<tr class="separator:af95357ecf63d793490bed3ace2507a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24583218b8984b32a274c24f08af4faf" id="r_a24583218b8984b32a274c24f08af4faf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a> const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24583218b8984b32a274c24f08af4faf">node</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i) const</td></tr>
-<tr class="separator:a24583218b8984b32a274c24f08af4faf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c18388fd405601fdbab667a6e3c6561" id="r_a9c18388fd405601fdbab667a6e3c6561"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c18388fd405601fdbab667a6e3c6561">structure</a> () const</td></tr>
+<tr class="separator:a9c18388fd405601fdbab667a6e3c6561"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9302d1b8ceed5681d7d63c08848d1ec" id="r_aa9302d1b8ceed5681d7d63c08848d1ec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9302d1b8ceed5681d7d63c08848d1ec">node</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i) const</td></tr>
+<tr class="separator:aa9302d1b8ceed5681d7d63c08848d1ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a153e0efe09a795de410dd43c52c8fcf2" id="r_a153e0efe09a795de410dd43c52c8fcf2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153e0efe09a795de410dd43c52c8fcf2">size</a> () const</td></tr>
 <tr class="separator:a153e0efe09a795de410dd43c52c8fcf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe546d90d99bba9eebede66beaf66415" id="r_abe546d90d99bba9eebede66beaf66415"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe546d90d99bba9eebede66beaf66415">enable_dumping_mode</a> ()</td></tr>
@@ -197,8 +199,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adf755ec22ce742984bfd91693a66747a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5026296ed41a346a5a6a774e7b0ef481" id="r_a5026296ed41a346a5a6a774e7b0ef481"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5026296ed41a346a5a6a774e7b0ef481">clear</a> ()</td></tr>
 <tr class="separator:a5026296ed41a346a5a6a774e7b0ef481"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca1a357714752e27e3494fa1dcd4f6ea" id="r_aca1a357714752e27e3494fa1dcd4f6ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca1a357714752e27e3494fa1dcd4f6ea">print</a> (<a class="el" href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">OutStream</a> &amp;os) const</td></tr>
-<tr class="separator:aca1a357714752e27e3494fa1dcd4f6ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a536762af87d60a91c9b412b3968882ac" id="r_a536762af87d60a91c9b412b3968882ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a536762af87d60a91c9b412b3968882ac">build</a> (std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt; <a class="el" href="#ae2dd1d764202f1fad879db777c2c9545">boxes</a>)</td></tr>
 <tr class="separator:a536762af87d60a91c9b412b3968882ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecfbd9710e2078d9d51cfaba6d484769" id="r_aecfbd9710e2078d9d51cfaba6d484769"><td class="memTemplParams" colspan="2">template&lt;typename Object&gt; </td></tr>
@@ -213,6 +213,17 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac1aa9bbca13e25ebcea21dcf991fc248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1deed7eb803e029487abc3e30d4c608" id="r_ad1deed7eb803e029487abc3e30d4c608"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1deed7eb803e029487abc3e30d4c608">distance</a> (<a class="el" href="class_a_a_b_btree_1_1_tree.html">Tree</a> const &amp;tree, <a class="el" href="namespace_a_a_b_btree.html#a46a02a2772464805830f5ca336094870">IndexMap</a> &amp;candidates) const</td></tr>
 <tr class="separator:ad1deed7eb803e029487abc3e30d4c608"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5efaccf46a0d96bdb44b3068bbdcdb11" id="r_a5efaccf46a0d96bdb44b3068bbdcdb11"><td class="memTemplParams" colspan="2">template&lt;typename Function&gt; </td></tr>
+<tr class="memitem:a5efaccf46a0d96bdb44b3068bbdcdb11"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5efaccf46a0d96bdb44b3068bbdcdb11">within_distance</a> (<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;point, Real const max_distance, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function dist_fun=[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;p, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(p);}) const</td></tr>
+<tr class="separator:a5efaccf46a0d96bdb44b3068bbdcdb11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a159ce0f28a69b58a63ea09abac3150" id="r_a8a159ce0f28a69b58a63ea09abac3150"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a159ce0f28a69b58a63ea09abac3150">depth</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;d) const</td></tr>
+<tr class="separator:a8a159ce0f28a69b58a63ea09abac3150"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72b47a92dcabaf12d494767721ca7b3d" id="r_a72b47a92dcabaf12d494767721ca7b3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72b47a92dcabaf12d494767721ca7b3d">nodes</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;l, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;n, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;b) const</td></tr>
+<tr class="separator:a72b47a92dcabaf12d494767721ca7b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9abb2e3c734ba5f61b966e434f0907a" id="r_ad9abb2e3c734ba5f61b966e434f0907a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9abb2e3c734ba5f61b966e434f0907a">stats</a> (<a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_statistics.html">Statistics</a> &amp;stats) const</td></tr>
+<tr class="separator:ad9abb2e3c734ba5f61b966e434f0907a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca1a357714752e27e3494fa1dcd4f6ea" id="r_aca1a357714752e27e3494fa1dcd4f6ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca1a357714752e27e3494fa1dcd4f6ea">print</a> (<a class="el" href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">OutStream</a> &amp;os) const</td></tr>
+<tr class="separator:aca1a357714752e27e3494fa1dcd4f6ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
 Private Types</h2></td></tr>
@@ -226,20 +237,18 @@ Private Types</h2></td></tr>
 <tr class="separator:ac7a8f69109c4f90238d76a42fed77c3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa832007e63709982c6379b57b8ffd77a" id="r_aa832007e63709982c6379b57b8ffd77a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> = <a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&lt;Real, N&gt;</td></tr>
 <tr class="separator:aa832007e63709982c6379b57b8ffd77a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16e2aafdc2ccb54856ce6a578dc208b7" id="r_a16e2aafdc2ccb54856ce6a578dc208b7"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBtree::Tree::AABBsubtree</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16e2aafdc2ccb54856ce6a578dc208b7">AABBnode</a></td></tr>
-<tr class="separator:a16e2aafdc2ccb54856ce6a578dc208b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:afc5ddd8137d0ca67d4243541cd39b80a" id="r_afc5ddd8137d0ca67d4243541cd39b80a"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc5ddd8137d0ca67d4243541cd39b80a">m_boxes</a> {nullptr}</td></tr>
 <tr class="separator:afc5ddd8137d0ca67d4243541cd39b80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24f6b3036eed12117f50fa4c7ebfc031" id="r_a24f6b3036eed12117f50fa4c7ebfc031"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24f6b3036eed12117f50fa4c7ebfc031">m_tree_structure</a></td></tr>
-<tr class="separator:a24f6b3036eed12117f50fa4c7ebfc031"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa8009bf7ddf296eb7cd30281e981b88" id="r_afa8009bf7ddf296eb7cd30281e981b88"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa8009bf7ddf296eb7cd30281e981b88">m_tree_structure</a></td></tr>
+<tr class="separator:afa8009bf7ddf296eb7cd30281e981b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdf0751289c44c1563c9fb62cf9bfde3" id="r_abdf0751289c44c1563c9fb62cf9bfde3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#ab7f50fe1e8fa820f8be13ac74c244cc5">IndexList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdf0751289c44c1563c9fb62cf9bfde3">m_tree_boxes_map</a></td></tr>
 <tr class="separator:abdf0751289c44c1563c9fb62cf9bfde3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a5773df0f4316047a6feaf93e927da2" id="r_a8a5773df0f4316047a6feaf93e927da2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a5773df0f4316047a6feaf93e927da2">m_dumping_mode</a> {true}</td></tr>
 <tr class="separator:a8a5773df0f4316047a6feaf93e927da2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f031878cb331577c243a40b3082601d" id="r_a5f031878cb331577c243a40b3082601d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f031878cb331577c243a40b3082601d">m_max_nodal_objects</a> {2}</td></tr>
+<tr class="memitem:a5f031878cb331577c243a40b3082601d" id="r_a5f031878cb331577c243a40b3082601d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f031878cb331577c243a40b3082601d">m_max_nodal_objects</a> {1}</td></tr>
 <tr class="separator:a5f031878cb331577c243a40b3082601d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8910734f7976650755d164f238e1186" id="r_aa8910734f7976650755d164f238e1186"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8910734f7976650755d164f238e1186">m_separation_ratio_tolerance</a> {0.1}</td></tr>
 <tr class="separator:aa8910734f7976650755d164f238e1186"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,7 +265,7 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt;<br />
-class AABBtree::Tree&lt; Real, N &gt;</div><p>The <a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABBtree).">Tree</a> class provides an efficient way to store and query a set of axis-aligned bounding boxes <em>non-recursively</em>. It supports various operations such as building the tree, adding axis-aligned boxes, and performing intersection queries. The <a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABBtree).">Tree</a> class is templated on the type of the real numbers and the dimensions of the bounding boxes and is based, as the name suggests, on a novel non-recursive algorithm. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+class AABBtree::Tree&lt; Real, N &gt;</div><p>The <a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABB tree).">Tree</a> class provides an efficient way to store and query a set of axis-aligned bounding boxes <em>non-recursively</em>. It supports various operations such as building the tree, adding axis-aligned boxes, and performing intersection queries. The <a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABB tree).">Tree</a> class is templated on the type of the real numbers and the dimensions of the bounding boxes and is based, as the name suggests, on a novel non-recursive algorithm. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Real</td><td>Type of the scalar coefficients </td></tr>
     <tr><td class="paramname">N</td><td>Dimension of the ambient space. </td></tr>
@@ -264,31 +273,6 @@ class AABBtree::Tree&lt; Real, N &gt;</div><p>The <a class="el" href="class_a_a_
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a16e2aafdc2ccb54856ce6a578dc208b7" name="a16e2aafdc2ccb54856ce6a578dc208b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16e2aafdc2ccb54856ce6a578dc208b7">&#9670;&#160;</a></span>AABBnode</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef struct <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBtree::Tree::AABBsubtree</a> <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::AABBnode</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Structure representing a node of the <a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a>. </p>
-
-</div>
-</div>
 <a id="af16ebe0542be4ec2bae7900059cac8d9" name="af16ebe0542be4ec2bae7900059cac8d9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af16ebe0542be4ec2bae7900059cac8d9">&#9670;&#160;</a></span>Box</h2>
 
@@ -590,6 +574,44 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
+<a id="a8a159ce0f28a69b58a63ea09abac3150" name="a8a159ce0f28a69b58a63ea09abac3150"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a159ce0f28a69b58a63ea09abac3150">&#9670;&#160;</a></span>depth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::depth </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>d</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Compute the depth of the tree from a given node. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">i</td><td>Index of the node to compute the depth from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">d</td><td>Depth of the tree from the given node. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a784451f1b28ab9ef8903dad728acae27" name="a784451f1b28ab9ef8903dad728acae27"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a784451f1b28ab9ef8903dad728acae27">&#9670;&#160;</a></span>disable_dumping_mode()</h2>
 
@@ -648,14 +670,14 @@ template&lt;typename Object&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Minimum distance between an object and the tree. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Compute the minimum distance between an object and the tree. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>Object to compute the distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Minimum distance candidates. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The minimum distance between the Object and the tree. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The minimum distance between the object and the tree. </dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Object</td><td>Type of the object to compute the distance to. </td></tr>
@@ -694,9 +716,9 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Minimum distance between an current tree and another tree. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Compute the minimum distance between the current tree and another tree. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABBtree).">Tree</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABB tree).">Tree</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Minimum distance candidates. </td></tr>
   </table>
   </dd>
@@ -844,7 +866,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Intersect the tree with another tree. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABBtree).">Tree</a> to intersect with. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABB tree).">Tree</a> to intersect with. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Intersection result (boxes indexes). </td></tr>
   </table>
   </dd>
@@ -1003,8 +1025,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a24583218b8984b32a274c24f08af4faf" name="a24583218b8984b32a274c24f08af4faf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24583218b8984b32a274c24f08af4faf">&#9670;&#160;</a></span>node()</h2>
+<a id="aa9302d1b8ceed5681d7d63c08848d1ec" name="aa9302d1b8ceed5681d7d63c08848d1ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9302d1b8ceed5681d7d63c08848d1ec">&#9670;&#160;</a></span>node()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1015,7 +1037,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a> const  &amp; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::node </td>
+          <td class="memname"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> const  &amp; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::node </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const</td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
           <td> const</td>
@@ -1034,6 +1056,56 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The i-th tree node. </dd></dl>
+
+</div>
+</div>
+<a id="a72b47a92dcabaf12d494767721ca7b3d" name="a72b47a92dcabaf12d494767721ca7b3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72b47a92dcabaf12d494767721ca7b3d">&#9670;&#160;</a></span>nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::nodes </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>l</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Compute the number of leafs, nodes, and long boxes of the tree from a given node. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">i</td><td>Index of the node to start the computation from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">l</td><td>Number of leafs of the tree from the given node. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">n</td><td>Number of nodes of the tree from the given node. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">b</td><td>Number of long boxes of the tree from the given node. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1061,9 +1133,9 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Print the tree internal structure in an output stream. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Print the tree info to an output stream. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">os</td><td>Output stream to print the tree to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">os</td><td>Output stream to print the tree info to. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1193,8 +1265,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="af95357ecf63d793490bed3ace2507a4a" name="af95357ecf63d793490bed3ace2507a4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af95357ecf63d793490bed3ace2507a4a">&#9670;&#160;</a></span>structure()</h2>
+<a id="ad9abb2e3c734ba5f61b966e434f0907a" name="ad9abb2e3c734ba5f61b966e434f0907a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9abb2e3c734ba5f61b966e434f0907a">&#9670;&#160;</a></span>stats()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1205,7 +1277,40 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a> &gt; const  &amp; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::structure </td>
+          <td class="memname">void <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::stats </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_statistics.html">Statistics</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>stats</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Compute some statistics about the current tree. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">stats</td><td><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_statistics.html">Statistics</a> about the tree. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9c18388fd405601fdbab667a6e3c6561" name="a9c18388fd405601fdbab667a6e3c6561"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c18388fd405601fdbab667a6e3c6561">&#9670;&#160;</a></span>structure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> &gt; const  &amp; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::structure </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -1218,6 +1323,65 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </table>
 </div><div class="memdoc">
 <p>Get the tree structure. </p><dl class="section return"><dt>Returns</dt><dd>The tree structure. </dd></dl>
+
+</div>
+</div>
+<a id="a5efaccf46a0d96bdb44b3068bbdcdb11" name="a5efaccf46a0d96bdb44b3068bbdcdb11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5efaccf46a0d96bdb44b3068bbdcdb11">&#9670;&#160;</a></span>within_distance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<div class="memtemplate">
+template&lt;typename Function&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::within_distance </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Real const</td>          <td class="paramname"><span class="paramname"><em>max_distance</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>candidates</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>dist_fun</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&#160;const&#160;&amp;&#160;p,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(p);}</span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Find the candidates that are within a given distance from a point, using a custom distance function. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_distance</td><td>Maximum distance to consider. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Minimum distance candidates. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dist_fun</td><td>Custom distance function. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if at least one object is within the given distance, false otherwise. </dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Function</td><td>Type of the custom distance function. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1292,7 +1456,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Number of collision check (for statistic). </p>
+<p>Number of collision check. </p>
 
 </div>
 </div>
@@ -1317,7 +1481,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Number of dumpings (for statistic). </p>
+<p>Number of dumpings. </p>
 
 </div>
 </div>
@@ -1358,7 +1522,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_max_nodal_objects {2}</td>
+          <td class="memname"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_max_nodal_objects {1}</td>
         </tr>
       </table>
   </td>
@@ -1442,7 +1606,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABBtree).">Tree</a> stack. </p>
+<p><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABB tree).">Tree</a> stack. </p>
 
 </div>
 </div>
@@ -1471,8 +1635,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a24f6b3036eed12117f50fa4c7ebfc031" name="a24f6b3036eed12117f50fa4c7ebfc031"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24f6b3036eed12117f50fa4c7ebfc031">&#9670;&#160;</a></span>m_tree_structure</h2>
+<a id="afa8009bf7ddf296eb7cd30281e981b88" name="afa8009bf7ddf296eb7cd30281e981b88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa8009bf7ddf296eb7cd30281e981b88">&#9670;&#160;</a></span>m_tree_structure</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1483,7 +1647,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;<a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html">AABBsubtree</a>&gt; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_tree_structure</td>
+          <td class="memname">std::vector&lt;<a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a>&gt; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_tree_structure</td>
         </tr>
       </table>
   </td>
@@ -1492,7 +1656,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABBtree).">Tree</a> structure. </p>
+<p><a class="el" href="class_a_a_b_btree_1_1_tree.html" title="A class representing a non-recursive axis-aligned bounding box tree (AABB tree).">Tree</a> structure. </p>
 
 </div>
 </div>

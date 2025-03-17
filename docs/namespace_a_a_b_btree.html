@@ -141,7 +141,8 @@ $(function(){initNavTree('namespace_a_a_b_btree.html',''); initResizable(true); 
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">AABBtree Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -158,7 +159,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class container for a ray.  <a href="class_a_a_b_btree_1_1_ray.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_a_b_btree_1_1_tree.html">Tree</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class representing a <em>non-recursive</em> axis-aligned bounding box tree (<a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a>).  <a href="class_a_a_b_btree_1_1_tree.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class representing a <em>non-recursive</em> axis-aligned bounding box tree (AABB tree).  <a href="class_a_a_b_btree_1_1_tree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -186,6 +187,15 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a3076e2acccd9d95fea5910dea68e2fa9" id="r_a3076e2acccd9d95fea5910dea68e2fa9"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
 <tr class="memitem:a3076e2acccd9d95fea5910dea68e2fa9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a3076e2acccd9d95fea5910dea68e2fa9">Point</a> = Eigen::Vector&lt;Real, N&gt;</td></tr>
 <tr class="separator:a3076e2acccd9d95fea5910dea68e2fa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a32285b9b38e8e5e4b3aae2a54764240f" id="r_a32285b9b38e8e5e4b3aae2a54764240f"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
+<tr class="memitem:a32285b9b38e8e5e4b3aae2a54764240f"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a32285b9b38e8e5e4b3aae2a54764240f">operator&lt;&lt;</a> (std::ostream &amp;os, <a class="el" href="class_a_a_b_btree_1_1_box.html">Box</a>&lt; Real, N &gt; const &amp;b)</td></tr>
+<tr class="separator:a32285b9b38e8e5e4b3aae2a54764240f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a061fd3cfa2a7cc9f3003ef69bc32883a" id="r_a061fd3cfa2a7cc9f3003ef69bc32883a"><td class="memTemplParams" colspan="2">template&lt;typename Real, <a class="el" href="#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </td></tr>
+<tr class="memitem:a061fd3cfa2a7cc9f3003ef69bc32883a"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a061fd3cfa2a7cc9f3003ef69bc32883a">operator&lt;&lt;</a> (std::ostream &amp;os, <a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r)</td></tr>
+<tr class="separator:a061fd3cfa2a7cc9f3003ef69bc32883a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a> namespace contains all the classes and functions of the <a class="el" href="namespace_a_a_b_btree.html" title="Namespace for the AABBtree library.">AABBtree</a> library. </p>
@@ -330,6 +340,81 @@ template&lt;typename Real, <a class="el" href="#afe8ed3e31de700bac488261556f28fb
       </table>
 </div><div class="memdoc">
 <p>Eigen column vector of real numbers. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a32285b9b38e8e5e4b3aae2a54764240f" name="a32285b9b38e8e5e4b3aae2a54764240f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32285b9b38e8e5e4b3aae2a54764240f">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; AABBtree::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_a_a_b_btree_1_1_box.html">Box</a>&lt; Real, N &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Print the box info to an output stream. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">os</td><td>Output stream to print the box info to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to print. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Real</td><td>Type of the scalar coefficients. </td></tr>
+    <tr><td class="paramname">N</td><td>Dimension of the ambient space. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a061fd3cfa2a7cc9f3003ef69bc32883a" name="a061fd3cfa2a7cc9f3003ef69bc32883a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a061fd3cfa2a7cc9f3003ef69bc32883a">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; AABBtree::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>r</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Print the ray info to an output stream. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">os</td><td>Output stream to print the ray info to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to print. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Real</td><td>Type of the scalar coefficients. </td></tr>
+    <tr><td class="paramname">N</td><td>Dimension of the ambient space. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

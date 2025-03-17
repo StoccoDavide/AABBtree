@@ -15,6 +15,8 @@
 #ifndef AABBTREE_BOX_HXX
 #define AABBTREE_BOX_HXX
 
+#include "AABBtree/Ray.hxx"
+
 namespace AABBtree {
 
   // Forward declaration of the Ray class
@@ -766,7 +768,32 @@ namespace AABBtree {
     Real exterior_distance(Ray<Real, N> const & r, Point & p1, Point & p2, Real tol = DUMMY_TOL) const
     {return r.exterior_distance(*this, p2, p1, tol);}
 
+    /**
+    * Print the box info to an output stream.
+    * \param[in] os Output stream to print the box info to.
+    */
+    void print(std::ostream & os) const
+    {
+      os <<
+        "────────────────────────────────────────────────────────────────────────────────" << std::endl <<
+        "BOX INFO" << std::endl <<
+        "\tmin = " << this->m_min.transpose() << std::endl <<
+        "\tmax = " << this->m_max.transpose() << std::endl <<
+        "────────────────────────────────────────────────────────────────────────────────" << std::endl;
+    }
+
   }; // class Box
+
+  /**
+  * Print the box info to an output stream.
+  * \param[in] os Output stream to print the box info to.
+  * \param[in] b Box to print.
+  * \tparam Real Type of the scalar coefficients.
+  * \tparam N Dimension of the ambient space.
+  */
+  template <typename Real, Integer N>
+  std::ostream & operator<<(std::ostream & os, Box<Real, N> const & b) {b.print(os); return os;}
+
 
 } // namespace AABBtree
 

@@ -13,3 +13,7 @@ include(AABBtreeMatplot)
 file(GLOB_RECURSE BENCHMARK_FUNCTIONS "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_functions.cc")
 add_executable(benchmark_functions ${BENCHMARK_FUNCTIONS})
 target_link_libraries(benchmark_functions PRIVATE AABBtree Matplot++::matplot)
+
+file(GLOB_RECURSE BENCHMARK_ASTEROIDS "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_asteroids.cc")
+add_executable(benchmark_asteroids ${BENCHMARK_ASTEROIDS})
+target_link_libraries(benchmark_asteroids PRIVATE AABBtree Matplot++::matplot)

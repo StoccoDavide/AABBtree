@@ -11,5 +11,7 @@ var namespace_a_a_b_btree =
     [ "Integer", "namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2", null ],
     [ "OutStream", "namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4", null ],
     [ "Point", "namespace_a_a_b_btree.html#a3076e2acccd9d95fea5910dea68e2fa9", null ],
-    [ "Vector", "namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5", null ]
+    [ "Vector", "namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5", null ],
+    [ "operator<<", "namespace_a_a_b_btree.html#a32285b9b38e8e5e4b3aae2a54764240f", null ],
+    [ "operator<<", "namespace_a_a_b_btree.html#a061fd3cfa2a7cc9f3003ef69bc32883a", null ]
 ];

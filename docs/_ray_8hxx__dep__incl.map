@@ -1,5 +1,13 @@
 <map id="include/AABBtree/Ray.hxx" name="include/AABBtree/Ray.hxx">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,181,31"/>
-<area shape="rect" id="Node000002" href="$_a_a_b_btree_8hh.html" title=" " alt="" coords="22,79,164,105"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,46,96,79,90,79,90,46"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="64,5,239,31"/>
+<area shape="rect" id="Node000002" href="$_a_a_b_btree_8hh.html" title=" " alt="" coords="5,226,148,252"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,40,74,57,53,80,46,99,43,119,47,160,59,197,72,225,67,227,54,199,42,161,38,119,41,97,49,78,70,53,97,36"/>
+<area shape="rect" id="Node000003" href="$_box_8hxx.html" title=" " alt="" coords="63,79,239,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="145,46,147,78,142,79,140,46"/>
+<area shape="poly" id="edge4_Node000003_Node000001" title=" " alt="" coords="157,64,155,31,161,31,163,63"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="130,118,104,154,89,193,81,226,76,225,84,191,99,151,126,115"/>
+<area shape="rect" id="Node000004" href="$_tree_8hxx.html" title=" " alt="" coords="114,153,293,178"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="171,116,197,151,192,154,167,119"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="170,189,99,228,97,223,167,184"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="278,149,306,153,316,158,319,166,314,174,301,179,263,182,263,176,300,174,311,170,314,165,312,162,305,158,277,154"/>
 </map>

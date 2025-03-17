@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['child_5fl_0',['child_l',['../struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html#ac112d1b31af5c6d5d35ef75bbd014754',1,'AABBtree::Tree::AABBsubtree']]],
-  ['child_5fr_1',['child_r',['../struct_a_a_b_btree_1_1_tree_1_1_a_a_b_bsubtree.html#a2069dd0e67578c149881cbd70eb25e9c',1,'AABBtree::Tree::AABBsubtree']]]
+  ['check_5fcounter_0',['check_counter',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a3e9667eeb843fd5737b8246609efc96e',1,'AABBtree::Tree::Statistics']]],
+  ['child_5fl_1',['child_l',['../struct_a_a_b_btree_1_1_tree_1_1_node.html#a37a5ce2166742198311629d7ed5926be',1,'AABBtree::Tree::Node']]],
+  ['child_5fr_2',['child_r',['../struct_a_a_b_btree_1_1_tree_1_1_node.html#a882e19e1d40c34b7b16a60900ae14193',1,'AABBtree::Tree::Node']]]
 ];

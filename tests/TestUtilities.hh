@@ -113,6 +113,22 @@ namespace TestUtilities {
     }
   }
 
+  // Plot a circle
+  template <typename Real, Integer N>
+  void plot_circle(AABBtree::Vector<Real, 2> const & center, Real const radius, std::string const & color,
+    Real const line_width = 1, Integer const n_points = 100) {
+    std::vector<Real> x, y;
+    Real const d_theta{2.0*M_PI/n_points};
+    for (Integer i{0}; i < n_points; ++i) {
+      Real const theta{d_theta*i};
+      x.push_back(center[0] + radius*std::cos(theta));
+      y.push_back(center[1] + radius*std::sin(theta));
+    }
+    if (ax) {
+      ax->plot(x, y)->line_width(line_width).color(color);
+    }
+  }
+
   // Plot a segment
   template <typename Real, Integer N>
   void plot_segment(AABBtree::Vector<Real, N> const & p_1, AABBtree::Vector<Real, N> const & p_2,
