@@ -249,10 +249,8 @@ int main() {
   tree.print(std::cout);
 
   // Find the clusters
-  auto const & a_1{tree.box(5)};
-  a_1->print(std::cout);
   IndexSet cluster;
-  Box cluster_box(3.0*a_1->min(), 3.0*a_1->max());
+  Box cluster_box(-5.0, -5.0, -5.0, 5.0, 5.0, 5.0);
   tree.intersect(cluster_box, cluster);
   std::cout << "Cluster size: " << cluster.size() << std::endl;
 

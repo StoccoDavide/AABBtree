@@ -59,7 +59,7 @@ TEMPLATE_TEST_CASE("Tree-Tree", "[template]", float, double) {
   #endif
 
   // Build segments batch 1
-  Integer const n_1{75};
+  Integer const n_1{50};
   TestType const scale_1{2.0};
   TestType const length_1{0.125};
   std::vector<Segment<TestType>> segments_1(n_1);

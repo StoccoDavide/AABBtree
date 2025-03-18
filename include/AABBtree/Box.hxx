@@ -182,7 +182,7 @@ namespace AABBtree {
     * dimension.
     * \return True if the box is empty, false otherwise.
     */
-    bool is_empty() const {return !(this->m_max.array() > this->m_min.array()).all();}
+    bool is_empty() const {return (this->m_max.array() < this->m_min.array()).any();}
 
     /**
     * Check if the current box is approximately equal to another box.

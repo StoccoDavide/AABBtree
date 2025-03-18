@@ -393,11 +393,13 @@ namespace AABBtree {
         Integer j{node.box_ptr};
         node.box_num = n_long;
         node.box_long.set_empty();
-        for (Integer i{0}; i < n_long; ++i) node.box_long.extend(*(*this->m_boxes)[m_tree_boxes_map[j++]]);
+        for (Integer i{0}; i < n_long; ++i) {node.box_long.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);}
         node_l.box.set_empty(); node_l.box_ptr = j;
-        for (Integer i{0}; i < n_left; ++i) node_l.box.extend(*(*this->m_boxes)[m_tree_boxes_map[j++]]);
+        for (Integer i{0}; i < n_left; ++i) {node_l.box.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);}
+        node_l.box_long = node_l.box;
         node_r.box.set_empty(); node_r.box_ptr = j;
-        for (Integer i{0}; i < n_right; ++i) node_r.box.extend(*(*this->m_boxes)[m_tree_boxes_map[j++]]);
+        for (Integer i{0}; i < n_right; ++i) {node_r.box.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);}
+        node_r.box_long = node_r.box;
 
         // Push nodes on tree structure
         this->m_tree_structure.emplace_back(node_l);
@@ -449,15 +451,18 @@ namespace AABBtree {
         if (!node.box.intersects(obj)) {continue;}
 
         // Intersect the object with the long boxes on the node
-        // CHECKME if (node.box_num > 0 && node.box_long.intersects(obj)) {
-          Integer const id_ini{node.box_ptr};
-          Integer const id_end{node.box_ptr + node.box_num};
-          for (Integer i{id_ini}; i < id_end; ++i) {
-            Integer const pos{this->m_tree_boxes_map[i]};
-            ++this->m_check_counter;
-            if (boxes[pos]->intersects(obj)) {candidates.insert(pos);}
+        if (node.box_num > 0) {
+          ++this->m_check_counter;
+          if (node.box_long.intersects(obj)) {
+            Integer const id_ini{node.box_ptr};
+            Integer const id_end{node.box_ptr + node.box_num};
+            for (Integer i{id_ini}; i < id_end; ++i) {
+              Integer const pos{this->m_tree_boxes_map[i]};
+              ++this->m_check_counter;
+              if (boxes[pos]->intersects(obj)) {candidates.insert(pos);}
+            }
           }
-        //}
+        }
 
         // Push children on the stack if thay are not leafs
         if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
@@ -513,17 +518,20 @@ namespace AABBtree {
         if (!node_1.box.intersects(node_2.box)) {continue;}
 
         // Intersect the long boxes on the nodes
-        if (node_1.box_num > 0 && node_2.box_num > 0) {// CHECKME } && node_1.box_long.intersects(node_2.box_long)) {
-          Integer const id_1_ini{node_1.box_ptr};
-          Integer const id_1_end{node_1.box_ptr + node_1.box_num};
-          Integer const id_2_ini{node_2.box_ptr};
-          Integer const id_2_end{node_2.box_ptr + node_2.box_num};
-          for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-            Integer const pos_1{this->m_tree_boxes_map[i]};
-            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-              Integer const pos_2{tree.m_tree_boxes_map[j]};
-              ++this->m_check_counter;
-              if (boxes_1[pos_1]->intersects(*boxes_2[pos_2])) {candidates[pos_1].insert(pos_2);}
+        if (node_1.box_num > 0 && node_2.box_num > 0) {
+          ++this->m_check_counter;
+          if (node_1.box_long.intersects(node_2.box_long)) {
+            Integer const id_1_ini{node_1.box_ptr};
+            Integer const id_1_end{node_1.box_ptr + node_1.box_num};
+            Integer const id_2_ini{node_2.box_ptr};
+            Integer const id_2_end{node_2.box_ptr + node_2.box_num};
+            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+              Integer const pos_1{this->m_tree_boxes_map[i]};
+              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+                Integer const pos_2{tree.m_tree_boxes_map[j]};
+                ++this->m_check_counter;
+                if (boxes_1[pos_1]->intersects(*boxes_2[pos_2])) {candidates[pos_1].insert(pos_2);}
+              }
             }
           }
         }
@@ -533,12 +541,14 @@ namespace AABBtree {
           this->m_stack.emplace_back(node_1); this->m_stack.emplace_back(node_2);
         };
         //if (id_s >= 0 && id_2 >= 0) {
-        //  if (node_1.box_tot_num > node_2.box_tot_num) {
+        //  if (node_1.box_tot_num >= node_2.box_tot_num) {
         //    stack_emplace_back(node_1.child_l, id_2);
         //    stack_emplace_back(node_1.child_r, id_2);
+        //    if (node_1.box_num > 0) {stack_emplace_back(negate(id_1), id_2);}
         //  } else {
-        //    stack_emplace_back(id_1, node_2.child_l);
-        //    stack_emplace_back(id_1, node_2.child_r);
+        //    stack_emplace_back(id_s, node_2.child_l);
+        //    stack_emplace_back(id_s, node_2.child_r);
+        //    if (node_2.box_num > 0) {stack_emplace_back(id_s, negate(id_2));}
         //  }
         //} else
         if (id_s >= 0) {
@@ -616,20 +626,23 @@ namespace AABBtree {
         if (tmp_distance > distance) {continue;}
 
         // Compute the distance between the object and the long boxes on the node
-        // CHECKME if (node.box_num > 0 && node.box_long.interior_distance(obj) < distance) {
-          Integer const id_ini{node.box_ptr};
-          Integer const id_end{node.box_ptr + node.box_num};
-          for (Integer i{id_ini}; i < id_end; ++i) {
-            Integer const pos{this->m_tree_boxes_map[i]};
-            ++this->m_check_counter;
-            tmp_distance = boxes[pos]->interior_distance(obj);
-            if (tmp_distance < distance) {
-              candidates.clear(); candidates.insert(pos); distance = tmp_distance;
-            } else if (tmp_distance == distance) {
-              candidates.insert(pos);
+        if (node.box_num > 0) {
+          ++this->m_check_counter;
+          if (node.box_long.interior_distance(obj) <= distance) {
+            Integer const id_ini{node.box_ptr};
+            Integer const id_end{node.box_ptr + node.box_num};
+            for (Integer i{id_ini}; i < id_end; ++i) {
+              Integer const pos{this->m_tree_boxes_map[i]};
+              ++this->m_check_counter;
+              tmp_distance = boxes[pos]->interior_distance(obj);
+              if (tmp_distance < distance) {
+                candidates.clear(); candidates.insert(pos); distance = tmp_distance;
+              } else if (tmp_distance == distance) {
+                candidates.insert(pos);
+              }
             }
           }
-        //}
+        }
 
         // Push children on the stack if thay are not leafs
         if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
@@ -689,21 +702,24 @@ namespace AABBtree {
         if (tmp_distance > distance) {continue;}
 
         // Compute the distance between the long boxes on the nodes
-        if (node_1.box_num > 0 && node_2.box_num > 0) {//CHECKME && node_1.box_long.interior_distance(node_2.box_long) < distance) {
-          Integer const id_1_ini{node_1.box_ptr};
-          Integer const id_1_end{node_1.box_ptr + node_1.box_num};
-          Integer const id_2_ini{node_2.box_ptr};
-          Integer const id_2_end{node_2.box_ptr + node_2.box_num};
-          for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-            Integer const pos_1{this->m_tree_boxes_map[i]};
-            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-              Integer const pos_2{tree.m_tree_boxes_map[j]};
-              ++this->m_check_counter;
-              tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
-              if (tmp_distance < distance) {
-                candidates.clear(); candidates[pos_1].insert(pos_2); distance = tmp_distance;
-              } else if (tmp_distance == distance) {
-                candidates[pos_1].insert(pos_2);
+        if (node_1.box_num > 0 && node_2.box_num > 0) {
+          ++this->m_check_counter;
+          if (node_1.box_long.interior_distance(node_2.box_long) <= distance) {
+            Integer const id_1_ini{node_1.box_ptr};
+            Integer const id_1_end{node_1.box_ptr + node_1.box_num};
+            Integer const id_2_ini{node_2.box_ptr};
+            Integer const id_2_end{node_2.box_ptr + node_2.box_num};
+            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+              Integer const pos_1{this->m_tree_boxes_map[i]};
+              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+                Integer const pos_2{tree.m_tree_boxes_map[j]};
+                ++this->m_check_counter;
+                tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
+                if (tmp_distance < distance) {
+                  candidates.clear(); candidates[pos_1].insert(pos_2); distance = tmp_distance;
+                } else if (tmp_distance == distance) {
+                  candidates[pos_1].insert(pos_2);
+                }
               }
             }
           }
@@ -713,22 +729,25 @@ namespace AABBtree {
         auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
           this->m_stack.emplace_back(node_1); this->m_stack.emplace_back(node_2);
         };
-        //if (id_s >= 0 && id_2 >= 0) {
-        //  if (node_1.box_tot_num > node_2.box_tot_num) {
+        //if (id_s1 >= 0 && id_s2 >= 0) {
+        //  if (node_1.box_tot_num >= node_2.box_tot_num) {
         //    stack_emplace_back(node_1.child_l, id_2);
         //    stack_emplace_back(node_1.child_r, id_2);
+        //    if (node_1.box_num > 0) {stack_emplace_back(negate(id_1), id_2);}
         //  } else {
-        //    stack_emplace_back(id_1, node_2.child_l);
-        //    stack_emplace_back(id_1, node_2.child_r);
+        //    stack_emplace_back(id_s, node_2.child_l);
+        //    stack_emplace_back(id_s, node_2.child_r);
+        //    if (node_2.box_num > 0) {stack_emplace_back(id_s, negate(id_2));}
         //  }
         //} else
-        if (id_s >= 0) {
+        if (id_s1 >= 0) {
           stack_emplace_back(node_1.child_l, id_2);
           stack_emplace_back(node_1.child_r, id_2);
           if (node_1.box_num > 0) {stack_emplace_back(negate(id_1), id_2);}
-        } else if (id_2 >= 0) {
+        } else if (id_s2 >= 0) {
           stack_emplace_back(id_s, node_2.child_l);
           stack_emplace_back(id_s, node_2.child_r);
+          if (node_2.box_num > 0) {stack_emplace_back(id_1, negate(id_2));}
         }
       }
 
@@ -741,13 +760,13 @@ namespace AABBtree {
     * \param[in] point Point to compute the distance to.
     * \param[in] max_distance Maximum distance to consider.
     * \param[out] candidates Minimum distance candidates.
-    * \param[in] dist_fun Custom distance function.
+    * \param[in] distance_function Custom distance function (default is the interior distance).
     * \return True if at least one object is within the given distance, false otherwise.
     * \tparam Function Type of the custom distance function.
     */
     template <typename Function>
     bool within_distance(Point const & point, Real const max_distance, IndexSet & candidates, Function
-      dist_fun = [](Point const & p, Box const & b) {return b.interior_distance(p);}) const
+      distance_function = [](Point const & p, Box const & b) {return b.interior_distance(p);}) const
     {
       // Reset statistics
       this->m_check_counter = 0;
@@ -775,20 +794,23 @@ namespace AABBtree {
 
         // Compute the distance between the point and the bounding box
         ++this->m_check_counter;
-        Real distance{dist_fun(point, node.box)};
+        Real distance{distance_function(point, node.box)};
 
         // If the distance is greater than the maximum distance, skip the node
         if (distance > max_distance) {continue;}
 
         // Compute the distance between the point and the long boxes on the node
         if (node.box_num > 0) {
-          Integer const id_ini{node.box_ptr};
-          Integer const id_end{node.box_ptr + node.box_num};
-          for (Integer i{id_ini}; i < id_end; ++i) {
-            Integer const pos{this->m_tree_boxes_map[i]};
-            ++this->m_check_counter;
-            Real tmp_distance{dist_fun(point, *boxes[pos])};
-            if (tmp_distance <= max_distance) {candidates.insert(pos);}
+          ++this->m_check_counter;
+          if (distance_function(point, node.box_long) <= max_distance) {
+            Integer const id_ini{node.box_ptr};
+            Integer const id_end{node.box_ptr + node.box_num};
+            for (Integer i{id_ini}; i < id_end; ++i) {
+              Integer const pos{this->m_tree_boxes_map[i]};
+              ++this->m_check_counter;
+              Real tmp_distance{distance_function(point, *boxes[pos])};
+              if (tmp_distance <= max_distance) {candidates.insert(pos);}
+            }
           }
         }
 
