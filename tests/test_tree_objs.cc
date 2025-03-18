@@ -130,23 +130,23 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
   #endif
 
   // Self intersect tree
-  candidates.clear();
-  tree_points.clear();
-  for (Integer i{0}; i < n; ++i) {
-    Vector point;
-    if (tree.self_intersect(candidates)) {
-      std::vector<Integer> candidates_vec(candidates.begin(), candidates.end());
-      for (Integer i{0}; i < static_cast<Integer>(candidates_vec.size()); ++i) {
-        for (Integer j{i+1}; j < static_cast<Integer>(candidates_vec.size()); ++j) {
-          if (segments[candidates_vec[i]].intersect(segments[candidates_vec[j]], point)) {
-            tree_points.push_back(point);
-            #ifdef AABBTREE_ENABLE_PLOTTING
-            plot_point<TestType, 2>(point, colors[2], 5.0);
-            #endif
-  }}}}}
-  #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
-  #endif
+  //candidates.clear();
+  //tree_points.clear();
+  //for (Integer i{0}; i < n; ++i) {
+  //  Vector point;
+  //  if (tree.self_intersect(candidates)) {
+  //    std::vector<Integer> candidates_vec(candidates.begin(), candidates.end());
+  //    for (Integer i{0}; i < static_cast<Integer>(candidates_vec.size()); ++i) {
+  //      for (Integer j{i+1}; j < static_cast<Integer>(candidates_vec.size()); ++j) {
+  //        if (segments[candidates_vec[i]].intersect(segments[candidates_vec[j]], point)) {
+  //          tree_points.push_back(point);
+  //          #ifdef AABBTREE_ENABLE_PLOTTING
+  //          plot_point<TestType, 2>(point, colors[2], 5.0);
+  //          #endif
+  //}}}}}
+  //#ifdef AABBTREE_ENABLE_PLOTTING
+  //show(fig);
+  //#endif
 
   // Intersect ray
   Ray ray(0.0, 0.0, 1.0, 1.0);

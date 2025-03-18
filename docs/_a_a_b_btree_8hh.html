@@ -150,6 +150,7 @@ $(function(){initNavTree('_a_a_b_btree_8hh.html',''); initResizable(true); });
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;array&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;queue&gt;</code><br />
 <code>#include &lt;set&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
@@ -157,6 +158,8 @@ $(function(){initNavTree('_a_a_b_btree_8hh.html',''); initResizable(true); });
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;numeric&gt;</code><br />
+<code>#include &lt;iterator&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;Eigen/Dense&gt;</code><br />
 <code>#include &lt;Eigen/Geometry&gt;</code><br />
 <code>#include &quot;<a class="el" href="_box_8hxx_source.html">AABBtree/Box.hxx</a>&quot;</code><br />
@@ -165,7 +168,7 @@ $(function(){initNavTree('_a_a_b_btree_8hh.html',''); initResizable(true); });
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for AABBtree.hh:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="_a_a_b_btree_8hh__incl.svg" width="1423" height="258"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="_a_a_b_btree_8hh__incl.svg" width="1691" height="258"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="_a_a_b_btree_8hh_source.html">Go to the source code of this file.</a></p>
@@ -237,7 +240,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (!(COND)) {<a class="code hl_define" href="#af5818f5b107e3b761bad6a7911e24480">AABBTREE_ERROR</a>(MSG);}</div>
-<div class="ttc" id="a_a_a_b_btree_8hh_html_af5818f5b107e3b761bad6a7911e24480"><div class="ttname"><a href="#af5818f5b107e3b761bad6a7911e24480">AABBTREE_ERROR</a></div><div class="ttdeci">#define AABBTREE_ERROR(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:35</div></div>
+<div class="ttc" id="a_a_a_b_btree_8hh_html_af5818f5b107e3b761bad6a7911e24480"><div class="ttname"><a href="#af5818f5b107e3b761bad6a7911e24480">AABBTREE_ERROR</a></div><div class="ttdeci">#define AABBTREE_ERROR(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:38</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -260,7 +263,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (!(COND)) {<a class="code hl_define" href="#a6ea9ae947f7a5c7f7e7883441106bfc7">AABBTREE_WARNING</a>(MSG);}</div>
-<div class="ttc" id="a_a_a_b_btree_8hh_html_a6ea9ae947f7a5c7f7e7883441106bfc7"><div class="ttname"><a href="#a6ea9ae947f7a5c7f7e7883441106bfc7">AABBTREE_WARNING</a></div><div class="ttdeci">#define AABBTREE_WARNING(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:48</div></div>
+<div class="ttc" id="a_a_a_b_btree_8hh_html_a6ea9ae947f7a5c7f7e7883441106bfc7"><div class="ttname"><a href="#a6ea9ae947f7a5c7f7e7883441106bfc7">AABBTREE_WARNING</a></div><div class="ttdeci">#define AABBTREE_WARNING(MSG)</div><div class="ttdef"><b>Definition</b> AABBtree.hh:51</div></div>
 </div><!-- fragment -->
 </div>
 </div>

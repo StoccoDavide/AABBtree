@@ -18,6 +18,7 @@
 #include <type_traits>
 #include <array>
 #include <vector>
+#include <queue>
 #include <set>
 #include <map>
 #include <iostream>
@@ -25,6 +26,8 @@
 #include <memory>
 #include <algorithm>
 #include <numeric>
+#include <iterator>
+#include <functional>
 
 // Eigen library
 #include <Eigen/Dense>

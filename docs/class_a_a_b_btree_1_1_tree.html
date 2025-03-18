@@ -213,9 +213,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac1aa9bbca13e25ebcea21dcf991fc248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1deed7eb803e029487abc3e30d4c608" id="r_ad1deed7eb803e029487abc3e30d4c608"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1deed7eb803e029487abc3e30d4c608">distance</a> (<a class="el" href="class_a_a_b_btree_1_1_tree.html">Tree</a> const &amp;tree, <a class="el" href="namespace_a_a_b_btree.html#a46a02a2772464805830f5ca336094870">IndexMap</a> &amp;candidates) const</td></tr>
 <tr class="separator:ad1deed7eb803e029487abc3e30d4c608"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5efaccf46a0d96bdb44b3068bbdcdb11" id="r_a5efaccf46a0d96bdb44b3068bbdcdb11"><td class="memTemplParams" colspan="2">template&lt;typename Function&gt; </td></tr>
-<tr class="memitem:a5efaccf46a0d96bdb44b3068bbdcdb11"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5efaccf46a0d96bdb44b3068bbdcdb11">within_distance</a> (<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;point, Real const max_distance, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function dist_fun=[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;p, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(p);}) const</td></tr>
-<tr class="separator:a5efaccf46a0d96bdb44b3068bbdcdb11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80ad07d812f82623139b72fd67caef55" id="r_a80ad07d812f82623139b72fd67caef55"><td class="memTemplParams" colspan="2">template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </td></tr>
+<tr class="memitem:a80ad07d812f82623139b72fd67caef55"><td class="memTemplItemLeft" align="right" valign="top">Real&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a80ad07d812f82623139b72fd67caef55">closest</a> (<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;point, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const n, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function distance_function=[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;p, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(p);}) const</td></tr>
+<tr class="separator:a80ad07d812f82623139b72fd67caef55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16ef61b10384d6df974a15ff4fce3242" id="r_a16ef61b10384d6df974a15ff4fce3242"><td class="memTemplParams" colspan="2">template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </td></tr>
+<tr class="memitem:a16ef61b10384d6df974a15ff4fce3242"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a16ef61b10384d6df974a15ff4fce3242">within_distance</a> (<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;point, Real const max_distance, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function distance_function=[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;p, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(p);}) const</td></tr>
+<tr class="separator:a16ef61b10384d6df974a15ff4fce3242"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a159ce0f28a69b58a63ea09abac3150" id="r_a8a159ce0f28a69b58a63ea09abac3150"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a159ce0f28a69b58a63ea09abac3150">depth</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;d) const</td></tr>
 <tr class="separator:a8a159ce0f28a69b58a63ea09abac3150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72b47a92dcabaf12d494767721ca7b3d" id="r_a72b47a92dcabaf12d494767721ca7b3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72b47a92dcabaf12d494767721ca7b3d">nodes</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;l, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;n, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;b) const</td></tr>
@@ -571,6 +574,65 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </table>
 </div><div class="memdoc">
 <p>Clear the tree. </p>
+
+</div>
+</div>
+<a id="a80ad07d812f82623139b72fd67caef55" name="a80ad07d812f82623139b72fd67caef55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80ad07d812f82623139b72fd67caef55">&#9670;&#160;</a></span>closest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<div class="memtemplate">
+template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::closest </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>candidates</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>distance_function</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[]&#160;(<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&#160;const&#160;&amp;&#160;p,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(p);}</span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Find the first \( n \) candidates from a point. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n</td><td>Number of candidates to find. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>First \( n \) candidates. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">distance_function</td><td>Custom distance function (default is the interior distance). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The maximum distance between the candidates and the point. The return value is negative if no candidates are found. </dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Function</td><td>Type of the custom distance function. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1326,15 +1388,15 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a5efaccf46a0d96bdb44b3068bbdcdb11" name="a5efaccf46a0d96bdb44b3068bbdcdb11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5efaccf46a0d96bdb44b3068bbdcdb11">&#9670;&#160;</a></span>within_distance()</h2>
+<a id="a16ef61b10384d6df974a15ff4fce3242" name="a16ef61b10384d6df974a15ff4fce3242"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16ef61b10384d6df974a15ff4fce3242">&#9670;&#160;</a></span>within_distance()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
 <div class="memtemplate">
-template&lt;typename Function&gt; </div>
+template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1357,7 +1419,7 @@ template&lt;typename Function&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>dist_fun</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&#160;const&#160;&amp;&#160;p,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(p);}</span>&#160;) const</td>
+          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>distance_function</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[]&#160;(<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&#160;const&#160;&amp;&#160;p,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(p);}</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1371,7 +1433,7 @@ template&lt;typename Function&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_distance</td><td>Maximum distance to consider. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Minimum distance candidates. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dist_fun</td><td>Custom distance function. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">distance_function</td><td>Custom distance function (default is the interior distance). </td></tr>
   </table>
   </dd>
 </dl>

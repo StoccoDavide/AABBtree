@@ -43,14 +43,14 @@ static const double GM{0.0002959122082855911}; // Gravitational parameter of the
 // Keplerian orbital elements
 template <typename Real, typename Integer>
 struct Keplerian {
-  Integer id; // asteroid ID
-  Real epoch; // epoch (Julian date)
-  Real a; // semi-major axis (AU)
-  Real e; // eccentricity
-  Real i; // inclination (rad)
-  Real lan; // longitude of ascending node (rad)
-  Real argperi; // argument of periapsis (rad)
-  Real m; // mean anomaly (rad)
+  Integer id;   // Asteroid ID
+  Real epoch;   // Epoch (Julian date)
+  Real a;       // Semi-major axis (AU)
+  Real e;       // Eccentricity
+  Real i;       // Inclination (rad)
+  Real lan;     // Longitude of ascending node (rad)
+  Real argperi; // Argument of periapsis (rad)
+  Real m;       // Mean anomaly (rad)
 };
 
 // Parse orbital data
@@ -76,10 +76,10 @@ void Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & da
     Keplerian<Real, Integer> entry;
     if (!(iss >> entry.id >> entry.epoch >> entry.a >> entry.e >> entry.i >> entry.lan >> entry.argperi >> entry.m))
     {std::cerr << "Error parsing line: " << line << std::endl; continue;}
-    entry.i *= M_PI/180.0; // Convert to radians
-    entry.lan *= M_PI/180.0; // Convert to radians
-    entry.argperi *= M_PI/180.0; // Convert to radians
-    entry.m *= M_PI/180.0; // Convert to radians
+    entry.i       *= M_PI/180.0;
+    entry.lan     *= M_PI/180.0;
+    entry.argperi *= M_PI/180.0;
+    entry.m       *= M_PI/180.0;
     data.emplace_back(entry);
   }
 }
@@ -115,20 +115,30 @@ void KeplerianToCartesian(Keplerian<Real, Integer> const & kepl, Real & x, Real 
 
 // Propagate orbital elements over time
 template <typename Real>
-void Propagate(Keplerian<Real, int> & kepl, Real t, Real t0 = 0.0) {
+void Propagate(Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0) {
   Real n{std::sqrt(static_cast<Real>(GM)/(kepl.a*kepl.a*kepl.a))}; // Mean motion (rad/day)
-  kepl.m = std::fmod(kepl.m + n*(t - t0), 2.0*M_PI);  // Keep within [0,2π]
+  kepl.m = std::fmod(kepl.m + n*(t_ini - t_end), 2.0*M_PI);  // Keep within [0,2π]
   if (kepl.m < 0) {kepl.m += 2.0*M_PI;}
 }
 
 // Main function
 int main() {
+
   using Real = double;
   using Integer = AABBtree::Integer;
-  using Vector = AABBtree::Vector<Real, 3>;
-  using Box = AABBtree::Box<Real, 3>;
-  using Tree = AABBtree::Tree<Real, 3>;
-  using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 3>;
+
+  // Constants
+  constexpr Integer n_asteroids{60000};
+  constexpr Integer n_clusters{100};
+  constexpr Integer n_neighbours{20};
+  constexpr Real t_ini{64328.0}; // January 1, 2035
+  constexpr Real t_end{t_ini + 30.0};
+  constexpr Integer t_steps{10};
+
+  using Vector = AABBtree::Vector<Real, 3*t_steps>;
+  using Box = AABBtree::Box<Real, 3*t_steps>;
+  using Tree = AABBtree::Tree<Real, 3*t_steps>;
+  using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 3*t_steps>;
   using TicToc = BenchmarkUtilities::TicToc<Real>;
 
   // Initialize the timer
@@ -136,109 +146,35 @@ int main() {
 
   // Parse asteroids data
   std::string fname = "./../benchmarks/asteroids.txt"; // from build directory
-  Integer n{60};
   std::vector<Keplerian<Real, Integer>> data;
-  timer.tic(); Parse<Real, Integer>(fname, data, n); timer.toc();
+  timer.tic(); Parse<Real, Integer>(fname, data, n_asteroids); timer.toc();
   std::cout << "Data parsed in " << timer.elapsed_us() << " us" << std::endl;
 
   // Set the initial and final times
-  Real t_ini{64328.0}; // January 1, 2035
-  Real t_end{t_ini + 10.0};
-
-  // Plot an asteroid and its evolution in time [0, 1month]
-  #ifdef AABBTREE_ENABLE_PLOTTING
-  {
-    SET_PLOT
-    Integer id{0}, steps{100};
-    std::vector<Real> t(steps), x(steps), y(steps), z(steps);
-    Real max_xy{0.0};
-    Real t_step{(t_end - t_ini)/(steps - 1)};
-    KeplerianToCartesian(data[id], x[0], y[0], z[0]);
-    for (Integer i{1}; i < steps; ++i) {
-      t[i] = t[i-1] + t_step;
-      Propagate(data[id], t[i], t[i-1]);
-      KeplerianToCartesian(data[id], x[i], y[i], z[i]);
-      max_xy = std::max(max_xy, std::max(std::abs(x[i]), std::abs(y[i])));
-    }
-    ax->hold(true);
-    ax->plot(x, y, "-o");
-    ax->xlim({-max_xy, max_xy}); ax->xlabel("x (AU)");
-    ax->ylim({-max_xy, max_xy}); ax->ylabel("y (AU)");
-    ax->hold(false);
-    show(fig);
-  }
-  #endif
-
-  // Plot the asteroids
-  #ifdef AABBTREE_ENABLE_PLOTTING
-  {
-    SET_PLOT
-    std::vector<Real> x(n), y(n), z(n);
-    Real max_xy{0.0};
-    Real max_xz{0.0};
-    for (Integer i{0}; i < n; ++i) {
-      KeplerianToCartesian(data[i], x[i], y[i], z[i]);
-      max_xy = std::max(max_xy, std::max(std::abs(x[i]), std::abs(y[i])));
-      max_xz = std::max(max_xz, std::max(std::abs(x[i]), std::abs(z[i])));
-    }
-    ax_xy->hold(true);
-    ax_xy->plot(x, y, "o");
-    ax_xy->xlim({-max_xy, max_xy}); ax_xy->xlabel("x (AU)");
-    ax_xy->ylim({-max_xy, max_xy}); ax_xy->ylabel("y (AU)");
-    ax_xy->hold(false);
-    ax_xz->hold(true);
-    ax_xz->plot(x, z, "o");
-    ax_xz->xlim({-max_xy, max_xy}); ax_xz->xlabel("x (AU)");
-    ax_xz->ylim({-max_xz, max_xz}); ax_xz->ylabel("z (AU)");
-    ax_xz->hold(false);
-    show(fig_xy);
-    show(fig_xz);
-  }
-  #endif
-
-  // Propagate asteroids over time
-  std::vector<Keplerian<Real, Integer>> data_new(data);
-  timer.tic();
-  for (Integer i{0}; i < n; ++i) {Propagate(data_new[i], t_ini, t_end);}
-  timer.toc();
-
-  // Plot the propagated asteroids
-  #ifdef AABBTREE_ENABLE_PLOTTING
-  {
-    std::vector<Real> x_new(n), y_new(n), z_new(n);
-    for (Integer i{0}; i < n; ++i) {
-      KeplerianToCartesian(data_new[i], x_new[i], y_new[i], z_new[i]);
-    }
-    ax_xy->hold(true);
-    ax_xy->plot(x_new, y_new, "ro");
-    ax_xy->hold(false);
-    ax_xz->hold(true);
-    ax_xz->plot(x_new, z_new, "ro");
-    ax_xz->hold(false);
-    show(fig_xy);
-    show(fig_xz);
-  }
-  #endif
+  Real dt{(t_end - t_ini)/t_steps};
 
   // Prepare the boxes
   std::unique_ptr<BoxUniquePtrList> boxes = std::make_unique<BoxUniquePtrList>();
-  boxes->reserve(n);
-  Real x_min, y_min, z_min, x_max, y_max, z_max;
-  //Real a_tol{0.1}, a_cnt{3.0}, a_min{a_cnt-a_tol}, a_max{a_cnt+a_tol};
-  //Real e_tol{0.1}, e_cnt{0.1}, e_min{e_cnt-e_tol}, e_max{e_cnt+e_tol};
-  //Real i_tol{0.1}, i_cnt{0.1}, i_min{i_cnt-i_tol}, i_max{i_cnt+i_tol};
-  //Real lan_tol{0.1}, lan_cnt{0.1}, lan_min{lan_cnt-lan_tol}, lan_max{lan_cnt+lan_tol};
-  //Real argperi_tol{0.1}, argperi_cnt{0.1}, argperi_min{argperi_cnt-argperi_tol}, argperi_max{argperi_cnt+argperi_tol};
-  //Real m_tol{10e5}, m_cnt{0.1}, m_min{m_cnt-m_tol}, m_max{m_cnt+m_tol};
-  for (Integer i{0}; i < n; ++i) {
-    KeplerianToCartesian(data[i], x_min, y_min, z_min);
-    Propagate(data[i], t_ini, t_end);
-    KeplerianToCartesian(data[i], x_max, y_max, z_max);
-    boxes->push_back(std::make_unique<Box>(
-      Vector(x_min, y_min, z_min), //, a_min, e_min, i_min, lan_min, argperi_min, m_min))
-      Vector(x_max, y_max, z_max) //, a_max, e_max, i_max, lan_max, argperi_max, m_max),
-    ));
-    boxes->back()->reorder();
+  boxes->reserve(n_asteroids);
+  for (Integer i{0}; i < n_asteroids; ++i) {
+    Vector x, y, z;
+    Keplerian<Real, Integer> data_i = data[i];
+    KeplerianToCartesian(data_i, x(0), y(0), z(0));
+    for (Integer j{1}; j < t_steps; ++j) {
+      Propagate(data_i, t_ini + j*dt, t_ini + (j-1)*dt);
+      KeplerianToCartesian(data_i, x(j), y(j), z(j));
+    }
+    Vector box_min, box_max;
+    for (Integer j{0}; j < 3*t_steps; j += 3) {
+      box_min[j+0] = std::min({x(j), x(j), x(j)});
+      box_min[j+1] = std::min({y(j), y(j), y(j)});
+      box_min[j+2] = std::min({z(j), z(j), z(j)});
+      box_max[j+0] = std::max({x(j), x(j), x(j)});
+      box_max[j+1] = std::max({y(j), y(j), y(j)});
+      box_max[j+2] = std::max({z(j), z(j), z(j)});
+    }
+    boxes->push_back(std::make_unique<Box>(box_min, box_max));
+    boxes->back()->reorder(); // Always wear a helmet
   }
   std::cout << "Boxes prepared in " << timer.elapsed_us() << " us" << std::endl;
 
@@ -248,11 +184,82 @@ int main() {
   std::cout << "Tree built in " << timer.elapsed_us() << " us" << std::endl;
   tree.print(std::cout);
 
-  // Find the clusters
-  IndexSet cluster;
-  Box cluster_box(-5.0, -5.0, -5.0, 5.0, 5.0, 5.0);
-  tree.intersect(cluster_box, cluster);
-  std::cout << "Cluster size: " << cluster.size() << std::endl;
+  std::vector<IndexSet> clusters(n_clusters);
+  std::vector<Real> clusters_distance(n_clusters);
+  timer.tic();
+  for (Integer i{0}; i < n_clusters; ++i) {
+    clusters_distance[i] = tree.closest(tree.box(i)->baricenter(), n_neighbours, clusters[i]);
+      //[] (Vector const & p, Box const & b) {return b.interior_distance(p);});
+  }
+  timer.toc();
+
+  // Find the best clusters (minimum distance)
+  std::vector<Integer> sorting(n_clusters);
+  std::iota(sorting.begin(), sorting.end(), 0);
+  std::sort(sorting.begin(), sorting.end(), [&clusters_distance](Integer i, Integer j) {
+    return clusters_distance[i] < clusters_distance[j];
+  });
+
+  // Plot all the asteroids
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  {
+    SET_PLOT
+    std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
+    Real max_xy{0.0};
+    Real max_xz{0.0};
+    for (Integer i{0}; i < n_asteroids; ++i) {
+      KeplerianToCartesian(data[i], x[i], y[i], z[i]);
+      max_xy = std::max(max_xy, std::max(std::abs(x[i]), std::abs(y[i])));
+      max_xz = std::max(max_xz, std::max(std::abs(x[i]), std::abs(z[i])));
+    }
+    ax_xy->hold(true);
+    ax_xz->hold(true);
+    ax_xy->plot(x, y, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
+    ax_xy->xlim({-max_xy, max_xy}); ax_xy->xlabel("x (AU)");
+    ax_xy->ylim({-max_xy, max_xy}); ax_xy->ylabel("y (AU)");
+    ax_xz->plot(x, z, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
+    ax_xz->xlim({-max_xy, max_xy}); ax_xz->xlabel("x (AU)");
+    ax_xz->ylim({-max_xz, max_xz}); ax_xz->ylabel("z (AU)");
+  }
+  #endif
+
+  // Plot the clusters
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  {
+    SET_PLOT
+    std::vector<Real> x, y, z;
+    for (Integer i{0}; i < 10; ++i) {
+      x.resize(n_neighbours); y.resize(n_neighbours); z.resize(n_neighbours);
+      auto & cluster = clusters[sorting[i]];
+      Integer j{0};
+      for (auto k : cluster) {
+        KeplerianToCartesian(data[k], x[j], y[j], z[j]); ++j;
+        Integer l_trace{20};
+        std::vector<Real> x_trace(l_trace), y_trace(l_trace), z_trace(l_trace);
+        Real dt_trace{(t_end - t_ini)/l_trace};
+        Keplerian<Real, Integer> data_k_new = data[k];
+        KeplerianToCartesian(data_k_new, x_trace[0], y_trace[0], z_trace[0]);
+        for (Integer l{1}; l < l_trace; ++l) {
+          Propagate(data_k_new, t_ini + l*dt_trace, t_ini + (l-1)*dt_trace);
+          KeplerianToCartesian(data_k_new, x_trace[l], y_trace[l], z_trace[l]);
+        }
+        ax_xy->plot(x_trace, y_trace, "k")->line_width(0.5);
+        ax_xz->plot(x_trace, z_trace, "k")->line_width(0.5);
+      }
+      ax_xy->plot(x, y, ".")->marker_size(2.5);
+      ax_xz->plot(x, z, ".")->marker_size(2.5);
+    }
+    show(fig_xy);
+    show(fig_xz);
+  }
+  #endif
+
+  for (Integer i{0}; i < 10; ++i) {
+    std::cout << "Cluster " << i << " distance: " << std::scientific <<
+    clusters_distance[sorting[i]] << std::endl;
+  }
+  std::cout << "Clusters found in " << timer.elapsed_us() << " us" << std::endl;
+
 
   return 0;
 }
