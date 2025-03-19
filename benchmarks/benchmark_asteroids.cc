@@ -55,14 +55,15 @@ struct Keplerian {
 
 // Parse orbital data
 template <typename Real, typename Integer>
-void Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & data, Integer const & n) {
+bool Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & data, Integer const & n)
+{
   // Clear data
   data.clear();
   data.reserve(n);
 
   // Open file
   std::ifstream file(fname);
-  if (!file) {std::cerr << "Error opening file: " << fname << std::endl; return;}
+  if (!file) {std::cerr << "Error opening file: " << fname << std::endl; return false;}
 
   // Skip header line
   std::string line;
@@ -82,11 +83,13 @@ void Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & da
     entry.m       *= M_PI/180.0;
     data.emplace_back(entry);
   }
+  return true;
 }
 
 // Solve Kepler's equation to get eccentric anomaly
 template <typename Real, typename Integer>
-Real SolveKepler(Real M, Real e, Real tol = 1e-6, Integer max_iter = 100) {
+Real SolveKepler(Real M, Real e, Real tol = 1e-6, Integer max_iter = 100)
+{
   Real E{M};
   for (Integer i{0}; i < max_iter; ++i) {
     Real delta{E - e*std::sin(E) - M};
@@ -99,7 +102,8 @@ Real SolveKepler(Real M, Real e, Real tol = 1e-6, Integer max_iter = 100) {
 
 // Convert Keplerian elements to Cartesian coordinates
 template <typename Real, typename Integer>
-void KeplerianToCartesian(Keplerian<Real, Integer> const & kepl, Real & x, Real & y, Real & z) {
+void KeplerianToCartesian(Keplerian<Real, Integer> const & kepl, Real & x, Real & y, Real & z)
+{
   Real E{SolveKepler<Real, Integer>(kepl.m, kepl.e)};
   Real nu{2.0*std::atan2(std::sqrt(1.0 + kepl.e)*std::sin(E/2), std::sqrt(1.0 - kepl.e)*std::cos(E/2))};
   Real r{kepl.a*(1.0 - kepl.e*std::cos(E))};
@@ -115,25 +119,28 @@ void KeplerianToCartesian(Keplerian<Real, Integer> const & kepl, Real & x, Real 
 
 // Propagate orbital elements over time
 template <typename Real>
-void Propagate(Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0) {
+void PropagateOrbit(Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0)
+{
+  if (t_end == t_ini) {return;}
   Real n{std::sqrt(static_cast<Real>(GM)/(kepl.a*kepl.a*kepl.a))}; // Mean motion (rad/day)
-  kepl.m = std::fmod(kepl.m + n*(t_ini - t_end), 2.0*M_PI);  // Keep within [0,2π]
+  kepl.m = std::fmod(kepl.m + n*(t_end - t_ini), 2.0*M_PI);  // Keep within [0,2π]
   if (kepl.m < 0) {kepl.m += 2.0*M_PI;}
 }
 
 // Main function
-int main() {
-
+int main()
+{
   using Real = double;
   using Integer = AABBtree::Integer;
 
-  // Constants
   constexpr Integer n_asteroids{60000};
-  constexpr Integer n_clusters{100};
+  constexpr Integer n_clusters{1000};
+  constexpr Integer n_clusters_to_plot{10};
   constexpr Integer n_neighbours{20};
   constexpr Real t_ini{64328.0}; // January 1, 2035
   constexpr Real t_end{t_ini + 30.0};
-  constexpr Integer t_steps{10};
+  constexpr Integer t_steps{30};
+  constexpr Integer l_trace{10};
 
   using Vector = AABBtree::Vector<Real, 3*t_steps>;
   using Box = AABBtree::Box<Real, 3*t_steps>;
@@ -147,7 +154,12 @@ int main() {
   // Parse asteroids data
   std::string fname = "./../benchmarks/asteroids.txt"; // from build directory
   std::vector<Keplerian<Real, Integer>> data;
-  timer.tic(); Parse<Real, Integer>(fname, data, n_asteroids); timer.toc();
+  timer.tic();
+  if (!Parse<Real, Integer>(fname, data, n_asteroids)) {
+    std::cerr << "Error parsing data" << std::endl;
+    return 1;
+  }
+  timer.toc();
   std::cout << "Data parsed in " << timer.elapsed_us() << " us" << std::endl;
 
   // Set the initial and final times
@@ -159,19 +171,18 @@ int main() {
   for (Integer i{0}; i < n_asteroids; ++i) {
     Vector x, y, z;
     Keplerian<Real, Integer> data_i = data[i];
-    KeplerianToCartesian(data_i, x(0), y(0), z(0));
-    for (Integer j{1}; j < t_steps; ++j) {
-      Propagate(data_i, t_ini + j*dt, t_ini + (j-1)*dt);
+    for (Integer j{0}; j < t_steps; ++j) {
+      PropagateOrbit(data_i, t_ini + j*dt, (j == 0) ? t_ini : t_ini + (j-1)*dt);
       KeplerianToCartesian(data_i, x(j), y(j), z(j));
     }
     Vector box_min, box_max;
     for (Integer j{0}; j < 3*t_steps; j += 3) {
-      box_min[j+0] = std::min({x(j), x(j), x(j)});
-      box_min[j+1] = std::min({y(j), y(j), y(j)});
-      box_min[j+2] = std::min({z(j), z(j), z(j)});
-      box_max[j+0] = std::max({x(j), x(j), x(j)});
-      box_max[j+1] = std::max({y(j), y(j), y(j)});
-      box_max[j+2] = std::max({z(j), z(j), z(j)});
+      box_min(j+0) = std::min({x(j+0), x(j+1), x(j+2)});
+      box_min(j+1) = std::min({y(j+0), y(j+1), y(j+2)});
+      box_min(j+2) = std::min({z(j+0), z(j+1), z(j+2)});
+      box_max(j+0) = std::max({x(j+0), x(j+1), x(j+2)});
+      box_max(j+1) = std::max({y(j+0), y(j+1), y(j+2)});
+      box_max(j+2) = std::max({z(j+0), z(j+1), z(j+2)});
     }
     boxes->push_back(std::make_unique<Box>(box_min, box_max));
     boxes->back()->reorder(); // Always wear a helmet
@@ -188,8 +199,14 @@ int main() {
   std::vector<Real> clusters_distance(n_clusters);
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {
-    clusters_distance[i] = tree.closest(tree.box(i)->baricenter(), n_neighbours, clusters[i]);
-      //[] (Vector const & p, Box const & b) {return b.interior_distance(p);});
+    clusters_distance[i] = tree.closest(tree.box(i)->baricenter(), n_neighbours, clusters[i],
+      [] (Vector const & p, Box const & b) {return (b.interior_distance(p));});
+      //[] (Vector const & p, Box const & b) {return (b.exterior_distance(p));});
+      //[] (Vector const & p, Box const & b) {return (b.baricenter() - p).norm();});
+      //[] (Vector const & p, Box const & b) {
+      //  if (b.contains(p)) {return -((b.baricenter() - p).cwiseAbs() - (0.5*b.sizes())).norm();}
+      //  return (b.interior_distance(p));
+      //});
   }
   timer.toc();
 
@@ -228,20 +245,18 @@ int main() {
   {
     SET_PLOT
     std::vector<Real> x, y, z;
-    for (Integer i{0}; i < 10; ++i) {
+    for (Integer i{0}; i < n_clusters_to_plot; ++i) {
       x.resize(n_neighbours); y.resize(n_neighbours); z.resize(n_neighbours);
-      auto & cluster = clusters[sorting[i]];
       Integer j{0};
-      for (auto k : cluster) {
+      for (Integer k : clusters[sorting[i]]) {
         KeplerianToCartesian(data[k], x[j], y[j], z[j]); ++j;
-        Integer l_trace{20};
         std::vector<Real> x_trace(l_trace), y_trace(l_trace), z_trace(l_trace);
         Real dt_trace{(t_end - t_ini)/l_trace};
-        Keplerian<Real, Integer> data_k_new = data[k];
-        KeplerianToCartesian(data_k_new, x_trace[0], y_trace[0], z_trace[0]);
-        for (Integer l{1}; l < l_trace; ++l) {
-          Propagate(data_k_new, t_ini + l*dt_trace, t_ini + (l-1)*dt_trace);
-          KeplerianToCartesian(data_k_new, x_trace[l], y_trace[l], z_trace[l]);
+        Keplerian<Real, Integer> data_k = data[k];
+        for (Integer l{0}; l < l_trace; ++l) {
+          // Backward propagation
+          PropagateOrbit(data_k, t_ini + l*dt_trace, (l == 0) ? t_ini : t_ini + (l-1)*dt_trace);
+          KeplerianToCartesian(data_k, x_trace[l], y_trace[l], z_trace[l]);
         }
         ax_xy->plot(x_trace, y_trace, "k")->line_width(0.5);
         ax_xz->plot(x_trace, z_trace, "k")->line_width(0.5);
@@ -254,12 +269,11 @@ int main() {
   }
   #endif
 
-  for (Integer i{0}; i < 10; ++i) {
+  for (Integer i{0}; i < n_clusters_to_plot; ++i) {
     std::cout << "Cluster " << i << " distance: " << std::scientific <<
     clusters_distance[sorting[i]] << std::endl;
   }
   std::cout << "Clusters found in " << timer.elapsed_us() << " us" << std::endl;
-
 
   return 0;
 }

@@ -790,7 +790,7 @@ namespace AABBtree {
       std::priority_queue<Pair, std::vector<Pair>, decltype(cmp)> queue(cmp);
 
       // Main loop that checks the intersection iteratively
-      Real max_distance{std::numeric_limits<Real>::max()};
+      Real max_distance{std::numeric_limits<Real>::max()}; // Maximum distance in the queue
       candidates.clear();
       while (!this->m_stack.empty())
       {
@@ -816,13 +816,12 @@ namespace AABBtree {
             ++this->m_check_counter;
             tmp_distance = distance_function(point, *boxes[pos]);
             if (tmp_distance < max_distance) {
-              max_distance = tmp_distance;
               if (static_cast<Integer>(queue.size()) < n) {
                 queue.emplace(tmp_distance, pos);
-              } else if (tmp_distance < queue.top().first) {
-                queue.pop();
-                queue.emplace(tmp_distance, pos);
+              } else {
+                queue.pop(); queue.emplace(tmp_distance, pos);
               }
+              max_distance = queue.top().first;
             }
           }
         }
@@ -833,8 +832,9 @@ namespace AABBtree {
       }
 
       // Extract indices into candidates
+      Real min_distance{queue.empty() ? max_distance : queue.top().first};
       while (!queue.empty()) {candidates.insert(queue.top().second); queue.pop();}
-      return max_distance;
+      return min_distance;
     }
 
     /**

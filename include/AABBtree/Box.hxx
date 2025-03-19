@@ -676,7 +676,6 @@ namespace AABBtree {
     bool intersect(Ray<Real, N> const & r, Point & c, Point & f, Real tol = DUMMY_TOL) const
     {return r.intersect(*this, c, f, tol);}
 
-
     /**
     * Compute the squared \em interior (or \em minimum) distance between the current box a given ray.
     * \param[in] r Ray to compute the squared distance to.

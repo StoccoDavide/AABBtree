@@ -824,7 +824,7 @@ $(function(){initNavTree('_tree_8hxx_source.html',''); initResizable(true); });
 <div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>      std::priority_queue&lt;Pair, std::vector&lt;Pair&gt;, <span class="keyword">decltype</span>(cmp)&gt; queue(cmp);</div>
 <div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span> </div>
 <div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>      <span class="comment">// Main loop that checks the intersection iteratively</span></div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>      Real max_distance{std::numeric_limits&lt;Real&gt;::max()};</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>      Real max_distance{std::numeric_limits&lt;Real&gt;::max()}; <span class="comment">// Maximum distance in the queue</span></div>
 <div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>      candidates.clear();</div>
 <div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>      <span class="keywordflow">while</span> (!this-&gt;<a class="code hl_variable" href="class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808">m_stack</a>.empty())</div>
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>      {</div>
@@ -850,25 +850,25 @@ $(function(){initNavTree('_tree_8hxx_source.html',''); initResizable(true); });
 <div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>            ++this-&gt;<a class="code hl_variable" href="class_a_a_b_btree_1_1_tree.html#a0b4eb43367220af367546926322388b1">m_check_counter</a>;</div>
 <div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>            tmp_distance = distance_function(point, *<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#ae2dd1d764202f1fad879db777c2c9545">boxes</a>[pos]);</div>
 <div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>            <span class="keywordflow">if</span> (tmp_distance &lt; max_distance) {</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>              max_distance = tmp_distance;</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>              <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a><span class="keyword">&gt;</span>(queue.size()) &lt; n) {</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>                queue.emplace(tmp_distance, pos);</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>              } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (tmp_distance &lt; queue.top().first) {</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                queue.pop();</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                queue.emplace(tmp_distance, pos);</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>              }</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>            }</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>          }</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        }</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span> </div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>        <span class="comment">// Push children on the stack if thay are not leafs</span></div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_l &gt; 0) {this-&gt;<a class="code hl_variable" href="class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808">m_stack</a>.emplace_back(<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_l);}</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_r &gt; 0) {this-&gt;<a class="code hl_variable" href="class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808">m_stack</a>.emplace_back(<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_r);}</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>      }</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span> </div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>      <span class="comment">// Extract indices into candidates</span></div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>              <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span><a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a><span class="keyword">&gt;</span>(queue.size()) &lt; n) {</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>                queue.emplace(tmp_distance, pos);</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>              } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                queue.pop(); queue.emplace(tmp_distance, pos);</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>              }</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>              max_distance = queue.top().first;</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>            }</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>          }</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>        }</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span> </div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>        <span class="comment">// Push children on the stack if thay are not leafs</span></div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_l &gt; 0) {this-&gt;<a class="code hl_variable" href="class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808">m_stack</a>.emplace_back(<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_l);}</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_r &gt; 0) {this-&gt;<a class="code hl_variable" href="class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808">m_stack</a>.emplace_back(<a class="code hl_function" href="class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec">node</a>.child_r);}</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>      }</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span> </div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>      <span class="comment">// Extract indices into candidates</span></div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>      Real min_distance{queue.empty() ? max_distance : queue.top().first};</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>      <span class="keywordflow">while</span> (!queue.empty()) {candidates.insert(queue.top().second); queue.pop();}</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>      <span class="keywordflow">return</span> max_distance;</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>      <span class="keywordflow">return</span> min_distance;</div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    }</div>
 </div>
 <div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span></div>
