@@ -134,7 +134,7 @@ int main()
   using Integer = AABBtree::Integer;
 
   constexpr Integer n_asteroids{60000};
-  constexpr Integer n_clusters{1000};
+  constexpr Integer n_clusters{60000};
   constexpr Integer n_clusters_to_plot{10};
   constexpr Integer n_neighbours{20};
   constexpr Real t_ini{64328.0}; // January 1, 2035
@@ -194,6 +194,12 @@ int main()
   timer.tic(); tree.build(std::move(boxes)); timer.toc();
   std::cout << "Tree built in " << timer.elapsed_us() << " us" << std::endl;
   tree.print(std::cout);
+
+  #ifdef AABBTREE_ENABLE_PLOTTING
+  {
+    show(fig);
+  }
+  #endif
 
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
@@ -274,6 +280,7 @@ int main()
     clusters_distance[sorting[i]] << std::endl;
   }
   std::cout << "Clusters found in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Average time per cluster: " << timer.elapsed_us()/n_clusters << " us" << std::endl;
 
   return 0;
 }

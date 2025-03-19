@@ -88,7 +88,7 @@ namespace AABBtree
   template <typename Real, Integer N> using BoxUniquePtr = std::unique_ptr<Box<Real, N>>; /**< Unique pointer to a box. */
   template <typename Real, Integer N> using BoxUniquePtrList = std::vector<BoxUniquePtr<Real, N>>; /**< List of unique pointers to boxes. */
   template <typename Real, Integer N> using Vector = Eigen::Vector<Real, N>; /**< Eigen column vector of real numbers. */
-  template <typename Real, Integer N> using Point = Eigen::Vector<Real, N>; /**< A geometric point in the ND space. */
+  template <typename Real, Integer N> using Point = Eigen::Vector<Real, N>; /**< A geometric point in the ambient space. */
 
 } // namespace AABBtree
 
