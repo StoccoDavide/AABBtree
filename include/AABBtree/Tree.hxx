@@ -96,7 +96,7 @@ namespace AABBtree {
     bool m_dumping_mode{true}; /**< Enable dumping while building the tree. */
 
     // Tree parameters
-    Integer m_max_nodal_objects{1}; /**< Maximum number of objects per node. */
+    Integer m_max_nodal_objects{10}; /**< Maximum number of objects per node. */
     Real m_separation_ratio_tolerance{0.1}; /**< Tolerance for bounding boxes separation. */
     Real m_balance_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes balance. */
     Real m_min_box_size{0.0}; /**< Minimum size tolerance for bounding boxes. */
@@ -322,7 +322,7 @@ namespace AABBtree {
         baricenter /= 2.0*node.box_num;
 
         // Check if the leafs are balanced, if not try to separate boxes on a new separation line
-        if (n_long > this->m_max_nodal_objects ||
+        /*if (n_long > this->m_max_nodal_objects ||
             std::min(n_left, n_right) < this->m_balance_ratio_tolerance * std::max(n_left, n_right) ) {
 
           // Perform coputation only if baricenter is well separated from the previous separation line
@@ -342,7 +342,7 @@ namespace AABBtree {
               }
             }
           }
-        }
+        }*/
 
         // If the left and right children are yet not balanced, dump the splitting axis
         if (this->m_dumping_mode && n_long > this->m_max_nodal_objects) {
@@ -757,18 +757,19 @@ namespace AABBtree {
     }
 
     /**
-    * Find the first \f$ n \f$ candidates from a point.
-    * \param[in] point Point to compute the distance to.
+    * Find the first \f$ n \f$ candidates from an object, using a custom distance function.
+    * \param[in] obj Object to compute the distance to.
     * \param[in] n Number of candidates to find.
     * \param[out] candidates First \f$ n \f$ candidates.
     * \param[in] distance_function Custom distance function (default is the interior distance).
     * \return The maximum distance between the candidates and the point. The return value is negative
     * if no candidates are found.
+    * \tparam Object Type of the object to compute the distance to.
     * \tparam Function Type of the custom distance function.
     */
-    template <typename Function = std::function<Real(Point const &, Box const &)>>
-    Real closest(Point const & point, Integer const n, IndexSet & candidates, Function
-      distance_function = [] (Point const & p, Box const & b) {return b.interior_distance(p);}) const
+    template <typename Object, typename Function = std::function<Real(Object const &, Box const &)>>
+    Real closest(Object const & obj, Integer const n, IndexSet & candidates, Function
+      distance_function = [] (Object const & o, Box const & b) {return b.interior_distance(o);}) const
     {
       // Reset statistics
       this->m_check_counter = 0;
@@ -800,21 +801,21 @@ namespace AABBtree {
         // Get the node
         Node const & node{this->m_tree_structure[id]};
 
-        // Compute the distance between the point and the bounding box
+        // Compute the distance between the object and the bounding box
         ++this->m_check_counter;
-        Real tmp_distance{distance_function(point, node.box)};
+        Real tmp_distance{distance_function(obj, node.box)};
 
         // If the distance is greater than the maximum distance, skip the node
         if (tmp_distance > max_distance) {continue;}
 
-        // Compute the distance between the point and the long boxes on the node
+        // Compute the distance between the object and the long boxes on the node
         if (node.box_num > 0) {
           Integer const id_ini{node.box_ptr};
           Integer const id_end{node.box_ptr + node.box_num};
           for (Integer i{id_ini}; i < id_end; ++i) {
             Integer const pos{this->m_tree_boxes_map[i]};
             ++this->m_check_counter;
-            tmp_distance = distance_function(point, *boxes[pos]);
+            tmp_distance = distance_function(obj, *boxes[pos]);
             if (tmp_distance < max_distance) {
               if (static_cast<Integer>(queue.size()) < n) {
                 queue.emplace(tmp_distance, pos);
@@ -838,17 +839,18 @@ namespace AABBtree {
     }
 
     /**
-    * Find the candidates that are within a given distance from a point, using a custom distance function.
-    * \param[in] point Point to compute the distance to.
+    * Find the candidates that are within a given distance from a object, using a custom distance function.
+    * \param[in] obj Object to compute the distance to.
     * \param[in] max_distance Maximum distance to consider.
     * \param[out] candidates Minimum distance candidates.
     * \param[in] distance_function Custom distance function (default is the interior distance).
     * \return True if at least one object is within the given distance, false otherwise.
+    * \tparam Object Type of the object to compute the distance to.
     * \tparam Function Type of the custom distance function.
     */
-    template <typename Function = std::function<Real(Point const &, Box const &)>>
-    bool within_distance(Point const & point, Real const max_distance, IndexSet & candidates, Function
-      distance_function = [] (Point const & p, Box const & b) {return b.interior_distance(p);}) const
+    template <typename Object, typename Function = std::function<Real(Object const &, Box const &)>>
+    bool within_distance(Object const & obj, Real const max_distance, IndexSet & candidates, Function
+      distance_function = [] (Object const & o, Box const & b) {return b.interior_distance(o);}) const
     {
       // Reset statistics
       this->m_check_counter = 0;
@@ -874,21 +876,21 @@ namespace AABBtree {
         // Get the node
         Node const & node{this->m_tree_structure[id]};
 
-        // Compute the distance between the point and the bounding box
+        // Compute the distance between the object and the bounding box
         ++this->m_check_counter;
-        Real distance{distance_function(point, node.box)};
+        Real distance{distance_function(obj, node.box)};
 
         // If the distance is greater than the maximum distance, skip the node
         if (distance > max_distance) {continue;}
 
-        // Compute the distance between the point and the long boxes on the node
+        // Compute the distance between the object and the long boxes on the node
         if (node.box_num > 0) {
           Integer const id_ini{node.box_ptr};
           Integer const id_end{node.box_ptr + node.box_num};
           for (Integer i{id_ini}; i < id_end; ++i) {
             Integer const pos{this->m_tree_boxes_map[i]};
             ++this->m_check_counter;
-            Real tmp_distance{distance_function(point, *boxes[pos])};
+            Real tmp_distance{distance_function(obj, *boxes[pos])};
             if (tmp_distance <= max_distance) {candidates.insert(pos);}
           }
         }

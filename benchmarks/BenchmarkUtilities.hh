@@ -211,6 +211,97 @@ namespace BenchmarkUtilities {
 
   #endif // AABBTREE_ENABLE_PLOTTING
 
+  // Asteroids benchmark utilities
+
+  static const double GM{0.0002959122082855911}; // Gravitational parameter of the Sun in AU^3/day^2
+
+  // Keplerian orbital elements
+  template <typename Real, typename Integer>
+  struct Keplerian {
+    Integer id;   // Asteroid ID
+    Real epoch;   // Epoch (Julian date)
+    Real a;       // Semi-major axis (AU)
+    Real e;       // Eccentricity
+    Real i;       // Inclination (rad)
+    Real lan;     // Longitude of ascending node (rad)
+    Real argperi; // Argument of periapsis (rad)
+    Real m;       // Mean anomaly (rad)
+  };
+
+  // Parse orbital data
+  template <typename Real, typename Integer>
+  bool Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & data, Integer const & n)
+  {
+    // Clear data
+    data.clear();
+    data.reserve(n);
+
+    // Open file
+    std::ifstream file(fname);
+    if (!file) {std::cerr << "Error opening file: " << fname << std::endl; return false;}
+
+    // Skip header line
+    std::string line;
+    std::getline(file, line);
+
+    // Parse data
+    Integer count{0};
+    while (std::getline(file, line) && count < n) {
+      count++;
+      std::istringstream iss(line);
+      Keplerian<Real, Integer> entry;
+      if (!(iss >> entry.id >> entry.epoch >> entry.a >> entry.e >> entry.i >> entry.lan >> entry.argperi >> entry.m))
+      {std::cerr << "Error parsing line: " << line << std::endl; continue;}
+      entry.i       *= M_PI/180.0;
+      entry.lan     *= M_PI/180.0;
+      entry.argperi *= M_PI/180.0;
+      entry.m       *= M_PI/180.0;
+      data.emplace_back(entry);
+    }
+    return true;
+  }
+
+  // Solve Kepler's equation to get eccentric anomaly
+  template <typename Real, typename Integer>
+  Real SolveKepler(Real M, Real e, Real tol = 1e-8, Integer max_iter = 100)
+  {
+    Real E{M};
+    for (Integer i{0}; i < max_iter; ++i) {
+      Real delta{E - e*std::sin(E) - M};
+      if (std::abs(delta) < tol) {break;}
+      E -= delta/(1.0 - e*std::cos(E));
+      if (i == max_iter - 1) {std::cerr << "Failed to converge" << std::endl;}
+    }
+    return E;
+  }
+
+  // Convert Keplerian elements to Cartesian coordinates
+  template <typename Real, typename Integer>
+  void KeplerianToCartesian(Keplerian<Real, Integer> const & kepl, Real & x, Real & y, Real & z)
+  {
+    Real E{SolveKepler<Real, Integer>(kepl.m, kepl.e)};
+    Real nu{2.0*std::atan2(std::sqrt(1.0 + kepl.e)*std::sin(E/2), std::sqrt(1.0 - kepl.e)*std::cos(E/2))};
+    Real r{kepl.a*(1.0 - kepl.e*std::cos(E))};
+    Real cos_lan{std::cos(kepl.lan)}, sin_lan{std::sin(kepl.lan)};
+    Real cos_argperi{std::cos(kepl.argperi)}, sin_argperi{std::sin(kepl.argperi)};
+    Real cos_i{std::cos(kepl.i)}, sin_i{std::sin(kepl.i)};
+    Real cos_nu{std::cos(nu)}, sin_nu{std::sin(nu)};
+    Real xp{r*cos_nu}, yp{r*sin_nu};
+    x = (cos_lan*cos_argperi - sin_lan*sin_argperi*cos_i)*xp + (-cos_lan*sin_argperi - sin_lan*cos_argperi*cos_i)*yp;
+    y = (sin_lan*cos_argperi + cos_lan*sin_argperi*cos_i)*xp + (-sin_lan*sin_argperi + cos_lan*cos_argperi*cos_i)*yp;
+    z = (sin_argperi*sin_i)*xp + (cos_argperi*sin_i)*yp;
+  }
+
+  // Propagate orbital elements over time
+  template <typename Real>
+  void PropagateOrbit(Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0)
+  {
+    if (t_end == t_ini) {return;}
+    Real n{std::sqrt(static_cast<Real>(GM)/(kepl.a*kepl.a*kepl.a))}; // Mean motion (rad/day)
+    kepl.m = std::fmod(kepl.m + n*(t_end - t_ini), 2.0*M_PI);  // Keep within [0,2π]
+    if (kepl.m < 0) {kepl.m += 2.0*M_PI;}
+  }
+
 } // namespace BenchmarkUtilities
 
 #endif // INCLUDE_BENCHMARK_UTILITIES_HH

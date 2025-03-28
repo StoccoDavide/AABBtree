@@ -38,95 +38,6 @@ grid(ax_xz, true);
 #include "BenchmarkUtilities.hh"
 using namespace BenchmarkUtilities;
 
-static const double GM{0.0002959122082855911}; // Gravitational parameter of the Sun in AU^3/day^2
-
-// Keplerian orbital elements
-template <typename Real, typename Integer>
-struct Keplerian {
-  Integer id;   // Asteroid ID
-  Real epoch;   // Epoch (Julian date)
-  Real a;       // Semi-major axis (AU)
-  Real e;       // Eccentricity
-  Real i;       // Inclination (rad)
-  Real lan;     // Longitude of ascending node (rad)
-  Real argperi; // Argument of periapsis (rad)
-  Real m;       // Mean anomaly (rad)
-};
-
-// Parse orbital data
-template <typename Real, typename Integer>
-bool Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & data, Integer const & n)
-{
-  // Clear data
-  data.clear();
-  data.reserve(n);
-
-  // Open file
-  std::ifstream file(fname);
-  if (!file) {std::cerr << "Error opening file: " << fname << std::endl; return false;}
-
-  // Skip header line
-  std::string line;
-  std::getline(file, line);
-
-  // Parse data
-  Integer count{0};
-  while (std::getline(file, line) && count < n) {
-    count++;
-    std::istringstream iss(line);
-    Keplerian<Real, Integer> entry;
-    if (!(iss >> entry.id >> entry.epoch >> entry.a >> entry.e >> entry.i >> entry.lan >> entry.argperi >> entry.m))
-    {std::cerr << "Error parsing line: " << line << std::endl; continue;}
-    entry.i       *= M_PI/180.0;
-    entry.lan     *= M_PI/180.0;
-    entry.argperi *= M_PI/180.0;
-    entry.m       *= M_PI/180.0;
-    data.emplace_back(entry);
-  }
-  return true;
-}
-
-// Solve Kepler's equation to get eccentric anomaly
-template <typename Real, typename Integer>
-Real SolveKepler(Real M, Real e, Real tol = 1e-6, Integer max_iter = 100)
-{
-  Real E{M};
-  for (Integer i{0}; i < max_iter; ++i) {
-    Real delta{E - e*std::sin(E) - M};
-    if (std::abs(delta) < tol) {break;}
-    E -= delta/(1.0 - e*std::cos(E));
-    if (i == max_iter - 1) {std::cerr << "Failed to converge" << std::endl;}
-  }
-  return E;
-}
-
-// Convert Keplerian elements to Cartesian coordinates
-template <typename Real, typename Integer>
-void KeplerianToCartesian(Keplerian<Real, Integer> const & kepl, Real & x, Real & y, Real & z)
-{
-  Real E{SolveKepler<Real, Integer>(kepl.m, kepl.e)};
-  Real nu{2.0*std::atan2(std::sqrt(1.0 + kepl.e)*std::sin(E/2), std::sqrt(1.0 - kepl.e)*std::cos(E/2))};
-  Real r{kepl.a*(1.0 - kepl.e*std::cos(E))};
-  Real cos_lan{std::cos(kepl.lan)}, sin_lan{std::sin(kepl.lan)};
-  Real cos_argperi{std::cos(kepl.argperi)}, sin_argperi{std::sin(kepl.argperi)};
-  Real cos_i{std::cos(kepl.i)}, sin_i{std::sin(kepl.i)};
-  Real cos_nu{std::cos(nu)}, sin_nu{std::sin(nu)};
-  Real xp{r*cos_nu}, yp{r*sin_nu};
-  x = (cos_lan*cos_argperi - sin_lan*sin_argperi*cos_i)*xp + (-cos_lan*sin_argperi - sin_lan*cos_argperi*cos_i)*yp;
-  y = (sin_lan*cos_argperi + cos_lan*sin_argperi*cos_i)*xp + (-sin_lan*sin_argperi + cos_lan*cos_argperi*cos_i)*yp;
-  z = (sin_argperi*sin_i)*xp + (cos_argperi*sin_i)*yp;
-}
-
-// Propagate orbital elements over time
-template <typename Real>
-void PropagateOrbit(Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0)
-{
-  if (t_end == t_ini) {return;}
-  Real n{std::sqrt(static_cast<Real>(GM)/(kepl.a*kepl.a*kepl.a))}; // Mean motion (rad/day)
-  kepl.m = std::fmod(kepl.m + n*(t_end - t_ini), 2.0*M_PI);  // Keep within [0,2π]
-  if (kepl.m < 0) {kepl.m += 2.0*M_PI;}
-}
-
 // Main function
 int main()
 {
@@ -134,13 +45,21 @@ int main()
   using Integer = AABBtree::Integer;
 
   constexpr Integer n_asteroids{60000};
-  constexpr Integer n_clusters{60000};
+  constexpr Integer n_clusters{600};
   constexpr Integer n_clusters_to_plot{10};
-  constexpr Integer n_neighbours{20};
   constexpr Real t_ini{64328.0}; // January 1, 2035
-  constexpr Real t_end{t_ini + 30.0};
-  constexpr Integer t_steps{30};
-  constexpr Integer l_trace{10};
+
+  // Clustering
+  //constexpr Integer n_neighbours{10};
+  //constexpr Real t_end{t_ini + 30.0};
+  //constexpr Integer t_steps{30};
+  //constexpr Integer l_trace{10};
+
+  // Phasing
+  constexpr Integer n_neighbours{2};
+  constexpr Real t_end{t_ini + 0.1*360.0};
+  constexpr Integer t_steps{0.5*360};
+  constexpr Integer l_trace{180};
 
   using Vector = AABBtree::Vector<Real, 3*t_steps>;
   using Box = AABBtree::Box<Real, 3*t_steps>;
@@ -165,28 +84,35 @@ int main()
   // Set the initial and final times
   Real dt{(t_end - t_ini)/t_steps};
 
-  // Prepare the boxes
+
+  // Write on a new file
   std::unique_ptr<BoxUniquePtrList> boxes = std::make_unique<BoxUniquePtrList>();
   boxes->reserve(n_asteroids);
+  std::ofstream asteroids_trace("asteroids_clustering_traces.txt");
   for (Integer i{0}; i < n_asteroids; ++i) {
+    asteroids_trace << i;
     Vector x, y, z;
     Keplerian<Real, Integer> data_i = data[i];
     for (Integer j{0}; j < t_steps; ++j) {
       PropagateOrbit(data_i, t_ini + j*dt, (j == 0) ? t_ini : t_ini + (j-1)*dt);
       KeplerianToCartesian(data_i, x(j), y(j), z(j));
+      asteroids_trace << " " << x(j) << " " << y(j) << " " << z(j);
     }
+    asteroids_trace << std::endl;
     Vector box_min, box_max;
-    for (Integer j{0}; j < 3*t_steps; j += 3) {
-      box_min(j+0) = std::min({x(j+0), x(j+1), x(j+2)});
-      box_min(j+1) = std::min({y(j+0), y(j+1), y(j+2)});
-      box_min(j+2) = std::min({z(j+0), z(j+1), z(j+2)});
-      box_max(j+0) = std::max({x(j+0), x(j+1), x(j+2)});
-      box_max(j+1) = std::max({y(j+0), y(j+1), y(j+2)});
-      box_max(j+2) = std::max({z(j+0), z(j+1), z(j+2)});
+    constexpr Real tol_trace{0.0};
+    for (Integer j{0}; j < t_steps; ++j) {
+      box_min(3*j+0) = x(j) - tol_trace;
+      box_min(3*j+1) = y(j) - tol_trace;
+      box_min(3*j+2) = z(j) - tol_trace;
+      box_max(3*j+0) = x(j) + tol_trace;
+      box_max(3*j+1) = y(j) + tol_trace;
+      box_max(3*j+2) = z(j) + tol_trace;
     }
     boxes->push_back(std::make_unique<Box>(box_min, box_max));
     boxes->back()->reorder(); // Always wear a helmet
   }
+  asteroids_trace.close();
   std::cout << "Boxes prepared in " << timer.elapsed_us() << " us" << std::endl;
 
   // Build the tree
@@ -196,32 +122,95 @@ int main()
   tree.print(std::cout);
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  {
-    show(fig);
-  }
+  //{show(fig);}
   #endif
 
+  // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {
-    clusters_distance[i] = tree.closest(tree.box(i)->baricenter(), n_neighbours, clusters[i],
-      [] (Vector const & p, Box const & b) {return (b.interior_distance(p));});
-      //[] (Vector const & p, Box const & b) {return (b.exterior_distance(p));});
-      //[] (Vector const & p, Box const & b) {return (b.baricenter() - p).norm();});
-      //[] (Vector const & p, Box const & b) {
-      //  if (b.contains(p)) {return -((b.baricenter() - p).cwiseAbs() - (0.5*b.sizes())).norm();}
-      //  return (b.interior_distance(p));
-      //});
+    if (i % 1000 == 0) {
+      std::cout << "Cluster " << i << " of " << n_clusters << std::endl;
+    }
+    // Clustering
+    /*clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
+    [] (Box const & b1, Box const & b2) {
+      Vector v1(b1.baricenter()), v2(b2.baricenter());
+      Real distance{0.0}, tmp, dx, dy, dz;
+      for (Integer i{0}; i < 3*t_steps; i += 3) {
+        tmp = std::numeric_limits<Real>::max();
+        for (Integer j{0}; j < 3*t_steps; j += 3) {
+          dx = v1(i+0) - v2(j+0);
+          dy = v1(i+1) - v2(j+1);
+          dz = v1(i+2) - v2(j+2);
+          tmp = std::min(tmp, dx*dx + dy*dy + dz*dz);
+        }
+        distance += std::sqrt(tmp);
+      }
+      return distance;
+    });*/
+
+    // Phasing
+    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
+    [] (Box const & b1, Box const & b2) {
+      Vector v1(b1.baricenter()), v2(b2.baricenter());
+      Real distance{std::numeric_limits<Real>::max()}, dx, dy, dz;
+      for (Integer j{0}; j < 3*t_steps; j += 3) {
+        dx = v1(j+0) - v2(j+0);
+        dy = v1(j+1) - v2(j+1);
+        dz = v1(j+2) - v2(j+2);
+        distance = std::min(distance, dx*dx + dy*dy + dz*dz);
+      }
+      return std::sqrt(distance);
+    });
   }
   timer.toc();
+
+  // Find the phasing points
+  std::vector<Eigen::Vector3d> phasing_points_1(n_clusters);
+  std::vector<Eigen::Vector3d> phasing_points_2(n_clusters);
+  for (Integer i{0}; i < n_clusters; ++i) {
+    phasing_points_1[i].setZero();
+    phasing_points_2[i].setZero();
+    Real dx, dy, dz, tmp, distance{std::numeric_limits<Real>::max()};
+    for (Integer j1 : clusters[i]) {
+    Vector v1(tree.box(j1)->baricenter());
+      for (Integer j2 : clusters[i]) {
+        if (j1 == j2) continue;
+        Vector v2(tree.box(j2)->baricenter());
+        for (Integer k{0}; k < 3*t_steps; k += 3) {
+          dx = v1(k+0) - v2(k+0);
+          dy = v1(k+1) - v2(k+1);
+          dz = v1(k+2) - v2(k+2);
+          tmp = dx*dx + dy*dy + dz*dz;
+          if (tmp < distance) {
+            distance = tmp;
+            phasing_points_1[i] << v1(k+0), v1(k+1), v1(k+2);
+            phasing_points_2[i] << v2(k+0), v2(k+1), v2(k+2);
+          }
+        }
+      }
+    }
+  }
 
   // Find the best clusters (minimum distance)
   std::vector<Integer> sorting(n_clusters);
   std::iota(sorting.begin(), sorting.end(), 0);
-  std::sort(sorting.begin(), sorting.end(), [&clusters_distance](Integer i, Integer j) {
-    return clusters_distance[i] < clusters_distance[j];
+  std::sort(sorting.begin(), sorting.end(), [&clusters_distance, &clusters](Integer i, Integer j) {
+    return clusters_distance[i] < clusters_distance[j] && clusters[i].size() == n_neighbours;
   });
+
+  // Save the clusters
+  std::ofstream asteroids_cluster("asteroids_clustering_clusters.txt");
+  for (Integer i{0}; i < n_clusters; ++i) {
+    asteroids_cluster << i << " " << sorting[i] << " " << clusters_distance[sorting[i]];
+    for (Integer j : clusters[sorting[i]]) {
+      asteroids_cluster << " " << j;
+    }
+    asteroids_cluster << std::endl;
+  }
+  asteroids_cluster.close();
 
   // Plot all the asteroids
   #ifdef AABBTREE_ENABLE_PLOTTING
@@ -252,10 +241,11 @@ int main()
     SET_PLOT
     std::vector<Real> x, y, z;
     for (Integer i{0}; i < n_clusters_to_plot; ++i) {
+      x.clear(); y.clear(); z.clear();
       x.resize(n_neighbours); y.resize(n_neighbours); z.resize(n_neighbours);
       Integer j{0};
       for (Integer k : clusters[sorting[i]]) {
-        KeplerianToCartesian(data[k], x[j], y[j], z[j]); ++j;
+        KeplerianToCartesian(data[k], x.at(j), y.at(j), z.at(j)); ++j;
         std::vector<Real> x_trace(l_trace), y_trace(l_trace), z_trace(l_trace);
         Real dt_trace{(t_end - t_ini)/l_trace};
         Keplerian<Real, Integer> data_k = data[k];
@@ -269,6 +259,16 @@ int main()
       }
       ax_xy->plot(x, y, ".")->marker_size(2.5);
       ax_xz->plot(x, z, ".")->marker_size(2.5);
+
+      // Plot the phasing points
+      ax_xy->plot(
+        {phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()},
+        {phasing_points_1[sorting[i]].y(), phasing_points_2[sorting[i]].y()},
+        "r-")->line_width(1.0);
+      ax_xz->plot(
+        {phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()},
+        {phasing_points_1[sorting[i]].z(), phasing_points_2[sorting[i]].z()},
+         "r-")->line_width(1.0);
     }
     show(fig_xy);
     show(fig_xz);
