@@ -36,7 +36,7 @@ namespace AABBtree {
     static_assert(N > 0, "Box dimension must be positive.");
 
     constexpr static Real EPS{std::numeric_limits<Real>::epsilon()}; /**> Machine epsilon for the scalar type. */
-    constexpr static Real MAX{static_cast<Real>(1.0)/EPS}; /**> Maximum value for the scalar type. */
+    constexpr static Real MAX{std::numeric_limits<Real>::max()}; /**> Maximum value for the scalar type. */
     constexpr static Real MIN{-MAX}; /**> Minimum value for the scalar type. */
     constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)}; /**> Dummy tolerance for the scalar type. */
 

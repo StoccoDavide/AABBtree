@@ -45,21 +45,13 @@ int main()
   using Integer = AABBtree::Integer;
 
   constexpr Integer n_asteroids{60000};
-  constexpr Integer n_clusters{600};
+  constexpr Integer n_clusters{60000};
   constexpr Integer n_clusters_to_plot{10};
   constexpr Real t_ini{64328.0}; // January 1, 2035
-
-  // Clustering
-  //constexpr Integer n_neighbours{10};
-  //constexpr Real t_end{t_ini + 30.0};
-  //constexpr Integer t_steps{30};
-  //constexpr Integer l_trace{10};
-
-  // Phasing
   constexpr Integer n_neighbours{2};
-  constexpr Real t_end{t_ini + 0.1*360.0};
-  constexpr Integer t_steps{0.5*360};
-  constexpr Integer l_trace{180};
+  constexpr Real t_end{t_ini + 10.0*365.0};
+  constexpr Integer t_steps{10.0*365};
+  constexpr Integer l_trace{365};
 
   using Vector = AABBtree::Vector<Real, 3*t_steps>;
   using Box = AABBtree::Box<Real, 3*t_steps>;
@@ -84,11 +76,10 @@ int main()
   // Set the initial and final times
   Real dt{(t_end - t_ini)/t_steps};
 
-
   // Write on a new file
   std::unique_ptr<BoxUniquePtrList> boxes = std::make_unique<BoxUniquePtrList>();
   boxes->reserve(n_asteroids);
-  std::ofstream asteroids_trace("asteroids_clustering_traces.txt");
+  std::ofstream asteroids_trace("asteroids_phasing_traces.txt");
   for (Integer i{0}; i < n_asteroids; ++i) {
     asteroids_trace << i;
     Vector x, y, z;
@@ -100,7 +91,7 @@ int main()
     }
     asteroids_trace << std::endl;
     Vector box_min, box_max;
-    constexpr Real tol_trace{0.0};
+    constexpr Real tol_trace{1.0e-6};
     for (Integer j{0}; j < t_steps; ++j) {
       box_min(3*j+0) = x(j) - tol_trace;
       box_min(3*j+1) = y(j) - tol_trace;
@@ -133,24 +124,6 @@ int main()
     if (i % 1000 == 0) {
       std::cout << "Cluster " << i << " of " << n_clusters << std::endl;
     }
-    // Clustering
-    /*clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
-    [] (Box const & b1, Box const & b2) {
-      Vector v1(b1.baricenter()), v2(b2.baricenter());
-      Real distance{0.0}, tmp, dx, dy, dz;
-      for (Integer i{0}; i < 3*t_steps; i += 3) {
-        tmp = std::numeric_limits<Real>::max();
-        for (Integer j{0}; j < 3*t_steps; j += 3) {
-          dx = v1(i+0) - v2(j+0);
-          dy = v1(i+1) - v2(j+1);
-          dz = v1(i+2) - v2(j+2);
-          tmp = std::min(tmp, dx*dx + dy*dy + dz*dz);
-        }
-        distance += std::sqrt(tmp);
-      }
-      return distance;
-    });*/
-
     // Phasing
     clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
     [] (Box const & b1, Box const & b2) {
@@ -168,11 +141,13 @@ int main()
   timer.toc();
 
   // Find the phasing points
+  std::vector<Real> phasing_time(n_clusters);
   std::vector<Eigen::Vector3d> phasing_points_1(n_clusters);
   std::vector<Eigen::Vector3d> phasing_points_2(n_clusters);
   for (Integer i{0}; i < n_clusters; ++i) {
     phasing_points_1[i].setZero();
     phasing_points_2[i].setZero();
+    phasing_time[i] = 0.0;
     Real dx, dy, dz, tmp, distance{std::numeric_limits<Real>::max()};
     for (Integer j1 : clusters[i]) {
     Vector v1(tree.box(j1)->baricenter());
@@ -188,11 +163,20 @@ int main()
             distance = tmp;
             phasing_points_1[i] << v1(k+0), v1(k+1), v1(k+2);
             phasing_points_2[i] << v2(k+0), v2(k+1), v2(k+2);
+            phasing_time[i] = t_ini + (k/3)*dt;
           }
         }
       }
     }
   }
+
+  // Save the phasing points and time
+  std::ofstream asteroids_phasing("asteroids_phasing_phasing.txt");
+  for (Integer i{0}; i < n_clusters; ++i) {
+    asteroids_phasing << i << " " << phasing_time[i] << " " << phasing_points_1[i].transpose() <<
+    " " << phasing_points_2[i].transpose() << std::endl;
+  }
+  asteroids_phasing.close();
 
   // Find the best clusters (minimum distance)
   std::vector<Integer> sorting(n_clusters);
@@ -202,7 +186,7 @@ int main()
   });
 
   // Save the clusters
-  std::ofstream asteroids_cluster("asteroids_clustering_clusters.txt");
+  std::ofstream asteroids_cluster("asteroids_phasing_clusters.txt");
   for (Integer i{0}; i < n_clusters; ++i) {
     asteroids_cluster << i << " " << sorting[i] << " " << clusters_distance[sorting[i]];
     for (Integer j : clusters[sorting[i]]) {

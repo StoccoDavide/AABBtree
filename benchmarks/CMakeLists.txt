@@ -14,6 +14,14 @@ file(GLOB_RECURSE BENCHMARK_FUNCTIONS "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_fun
 add_executable(benchmark_functions ${BENCHMARK_FUNCTIONS})
 target_link_libraries(benchmark_functions PRIVATE AABBtree Matplot++::matplot)
 
-file(GLOB_RECURSE BENCHMARK_ASTEROIDS "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_asteroids.cc")
-add_executable(benchmark_asteroids ${BENCHMARK_ASTEROIDS})
-target_link_libraries(benchmark_asteroids PRIVATE AABBtree Matplot++::matplot)
+file(GLOB_RECURSE BENCHMARK_ASTEROIDS_CLUSTERING "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_asteroids_clustering.cc")
+add_executable(benchmark_asteroids_clustering ${BENCHMARK_ASTEROIDS_CLUSTERING})
+target_link_libraries(benchmark_asteroids_clustering PRIVATE AABBtree Matplot++::matplot)
+
+file(GLOB_RECURSE BENCHMARK_ASTEROIDS_ORBIT "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_asteroids_orbit.cc")
+add_executable(benchmark_asteroids_orbit ${BENCHMARK_ASTEROIDS_ORBIT})
+target_link_libraries(benchmark_asteroids_orbit PRIVATE AABBtree Matplot++::matplot)
+
+file(GLOB_RECURSE BENCHMARK_ASTEROIDS_COMPLEXITY "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_asteroids_complexity.cc")
+add_executable(benchmark_asteroids_complexity ${BENCHMARK_ASTEROIDS_COMPLEXITY})
+target_link_libraries(benchmark_asteroids_complexity PRIVATE AABBtree Matplot++::matplot)

@@ -123,7 +123,7 @@ namespace AABBtree {
     Ray<NewReal, N> cast() const
     {
       if constexpr (std::is_same<Real, NewReal>::value) {return *this;}
-      return Ray<NewReal, N>(this->m_min.template cast<NewReal>(), this->m_max.template cast<NewReal>());
+      return Ray<NewReal, N>(this->m_origin.template cast<NewReal>(), this->m_direction.template cast<NewReal>());
     }
 
     /**

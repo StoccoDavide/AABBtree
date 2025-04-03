@@ -13,6 +13,7 @@
 
 // C++17 standard libraries
 #include <vector>
+#include <algorithm>
 
 // AABBtree library
 #include "AABBtree.hh"
@@ -230,7 +231,8 @@ namespace BenchmarkUtilities {
 
   // Parse orbital data
   template <typename Real, typename Integer>
-  bool Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & data, Integer const & n)
+  bool Parse(std::string const & fname, std::vector<Keplerian<Real, Integer>> & data, Integer const & n,
+    bool reverse = false)
   {
     // Clear data
     data.clear();
@@ -240,18 +242,23 @@ namespace BenchmarkUtilities {
     std::ifstream file(fname);
     if (!file) {std::cerr << "Error opening file: " << fname << std::endl; return false;}
 
-    // Skip header line
+    std::vector<std::string> lines;
     std::string line;
-    std::getline(file, line);
+    std::getline(file, line); // Skip first line
+    while (std::getline(file, line)) {lines.push_back(line);}
+    file.close();
+
+    // Reverse lines if needed
+    if (reverse) {std::reverse(lines.begin(), lines.end());}
 
     // Parse data
     Integer count{0};
-    while (std::getline(file, line) && count < n) {
-      count++;
-      std::istringstream iss(line);
+    for (const auto & i_line : lines) {
+      if (++count > n) {break;}
+      std::istringstream iss(i_line);
       Keplerian<Real, Integer> entry;
       if (!(iss >> entry.id >> entry.epoch >> entry.a >> entry.e >> entry.i >> entry.lan >> entry.argperi >> entry.m))
-      {std::cerr << "Error parsing line: " << line << std::endl; continue;}
+      {std::cerr << "Error parsing line: " << i_line << std::endl; continue;}
       entry.i       *= M_PI/180.0;
       entry.lan     *= M_PI/180.0;
       entry.argperi *= M_PI/180.0;

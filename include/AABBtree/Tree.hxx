@@ -13,6 +13,8 @@
 #ifndef INCLUDE_AABBTREE_TREE_HXX
 #define INCLUDE_AABBTREE_TREE_HXX
 
+#include <unordered_set>
+
 #include "AABBtree/Box.hxx"
 #include "AABBtree/Tree.hxx"
 
@@ -31,31 +33,10 @@ namespace AABBtree {
   */
   template <typename Real, Integer N>
   class Tree {
-
+  public:
     static_assert(std::is_floating_point<Real>::value, "Tree Real type must be a floating-point type.");
     static_assert(std::is_integral<Integer>::value, "Tree dimension type must be an integer type." );
     static_assert(N > 0, "Tree dimension must be positive.");
-
-    // Basic types definitions
-    using Box = Box<Real, N>;
-    using BoxUniquePtr = BoxUniquePtr<Real, N>;
-    using BoxUniquePtrList = BoxUniquePtrList<Real, N>;
-    using Vector = Vector<Real, N>;
-    using Point = Point<Real, N>;
-
-    /**
-    * Structure representing a node of the AABB tree.
-    */
-    struct Node {
-      Box box; /**< Bounding box of the subtree. */
-      Box box_long; /**< Bounding box of long boxes. */
-      Integer box_ptr; /**< Pointer to the first box in the reordering map of boxes. */
-      Integer box_num; /**< Number of boxes in the subtree. */
-      Integer box_tot_num; /**< Total number of boxes in the subtree. */
-      Integer parent; /**< Root node of the subtree. */
-      Integer child_l; /**< Left child of the subtree. */
-      Integer child_r; /**< Right child of the subtree. */
-    };
 
     /**
     * Structure representing the statistics of the AABB tree.
@@ -88,6 +69,28 @@ namespace AABBtree {
       void reset() {*this = Statistics{};}
     };
 
+  private:
+    // Basic types definitions
+    using Box = Box<Real, N>;
+    using BoxUniquePtr = BoxUniquePtr<Real, N>;
+    using BoxUniquePtrList = BoxUniquePtrList<Real, N>;
+    using Vector = Vector<Real, N>;
+    using Point = Point<Real, N>;
+
+    /**
+    * Structure representing a node of the AABB tree.
+    */
+    struct Node {
+      Box box; /**< Bounding box of the subtree. */
+      Box box_long; /**< Bounding box of long boxes. */
+      Integer box_ptr; /**< Pointer to the first box in the reordering map of boxes. */
+      Integer box_num; /**< Number of boxes in the subtree. */
+      Integer box_tot_num; /**< Total number of boxes in the subtree. */
+      Integer parent; /**< Root node of the subtree. */
+      Integer child_l; /**< Left child of the subtree. */
+      Integer child_r; /**< Right child of the subtree. */
+    };
+
 
     // Tree hierarchy
     std::unique_ptr<BoxUniquePtrList> m_boxes{nullptr};
@@ -97,7 +100,7 @@ namespace AABBtree {
 
     // Tree parameters
     Integer m_max_nodal_objects{10}; /**< Maximum number of objects per node. */
-    Real m_separation_ratio_tolerance{0.1}; /**< Tolerance for bounding boxes separation. */
+    Real m_separation_ratio_tolerance{0.30}; /**< Tolerance for bounding boxes separation. */
     Real m_balance_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes balance. */
     Real m_min_box_size{0.0}; /**< Minimum size tolerance for bounding boxes. */
 
@@ -321,34 +324,13 @@ namespace AABBtree {
         }
         baricenter /= 2.0*node.box_num;
 
-        // Check if the leafs are balanced, if not try to separate boxes on a new separation line
-        /*if (n_long > this->m_max_nodal_objects ||
-            std::min(n_left, n_right) < this->m_balance_ratio_tolerance * std::max(n_left, n_right) ) {
-
-          // Perform coputation only if baricenter is well separated from the previous separation line
-          if (std::abs(baricenter - separation_line) > separation_tolerance) {
-            n_long = n_left = n_right = 0;
-            id_ini = node.box_ptr;
-            id_end = node.box_ptr + node.box_num;
-            while (id_ini < id_end) {
-              Box const & box_id{*(*this->m_boxes)[this->m_tree_boxes_map[id_ini]]};
-              Integer side{static_cast<Integer>(box_id.which_side(baricenter, separation_tolerance, axis))};
-              switch (side) {
-                case static_cast<Integer>(Box::Side::LEFT): ++n_left;
-                  std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]); break;
-                case static_cast<Integer>(Box::Side::RIGHT): ++n_right;
-                  std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]); break;
-                default: ++n_long; ++id_ini;
-              }
-            }
-          }
-        }*/
-
         // If the left and right children are yet not balanced, dump the splitting axis
         if (this->m_dumping_mode && n_long > this->m_max_nodal_objects) {
           if (std::min(n_left, n_right) < this->m_balance_ratio_tolerance * std::max(n_left, n_right)) {
             if (dump < N-1) {++dump; this->m_stack.push_back(id); {continue;}}
-        }}
+          }
+        }
+        // FIXME: n_long > this->m_max_nodal_objects, where do I put the long boxes?
 
         // Reset the dump counter
         dump = 0;
@@ -541,16 +523,6 @@ namespace AABBtree {
         auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
           this->m_stack.emplace_back(node_1); this->m_stack.emplace_back(node_2);
         };
-        // FIXME if (id_s1 >= 0 && id_s2 >= 0) {
-        //  if (node_1.box_tot_num >= node_2.box_tot_num) {
-        //    stack_emplace_back(node_1.child_l, id_s2);
-        //    stack_emplace_back(node_1.child_r, id_s2);
-        //    if (node_1.box_num > 0) {stack_emplace_back(id_1, negate(id_2));}
-        //  } else {
-        //    stack_emplace_back(id_s1, node_2.child_l);
-        //    stack_emplace_back(id_s1, node_2.child_r);
-        //    if (node_2.box_num > 0) stack_emplace_back(negate(id_1), id_2);}
-        //} else
         if (id_s1 >= 0) {
           stack_emplace_back(node_1.child_l, id_s2);
           stack_emplace_back(node_1.child_r, id_s2);
@@ -558,7 +530,6 @@ namespace AABBtree {
         } else if (id_s2 >= 0) {
           stack_emplace_back(id_s1, node_2.child_l);
           stack_emplace_back(id_s1, node_2.child_r);
-          // FIXME if (node_2.box_num > 0) {stack_emplace_back(id_1, negate(id_2));}
         }
       }
 
@@ -731,16 +702,6 @@ namespace AABBtree {
         auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
           this->m_stack.emplace_back(node_1); this->m_stack.emplace_back(node_2);
         };
-        // FIXME if (id_s1 >= 0 && id_s2 >= 0) {
-        //  if (node_1.box_tot_num >= node_2.box_tot_num) {
-        //    stack_emplace_back(node_1.child_l, id_s2);
-        //    stack_emplace_back(node_1.child_r, id_s2);
-        //    if (node_1.box_num > 0) {stack_emplace_back(id_1, negate(id_2));}
-        //  } else {
-        //    stack_emplace_back(id_s1, node_2.child_l);
-        //    stack_emplace_back(id_s1, node_2.child_r);
-        //    if (node_2.box_num > 0) stack_emplace_back(negate(id_1), id_2);}
-        //} else
         if (id_s1 >= 0) {
           stack_emplace_back(node_1.child_l, id_s2);
           stack_emplace_back(node_1.child_r, id_s2);
@@ -748,7 +709,6 @@ namespace AABBtree {
         } else if (id_s2 >= 0) {
           stack_emplace_back(id_s1, node_2.child_l);
           stack_emplace_back(id_s1, node_2.child_r);
-          // FIXME if (node_2.box_num > 0) {stack_emplace_back(id_1, negate(id_2));}
         }
       }
 
@@ -911,6 +871,8 @@ namespace AABBtree {
     */
     void depth(Integer const i, Integer & d) const
     {
+      d = 0;
+      if (i < 0) {return;}
       this->m_stack.clear();
       this->m_stack.reserve(2*this->size() + 1);
       this->m_stack.emplace_back(i);
@@ -918,7 +880,6 @@ namespace AABBtree {
       depth_stack.reserve(2*this->size() + 1);
       depth_stack.emplace_back(0);
       Integer depth{0};
-      d = 0;
       while (!this->m_stack.empty())
       {
         Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
@@ -940,10 +901,11 @@ namespace AABBtree {
     */
     void nodes(Integer const i, Integer & l, Integer & n, Integer & b) const
     {
+      l = n = b = 0;
+      if (i < 0) {return;}
       this->m_stack.clear();
       this->m_stack.reserve(2*this->size() + 1);
       this->m_stack.emplace_back(i);
-      l = n = b = 0;
       while (!this->m_stack.empty())
       {
         Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
