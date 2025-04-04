@@ -35,10 +35,10 @@ using namespace TestUtilities;
 TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
 
   using Point = Eigen::Matrix<TestType, 2, 1>;
-  using Box = AABBtree::Box<TestType, 2>;
-  using Ray = AABBtree::Ray<TestType, 2>;
+  using Box   = AABBtree::Box<TestType, 2>;
+  using Ray   = AABBtree::Ray<TestType, 2>;
 
-  std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
+  std::vector<std::string> colors = { "r", "g", "b", "c", "m", "y", "k", "w" };
   TestType const tol{1.0e-8};
 
   SECTION("Intersection") {
@@ -48,8 +48,8 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
     TestType d_int{ray.interior_distance(box, tol)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim( {-3.0, 3.0}); P.xlabel("x");
-    P.ylim( {-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid( true);
     P.title("Intersection");
     P.plot_ray<TestType, 2>( ray, colors[0], 1.0);
@@ -73,8 +73,8 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
     TestType d{ray.distance(pnt)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim( {-3.0, 3.0}); P.xlabel("x");
-    P.ylim( {-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid( true);
     P.title("Point distance");
     P.plot_ray<TestType, 2>( ray, colors[0], 1.0);
@@ -96,8 +96,8 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
     TestType d_int{ray.interior_distance(box, tol)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim( {-3.0, 3.0}); P.xlabel("x");
-    P.ylim( {-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid( true);
     P.title("Interior distance");
     P.plot_ray<TestType, 2>( ray, colors[0], 1.0);
@@ -119,8 +119,8 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
     TestType d_int{ray.exterior_distance(box, tol)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim( {-3.0, 3.0}); P.xlabel("x");
-    P.ylim( {-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid( true);
     P.title("Exterior distance");
     P.plot_ray<TestType, 2>( ray, colors[0], 1.0);

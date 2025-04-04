@@ -89,17 +89,17 @@ int main() {
   AABBtree::Tree<Real, 2> tree_1;
   AABBtree::Tree<Real, 2> tree_2;
   timer.tic(); tree_1.build(std::move(boxes_1)); timer.toc();
-  std::cout << std::fixed << "Tree 1 built in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << std::fixed << "Tree 1 built in " << timer.elapsed_us() << " us\n";
   timer.tic(); tree_2.build(std::move(boxes_2)); timer.toc();
-  std::cout << "Tree 2 built in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Tree 2 built in " << timer.elapsed_us() << " us\n";
   tree_1.print(std::cout);
   tree_2.print(std::cout);
 
   // Plot the functions
   #ifdef AABBTREE_ENABLE_PLOTTING
   Plot2D P;
-  P.xlim({-3.0, 3.0}); P.xlabel("x");
-  P.ylim({-3.0, 3.0}); P.ylabel("y");
+  P.xlim(-3.0, 3.0); P.xlabel("x");
+  P.ylim(-3.0, 3.0); P.ylabel("y");
   P.grid(true);
   std::vector<Real> x_f1_vec(x_f1.data(), x_f1.data() + x_f1.size());
   std::vector<Real> y_f1_vec(y_f1.data(), y_f1.data() + y_f1.size());
@@ -118,9 +118,9 @@ int main() {
   IndexSet candidates_set;
   bool do_intersect;
   timer.tic(); do_intersect = tree_1.intersect(box, candidates_set); timer.toc();
-  std::cout << "Box intersects tree 1 in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Box intersects tree 1 in " << timer.elapsed_us() << " us\n";
   if (do_intersect) {
-    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    std::cout << "Candidates: " << candidates_set.size() << '\n';
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
       P.plot_box<Real, 2>( *tree_1.box(i), "r", 0.25);
@@ -130,9 +130,9 @@ int main() {
 
   // Intersect box with tree 2
   timer.tic(); do_intersect = tree_2.intersect(box, candidates_set); timer.toc();
-  std::cout << "Box intersects tree 2 in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Box intersects tree 2 in " << timer.elapsed_us() << " us\n";
   if (do_intersect) {
-    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    std::cout << "Candidates: " << candidates_set.size() << '\n';
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
       P.plot_box<Real, 2>( *tree_2.box(i), "g", 0.25);
@@ -147,17 +147,17 @@ int main() {
   Ray<Real, 2> ray(-2.0, -2.0, 1.0, 1.0);
   ray.direction().normalize();
   #ifdef AABBTREE_ENABLE_PLOTTING
-  P.xlim({-3.0, 3.0}); P.xlabel("x");
-  P.ylim({-3.0, 3.0}); P.ylabel("y");
+  P.xlim(-3.0, 3.0); P.xlabel("x");
+  P.ylim(-3.0, 3.0); P.ylabel("y");
   P.grid(true);
   P.plot_ray<Real, 2>( ray, "b", 1.0);
   #endif
 
   // Intersect ray with tree 1
   timer.tic(); do_intersect = tree_1.intersect(ray, candidates_set); timer.toc();
-  std::cout << "Ray intersects tree 1 in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Ray intersects tree 1 in " << timer.elapsed_us() << " us\n";
   if (do_intersect) {
-    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    std::cout << "Candidates: " << candidates_set.size() << '\n';
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
       P.plot_box<Real, 2>( *tree_1.box(i), "r", 0.25);
@@ -167,9 +167,9 @@ int main() {
 
   // Intersect ray with tree 2
   timer.tic(); do_intersect = tree_2.intersect(ray, candidates_set); timer.toc();
-  std::cout << "Ray intersects tree 2 in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Ray intersects tree 2 in " << timer.elapsed_us() << " us\n";
   if (do_intersect) {
-    std::cout << "Candidates: " << candidates_set.size() << std::endl;
+    std::cout << "Candidates: " << candidates_set.size() << '\n';
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
       P.plot_box<Real, 2>( *tree_1.box(i), "r", 0.25 );
@@ -183,9 +183,9 @@ int main() {
   // Intersect tree 1 with tree 2
   IndexMap candidates_map;
   timer.tic(); do_intersect = tree_1.intersect(tree_2, candidates_map); timer.toc();
-  std::cout << "Trees intersect in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Trees intersect in " << timer.elapsed_us() << " us\n";
   if (do_intersect) {
-    std::cout << "Candidates: " << candidates_map.size() << std::endl;
+    std::cout << "Candidates: " << candidates_map.size() << '\n';
     std::vector<Vector2> tree_points;
     Vector2 point;
     for (auto const & [key, value] : candidates_map) {

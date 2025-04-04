@@ -33,19 +33,19 @@ namespace AABBtree {
       m_ax  = m_fig->current_axes();
     }
 
-    void set_grid() { m_ax->grid(true); }
-    void hold( bool const YN ) { m_ax->hold( YN ); }
-    void xlabel ( std::string const & s ) { matplot::xlabel( m_ax, s ); }
-    void ylabel ( std::string const & s ) { matplot::ylabel( m_ax, s ); }
-    void xlim   ( const std::array<double, 2> & R ) { return m_ax->xlim( R ); }
-    void ylim   ( const std::array<double, 2> & R ) { return m_ax->ylim( R ); }
-    void title  ( std::string const & s ) { matplot::title( m_ax, s ); }  
-    void show()  { matplot::show( m_fig ); }  
-    void clear() { m_ax->clear(); }  
+    void hold   ( bool const YN ) { m_ax->hold( YN ); }
+    void xlabel ( std::string const & s ) { m_ax->xlabel( s ); }
+    void ylabel ( std::string const & s ) { m_ax->ylabel( s ); }
+    void xlim   ( double const mi, double const ma ) { return m_ax->xlim( {mi,ma} ); }
+    void ylim   ( double const mi, double const ma ) { return m_ax->ylim( {mi,ma} ); }
+    void title  ( std::string const & s ) { m_ax->title( s ); }  
+    void show()  { m_fig->show(); }  
+    void clear() { m_ax->clear(); }
 
-    template <typename... Args> auto plot  ( Args... args ) { return matplot::plot( m_ax, args... ); }
+    template <typename... Args> auto plot  ( Args... args ) { return m_ax->plot( args... ); }
     template <typename... Args> auto grid  ( Args... args ) { return m_ax->grid( args... ); }
     template <typename... Args> auto loglog( Args... args ) { return m_ax->loglog( args... ); }
+    template <typename... Args> auto legend( Args... args ) { return m_ax->legend( args... ); }
 
     // Plot a box
     template <typename Real, Integer N>

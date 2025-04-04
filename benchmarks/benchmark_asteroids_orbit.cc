@@ -53,11 +53,11 @@ int main()
   std::vector<Keplerian<Real, Integer>> data;
   timer.tic();
   if (!Parse<Real, Integer>(fname, data, n_asteroids)) {
-    std::cerr << "Error parsing data" << std::endl;
+    std::cerr << "Error parsing data\n";
     return 1;
   }
   timer.toc();
-  std::cout << "Data parsed in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Data parsed in " << timer.elapsed_us() << " us\n";
 
   // Set the initial and final times
   Real dt{(t_end - t_ini)/t_steps};
@@ -75,7 +75,7 @@ int main()
       KeplerianToCartesian(data_i, x(j), y(j), z(j));
       asteroids_trace << " " << x(j) << " " << y(j) << " " << z(j);
     }
-    asteroids_trace << std::endl;
+    asteroids_trace << '\n';
     Vector box_min, box_max;
     constexpr Real tol_trace{1.0e-6};
     for (Integer j{0}; j < t_steps; ++j) {
@@ -90,12 +90,12 @@ int main()
     boxes->back()->reorder(); // Always wear a helmet
   }
   asteroids_trace.close();
-  std::cout << "Boxes prepared in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Boxes prepared in " << timer.elapsed_us() << " us\n";
 
   // Build the tree
   Tree tree;
   timer.tic(); tree.build(std::move(boxes)); timer.toc();
-  std::cout << "Tree built in " << timer.elapsed_us() << " us" << std::endl;
+  std::cout << "Tree built in " << timer.elapsed_us() << " us\n";
   tree.print(std::cout);
 
   #ifdef AABBTREE_ENABLE_PLOTTING
@@ -108,7 +108,7 @@ int main()
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {
     if (i % 1000 == 0) {
-      std::cout << "Cluster " << i << " of " << n_clusters << std::endl;
+      std::cout << "Cluster " << i << " of " << n_clusters << '\n';
     }
     // Phasing
     clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
@@ -160,7 +160,7 @@ int main()
   std::ofstream asteroids_phasing("asteroids_phasing_phasing.txt");
   for (Integer i{0}; i < n_clusters; ++i) {
     asteroids_phasing << i << " " << phasing_time[i] << " " << phasing_points_1[i].transpose() <<
-    " " << phasing_points_2[i].transpose() << std::endl;
+    " " << phasing_points_2[i].transpose() << '\n';
   }
   asteroids_phasing.close();
 
@@ -178,7 +178,7 @@ int main()
     for (Integer j : clusters[sorting[i]]) {
       asteroids_cluster << " " << j;
     }
-    asteroids_cluster << std::endl;
+    asteroids_cluster << '\n';
   }
   asteroids_cluster.close();
 
@@ -199,11 +199,11 @@ int main()
     XY.hold(true);
     XZ.hold(true);
     XY.plot(x, y, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
-    XY.xlim({-max_xy, max_xy}); XY.xlabel("x (AU)");
-    XY.ylim({-max_xy, max_xy}); XY.ylabel("y (AU)");
+    XY.xlim(-max_xy, max_xy); XY.xlabel("x (AU)");
+    XY.ylim(-max_xy, max_xy); XY.ylabel("y (AU)");
     XZ.plot(x, z, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
-    XZ.xlim({-max_xy, max_xy}); XZ.xlabel("x (AU)");
-    XZ.ylim({-max_xz, max_xz}); XZ.ylabel("z (AU)");
+    XZ.xlim(-max_xy, max_xy); XZ.xlabel("x (AU)");
+    XZ.ylim(-max_xz, max_xz); XZ.ylabel("z (AU)");
   }
   #endif
 
@@ -248,10 +248,10 @@ int main()
 
   for (Integer i{0}; i < n_clusters_to_plot; ++i) {
     std::cout << "Cluster " << i << " distance: " << std::scientific <<
-    clusters_distance[sorting[i]] << std::endl;
+    clusters_distance[sorting[i]] << '\n';
   }
-  std::cout << "Clusters found in " << timer.elapsed_us() << " us" << std::endl;
-  std::cout << "Average time per cluster: " << timer.elapsed_us()/n_clusters << " us" << std::endl;
+  std::cout << "Clusters found in " << timer.elapsed_us() << " us\n";
+  std::cout << "Average time per cluster: " << timer.elapsed_us()/n_clusters << " us\n";
 
   return 0;
 }

@@ -48,8 +48,8 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_3; box_1.intersect(box_2, box_3);
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim({-3.0, 3.0}); P.xlabel("x");
-    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid(true);
     P.title( "Intersection" );
     P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
@@ -75,8 +75,8 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     TestType d_ext{box.exterior_distance(pnt, f)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim({-3.0, 3.0}); P.xlabel("x");
-    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid(true);
     P.title( "Point distance" );
     P.plot_box<TestType, 2>( box, colors[0], 1.0); P.hold(true);
@@ -96,8 +96,8 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     TestType d{box_1.interior_distance(box_2, p_1, p_2)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim({-3.0, 3.0}); P.xlabel("x");
-    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid(true);
     P.title( "Interior distance" );
     P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
@@ -117,8 +117,8 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     TestType d{box_1.exterior_distance(box_2, p_1, p_2)};
     #ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim({-3.0, 3.0}); P.xlabel("x");
-    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.xlim(-3.0, 3.0); P.xlabel("x");
+    P.ylim(-3.0, 3.0); P.ylabel("y");
     P.grid(true);
     P.title( "Exterior distance" );
     P.plot_box<TestType, 2>( box_1, colors[0], 1.0);

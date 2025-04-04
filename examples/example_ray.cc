@@ -38,7 +38,7 @@ int main() {
   Box box(min_corner, max_corner);
 
   // Check if the ray intersects the box
-  std::cout << "Does the ray intersect the box? " << (ray.intersects(box) ? "Yes" : "No") << std::endl;
+  std::cout << "Does the ray intersect the box? " << (ray.intersects(box) ? "Yes\n" : "No\n");
 
   // Find the intersection point if the ray intersects the box
   Point closest_intersection_point, farthest_intersection_point;
@@ -47,12 +47,12 @@ int main() {
   // Find the closest point and its distance in the box to the ray
   Point closest_point_on_ray, closest_point_on_box;
   Real min_distance{ray.interior_distance(box, closest_point_on_ray, closest_point_on_box)};
-  std::cout << "Minimum distance: " << min_distance << std::endl;
+  std::cout << "Minimum distance: " << min_distance << '\n';
 
   // Find the farthest point and its distance in the box to the ray
   Point farthest_point_on_ray, farthest_point_on_box;
   Real max_distance{ray.exterior_distance(box, farthest_point_on_ray, farthest_point_on_box)};
-  std::cout << "Maximum distance: " << max_distance << std::endl;
+  std::cout << "Maximum distance: " << max_distance << '\n';
 
   return 0;
 }

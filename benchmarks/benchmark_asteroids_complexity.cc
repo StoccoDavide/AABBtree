@@ -48,12 +48,12 @@ ComputeChecks( int n_objects_t1, int n_objects_t2, int n_nodal_objs ) {
   std::string fname{ "./benchmarks/asteroids.txt" }; // from build directory
   std::vector<Keplerian<Real, Integer>> data_1;
   if (!Parse<Real, Integer>(fname, data_1, n_objects_t1, false)) {
-    std::cerr << "Error parsing data 1" << std::endl;
+    std::cerr << "Error parsing data 1\n";
     return {};
   }
   std::vector<Keplerian<Real, Integer>> data_2;
   if (!Parse<Real, Integer>(fname, data_2, n_objects_t2, true)) {
-    std::cerr << "Error parsing data 2" << std::endl;
+    std::cerr << "Error parsing data 2\n";
     return {};
   }
 
@@ -91,6 +91,10 @@ ComputeChecks( int n_objects_t1, int n_objects_t2, int n_nodal_objs ) {
       PropagateOrbit(data_i2, t_ini + j*dt, (j == 0) ? t_ini : t_ini + (j-1)*dt);
       KeplerianToCartesian(data_i2, x_2(j), y_2(j), z_2(j));
     }
+    
+    // swap y and z
+    y_2.swap(z_2);
+
     Vector box_min_2, box_max_2;
     constexpr Real tol_trace{1.0e-1};
     for (Integer j{0}; j < t_steps; ++j) {
@@ -147,7 +151,8 @@ ComputeChecks( int n_objects_t1, int n_objects_t2, int n_nodal_objs ) {
 }
 
 // Main function
-int main() {
+int
+main() {
 
   #ifdef AABBTREE_ENABLE_PLOTTING
   Plot2D BB;
@@ -166,10 +171,12 @@ int main() {
 
   // Set the number of asteroids for the two trees
   std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k"};
-  std::vector<Integer> n_objects = {60, 125, 250, 500, 1000, 2000, 4000, 8000};//, 15000, 30000
-  std::vector<Integer> n_nodal_objs = {10, 15, 20};
+  //std::vector<Integer>     n_objects = {60, 125, 250, 500, 1000, 2000, 4000, 8000};//, 15000, 30000
+  std::vector<Integer>     n_objects = {100, 200, 400, 800, 1600, 3200, 6400, 12800, 20000, 40000 };//, 15000, 30000
+  std::vector<Integer>     n_nodal_objs = {5, 20, 40};
+  std::vector<std::string> L{"B1","T1","B2","T2","B3","T3"};
 
-  std::cout << "----------------------------------------" << std::endl;
+  std::cout << "----------------------------------------\n";
   std::vector<Real> checks_t_avg(n_objects.size());
   std::vector<Real> checks_b_avg(n_objects.size());
   std::vector<Real> n_objects_tt(n_objects.size());
@@ -182,15 +189,16 @@ int main() {
       //n_objects_bb[i] = std::log(static_cast<Real>(n_objects[i]));
       //n_objects_tt[i] = std::log(static_cast<Real>(n_objects[i]))*static_cast<Real>(n_objects[i]);
       n_objects_tt[i] = static_cast<Real>(n_objects[i]);
-      std::cout << "Number of asteroids: " << n_objects[i] << std::endl;
-      std::cout << "Number of objects:   " << n_nodal_objs[j] << std::endl;
-      std::cout << "Checks b: " << checks_b_avg[i] << std::endl;
-      std::cout << "Checks t: " << checks_t_avg[i] << std::endl;
-      std::cout << "----------------------------------------" << std::endl;
+      std::cout << "Number of asteroids: " << n_objects[i] << '\n';
+      std::cout << "Number of objects:   " << n_nodal_objs[j] << '\n';
+      std::cout << "Checks b: " << checks_b_avg[i] << '\n';
+      std::cout << "Checks t: " << checks_t_avg[i] << '\n';
+      std::cout << "----------------------------------------\n";
     }
     #ifdef AABBTREE_ENABLE_PLOTTING
     TT.loglog(n_objects, checks_b_avg)->line_width(1.5).color(colors[j]).line_style("--");
     TT.loglog(n_objects, checks_t_avg)->line_width(1.5).color(colors[j]).line_style("-");
+    TT.legend(L);
     #endif
   }
 

@@ -43,17 +43,17 @@
 
 // Assert for AABBtree
 #ifndef AABBTREE_ASSERT
-#define AABBTREE_ASSERT(COND, MSG) if (!(COND)) {AABBTREE_ERROR(MSG);}
+#define AABBTREE_ASSERT(COND, MSG) if (!(COND)) { AABBTREE_ERROR(MSG); }
 #endif
 
 // Warning for AABBtree
 #ifndef AABBTREE_WARNING
-#define AABBTREE_WARNING(MSG) {std::cout << MSG << std::endl;}
+#define AABBTREE_WARNING(MSG) { std::cout << MSG << '\n' }
 #endif
 
 // Warning assert for AABBtree
 #ifndef AABBTREE_ASSERT_WARNING
-#define AABBTREE_ASSERT_WARNING(COND, MSG) if (!(COND)) {AABBTREE_WARNING(MSG);}
+#define AABBTREE_ASSERT_WARNING(COND, MSG) if (!(COND)) { AABBTREE_WARNING(MSG); }
 #endif
 
 // Default integer AABBtree type

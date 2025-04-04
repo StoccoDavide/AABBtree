@@ -43,8 +43,8 @@ TEMPLATE_TEST_CASE( "Tree-Tree", "[template]", float, double ) {
   using Box = AABBtree::Box<TestType, 2>;
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  P.xlim( {-3.0, 3.0}); P.xlabel("x");
-  P.ylim( {-3.0, 3.0}); P.ylabel("y");
+  P.xlim( -3.0, 3.0 ); P.xlabel("x");
+  P.ylim( -3.0, 3.0 ); P.ylabel("y");
   P.grid(true);
   P.title("Build");
   #endif

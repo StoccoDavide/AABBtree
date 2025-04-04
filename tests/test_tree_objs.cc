@@ -45,8 +45,8 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
 
   #ifdef AABBTREE_ENABLE_PLOTTING
   Plot2D P;
-  P.xlim({-3.0, 3.0}); P.xlabel("x");
-  P.ylim({-3.0, 3.0}); P.ylabel("y");
+  P.xlim(-3.0, 3.0); P.xlabel("x");
+  P.ylim(-3.0, 3.0); P.ylabel("y");
   P.grid( true);
   P.title( "Build");
   #endif

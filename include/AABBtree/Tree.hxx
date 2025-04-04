@@ -111,11 +111,11 @@ namespace AABBtree {
 
     private:
     // Basic types definitions
-    using Box = Box<Real, N>;
-    using BoxUniquePtr = BoxUniquePtr<Real, N>;
+    using Box              = Box<Real, N>;
+    using BoxUniquePtr     = BoxUniquePtr<Real, N>;
     using BoxUniquePtrList = BoxUniquePtrList<Real, N>;
-    using Vector = Vector<Real, N>;
-    using Point = Point<Real, N>;
+    using Vector           = Vector<Real, N>;
+    using Point            = Point<Real, N>;
 
     /**
      * \brief Structure representing a node of the AABB tree.
@@ -167,24 +167,23 @@ namespace AABBtree {
      * \brief Get a look at the vector of unique pointers to the bounding boxes.
      * \return A const reference to the vector of unique pointers to the bounding boxes.
      */
-    BoxUniquePtrList const & boxes() const {return *this->m_boxes;}
+    BoxUniquePtrList const & boxes() const { return *this->m_boxes; }
 
     /**
      * \brief Get a look at the i-th unique pointer to the bounding box.
      * \param[in] i Index of the unique pointer to the bounding box.
      * \return A const reference to the i-th unique pointer to the bounding box.
      */
-    BoxUniquePtr const & box(Integer const i) const {return (*this->m_boxes)[i];}
+    BoxUniquePtr const & box(Integer const i) const { return (*this->m_boxes)[i]; }
 
     /**
      * \brief Set the maximum number of objects per node.
      * \param[in] n Maximum number of objects per node.
      */
     void max_nodal_objects( Integer const n ) {
-      #define CMD "AABBtree::Tree::max_nodal_objects(...): "
-      AABBTREE_ASSERT(n > 0, CMD "input must be a positive integer.");
+      constexpr char CMD[]{"AABBtree::Tree::max_nodal_objects(...): "};
+      AABBTREE_ASSERT(n > 0, CMD << "input must be a positive integer.");
       this->m_max_nodal_objects = n;
-      #undef CMD
     }
 
     /**
@@ -198,10 +197,9 @@ namespace AABBtree {
      * \param[in] ratio Balance ratio tolerance for bounding boxes.
      */
     void separation_ratio_tolerance( Real const ratio ) {
-      #define CMD "AABBtree::Tree::separation_ratio_tolerance(...): "
-      AABBTREE_ASSERT(ratio > 0.0 && ratio < 1.0, CMD "input must be in the range [0, 1].");
+      constexpr char CMD[]{ "AABBtree::Tree::separation_ratio_tolerance(...): " };
+      AABBTREE_ASSERT(ratio > 0.0 && ratio < 1.0, CMD << "input must be in the range [0, 1].");
       this->m_separation_ratio_tolerance = ratio;
-      #undef CMD
     }
 
     /**
@@ -216,10 +214,9 @@ namespace AABBtree {
      */
     void min_box_size(Real const size)
     {
-      #define CMD "AABBtree::Tree::min_box_size(...): "
-      AABBTREE_ASSERT(size >= 0.0, CMD "input must be a non-negative real number.");
+      constexpr char CMD[]{ "AABBtree::Tree::min_box_size(...): " };
+      AABBTREE_ASSERT(size >= 0.0, CMD << "input must be a non-negative real number.");
       this->m_min_box_size = size;
-      #undef CMD
     }
 
     /**
@@ -282,7 +279,8 @@ namespace AABBtree {
      * \brief Build the tree given the bounding boxes.
      * \param[in] boxes Bounding boxes to build the tree from.
      */
-    void build( std::unique_ptr<BoxUniquePtrList> boxes ) {
+    void
+    build( std::unique_ptr<BoxUniquePtrList> boxes ) {
 
       // Collect the original object boxes
       this->m_boxes = std::move(boxes);
@@ -294,18 +292,18 @@ namespace AABBtree {
 
       // Setup the root node
       Node root;
-      root.parent  = -1;
-      root.child_l = -1;
-      root.child_r = -1;
-      root.box_ptr = 0;
-      root.box_num = 0;
+      root.parent      = -1;
+      root.child_l     = -1;
+      root.child_r     = -1;
+      root.box_ptr     = 0;
+      root.box_num     = 0;
       root.box_tot_num = num_boxes;
 
       // Setup the boxes map and compute the root box
       Integer depth{std::ceil(std::log2(num_boxes))};
       root.box.set_empty();
       this->m_tree_boxes_map.reserve(2*depth);
-      for (BoxUniquePtr const & box : *this->m_boxes) {
+      for ( BoxUniquePtr const & box : *this->m_boxes ) {
         root.box.extend(*box);
         this->m_tree_boxes_map.emplace_back(root.box_num++);
       }
@@ -344,15 +342,19 @@ namespace AABBtree {
         Integer n_right{0};
         Integer id_ini{node.box_ptr};
         Integer id_end{node.box_ptr + node.box_num};
-        Real baricenter {0.0};
+        Real baricenter {0};
         while (id_ini < id_end) {
           Box const & box_id{*(*this->m_boxes)[this->m_tree_boxes_map[id_ini]]};
-          Integer side{static_cast<Integer>(box_id.which_side(separation_line, separation_tolerance, axis))};
+          typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
           switch (side) {
-            case static_cast<Integer>(Box::Side::LEFT): ++n_left; // Left boxes are moved to the end
-              std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]); break;
-            case static_cast<Integer>(Box::Side::RIGHT): ++n_right; // Right boxes are moved to the end
-              std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]); break;
+            case Box::Side::LEFT:
+              ++n_left; // Left boxes are moved to the end
+              std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]);
+              break;
+            case Box::Side::RIGHT:
+              ++n_right; // Right boxes are moved to the end
+              std::swap(this->m_tree_boxes_map[id_ini], this->m_tree_boxes_map[--id_end]);
+              break;
             default: ++n_long; ++id_ini;
           }
           baricenter += box_id.max()[axis] + box_id.min()[axis];
@@ -374,7 +376,7 @@ namespace AABBtree {
         n_left = n_right = 0;
         id_ini = node.box_ptr + n_long;
         id_end = node.box_ptr + node.box_num;
-        while (id_ini < id_end) {
+        while ( id_ini < id_end ) {
           Integer ipos{this->m_tree_boxes_map[id_ini]};
           if ((*this->m_boxes)[ipos]->baricenter(axis) < separation_line) {
             ++id_ini; ++n_left; // In right position do nothing
@@ -385,7 +387,7 @@ namespace AABBtree {
         }
 
         // If the left and right children have few boxes, they are leafs
-        if (n_left <= this->m_max_nodal_objects && n_right <= this->m_max_nodal_objects) {continue;}
+        if ( n_left <= this->m_max_nodal_objects && n_right <= this->m_max_nodal_objects ) continue;
 
         // Set the left and right children indexes
         node.child_l = static_cast<Integer>(this->size() + 0);
@@ -408,14 +410,22 @@ namespace AABBtree {
 
         // Compute the bounding box of the long boxes, and left and right children
         Integer j{node.box_ptr};
+
         node.box_num = n_long;
         node.box_long.set_empty();
-        for (Integer i{0}; i < n_long; ++i) {node.box_long.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);}
-        node_l.box.set_empty(); node_l.box_ptr = j;
-        for (Integer i{0}; i < n_left; ++i) {node_l.box.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);}
+        for ( Integer i{0}; i < n_long; ++i ) 
+          node.box_long.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);
+        
+        node_l.box.set_empty();
+        node_l.box_ptr = j;
+        for (Integer i{0}; i < n_left; ++i)
+          node_l.box.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);
         node_l.box_long = node_l.box;
-        node_r.box.set_empty(); node_r.box_ptr = j;
-        for (Integer i{0}; i < n_right; ++i) {node_r.box.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);}
+
+        node_r.box.set_empty();
+        node_r.box_ptr = j;
+        for (Integer i{0}; i < n_right; ++i)
+          node_r.box.extend(*(*this->m_boxes)[this->m_tree_boxes_map[j++]]);
         node_r.box_long = node_r.box;
 
         // Push nodes on tree structure
@@ -437,12 +447,13 @@ namespace AABBtree {
      * \note Object must have a method \c intersects that computes the intersection with a box.
      */
     template <typename Object>
-    bool intersect( Object const & obj, IndexSet & candidates ) const {
+    bool
+    intersect( Object const & obj, IndexSet & candidates ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
       // Return if the tree is empty
-      if (this->is_empty()) {return false;}
+      if ( this->is_empty() ) return false;
 
       // Collect the original object boxes
       BoxUniquePtrList const & boxes{*this->m_boxes};
@@ -454,35 +465,35 @@ namespace AABBtree {
 
       // Main loop that checks the intersection iteratively
       candidates.clear();
-      while (!this->m_stack.empty())
-      {
+      while (!this->m_stack.empty()) {
+
         // Pop the node from stack
         Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
 
         // Get the node
         Node const & node{this->m_tree_structure[id]};
 
-        // If the object is not intersects the box, skip the node
+        // If the object do not intersects the box, skip the node
         ++this->m_check_counter;
-        if (!node.box.intersects(obj)) {continue;}
+        if ( !node.box.intersects(obj) ) continue;
 
         // Intersect the object with the long boxes on the node
-        if (node.box_num > 0) {
+        if ( node.box_num > 0 ) {
           ++this->m_check_counter;
-          if (node.box_long.intersects(obj)) {
+          if ( node.box_long.intersects(obj) ) {
             Integer const id_ini{node.box_ptr};
             Integer const id_end{node.box_ptr + node.box_num};
-            for (Integer i{id_ini}; i < id_end; ++i) {
-              Integer const pos{this->m_tree_boxes_map[i]};
+            for ( Integer i{id_ini}; i < id_end; ++i ) {
+              Integer const pos{ this->m_tree_boxes_map[i] };
               ++this->m_check_counter;
-              if (boxes[pos]->intersects(obj)) {candidates.insert(pos);}
+              if (boxes[pos]->intersects(obj)) candidates.insert(pos);
             }
           }
         }
 
-        // Push children on the stack if thay are not leafs
-        if (node.child_l > 0) {this->m_stack.emplace_back(node.child_l);}
-        if (node.child_r > 0) {this->m_stack.emplace_back(node.child_r);}
+        // Push children on the stack if they are not leafs
+        if ( node.child_l > 0 ) this->m_stack.emplace_back(node.child_l);
+        if ( node.child_r > 0 ) this->m_stack.emplace_back(node.child_r);
       }
 
       // Return true if the object intersects the tree
@@ -495,30 +506,30 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (boxes indexes).
      * \return True if the point intersects the tree, false otherwise.
      */
-    bool intersect(Tree const & tree, IndexMap & candidates) const {
+    bool
+    intersect( Tree const & tree, IndexMap & candidates ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
       // Return if the tree is empty
-      if (this->is_empty() || tree.is_empty()) {return false;}
+      if ( this->is_empty() || tree.is_empty() ) return false;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes_1{*this->m_boxes};
-      BoxUniquePtrList const & boxes_2{*tree.m_boxes};
+      BoxUniquePtrList const & boxes_1{ *this->m_boxes };
+      BoxUniquePtrList const & boxes_2{ *tree.m_boxes  };
 
       // Setup the stack
       this->m_stack.clear();
-      this->m_stack.reserve(this->size() + tree.size() + 2);
+      this->m_stack.reserve( this->size() + tree.size() + 2 );
       this->m_stack.emplace_back(0);
       this->m_stack.emplace_back(0);
 
       // Negate the id of the node to distinguish the tree
-      auto negate = [] (Integer const id) {return -1-id;};
+      auto negate = [] ( Integer const id ) { return -1-id; };
 
       // Main loop that checks the intersection iteratively
       candidates.clear();
-      while (!this->m_stack.empty())
-      {
+      while ( !this->m_stack.empty() ) {
         // Pop the node from stack (reversed order)
         Integer const id_s2{this->m_stack.back()}; this->m_stack.pop_back();
         Integer const id_2{id_s2 >= 0 ? id_s2 : negate(id_s2)};
@@ -526,43 +537,55 @@ namespace AABBtree {
         Integer const id_1{id_s1 >= 0 ? id_s1 : negate(id_s1)};
 
         // Get the node
-        Node const & node_1{this->m_tree_structure[id_1]};
-        Node const & node_2{tree.m_tree_structure[id_2]};
+        Node const & node_1{ this->m_tree_structure[id_1 ]};
+        Node const & node_2{ tree.m_tree_structure[id_2] };
 
         // If the boxes are not intersecting, skip the nodes
         ++this->m_check_counter;
-        if (!node_1.box.intersects(node_2.box)) {continue;}
+        if ( !node_1.box.intersects(node_2.box) ) continue;
 
         // Intersect the long boxes on the nodes
-        if (node_1.box_num > 0 && node_2.box_num > 0) {
+        if ( node_1.box_num > 0 && node_2.box_num > 0 ) {
           ++this->m_check_counter;
           if (node_1.box_long.intersects(node_2.box_long)) {
-            Integer const id_1_ini{node_1.box_ptr};
-            Integer const id_1_end{node_1.box_ptr + node_1.box_num};
-            Integer const id_2_ini{node_2.box_ptr};
-            Integer const id_2_end{node_2.box_ptr + node_2.box_num};
-            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+            Integer const id_1_ini{ node_1.box_ptr                  };
+            Integer const id_1_end{ node_1.box_ptr + node_1.box_num };
+            Integer const id_2_ini{ node_2.box_ptr                  };
+            Integer const id_2_end{ node_2.box_ptr + node_2.box_num };
+            for ( Integer i{id_1_ini}; i < id_1_end; ++i ) {
               Integer const pos_1{this->m_tree_boxes_map[i]};
-              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+              for ( Integer j{id_2_ini}; j < id_2_end; ++j ) {
                 Integer const pos_2{tree.m_tree_boxes_map[j]};
                 ++this->m_check_counter;
-                if (boxes_1[pos_1]->intersects(*boxes_2[pos_2])) {candidates[pos_1].insert(pos_2);}
+                if ( boxes_1[pos_1]->intersects(*boxes_2[pos_2]) )
+                  candidates[pos_1].insert(pos_2);
               }
             }
           }
         }
 
-        // Push children of both trees on the stack if thay are not leafs
+        // Push children of both trees on the stack if they are not leafs
         auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
           this->m_stack.emplace_back(node_1); this->m_stack.emplace_back(node_2);
         };
-        if (id_s1 >= 0) {
-          stack_emplace_back(node_1.child_l, id_s2);
-          stack_emplace_back(node_1.child_r, id_s2);
-          if (node_1.box_num > 0) {stack_emplace_back(negate(id_1), id_2);}
-        } else if (id_s2 >= 0) {
-          stack_emplace_back(id_s1, node_2.child_l);
-          stack_emplace_back(id_s1, node_2.child_r);
+        if ( node_1.box_num < node_2. box_num ) {
+          if ( id_s1 >= 0 ) {
+            stack_emplace_back( node_1.child_l, id_s2 );
+            stack_emplace_back( node_1.child_r, id_s2 );
+            if ( node_1.box_num > 0 ) stack_emplace_back(negate(id_1), id_2);
+          } else if ( id_s2 >= 0 ) {
+            stack_emplace_back(id_s1, node_2.child_l);
+            stack_emplace_back(id_s1, node_2.child_r);
+          }
+        } else {
+          if ( id_s2 >= 0 ) {
+            stack_emplace_back(id_s1, node_2.child_l);
+            stack_emplace_back(id_s1, node_2.child_r);
+            if ( node_2.box_num > 0 ) stack_emplace_back( id_1, negate(id_2) );
+          } else if ( id_s1 >= 0 ) {
+            stack_emplace_back( node_1.child_l, id_s2 );
+            stack_emplace_back( node_1.child_r, id_s2 );
+          }
         }
       }
 
@@ -575,7 +598,8 @@ namespace AABBtree {
      * \param[out] candidates Intersection result (boxes indexes).
      * \return True if the tree intersects itself, false otherwise.
      */
-    bool self_intersect( IndexSet & candidates ) const {
+    bool
+    self_intersect( IndexSet & candidates ) const {
       IndexMap candidates_map;
       bool intersects{this->intersect(*this, candidates_map)};
       candidates.clear();

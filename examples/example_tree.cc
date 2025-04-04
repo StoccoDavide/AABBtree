@@ -55,30 +55,30 @@ int main() {
   // Intersect ray with the tree
   IndexSet candidates;
   if (tree.intersect(ray, candidates)) {
-    std::cout << "Ray intersects with the following boxes:" << std::endl;
+    std::cout << "Ray intersects with the following boxes:\n";
     for (const auto& idx : candidates) {
-      std::cout << "Box " << idx << std::endl;
+      std::cout << "Box " << idx << '\n';
     }
   } else {
-    std::cout << "Ray does not intersect any boxes." << std::endl;
+    std::cout << "Ray does not intersect any boxes.\n";
   }
 
   // Check self-intersection of the tree
   candidates.clear();
   if (tree.self_intersect(candidates)) {
-    std::cout << "Self-intersection detected between the following boxes:" << std::endl;
+    std::cout << "Self-intersection detected between the following boxes:\n";
     for (const auto& idx : candidates) {
-      std::cout << "Box " << idx << std::endl;
+      std::cout << "Box " << idx << '\n';
     }
   } else {
-    std::cout << "No self-intersections detected in the tree." << std::endl;
+    std::cout << "No self-intersections detected in the tree.\n";
   }
 
   // Compute the minimum distance between the tree and a point
   Point point(2.0, 1.0);
   IndexSet candidates_distance;
   Real min_distance{tree.distance(point, candidates_distance)};
-  std::cout << "Minimum distance between the tree and the point: " << min_distance << std::endl;
+  std::cout << "Minimum distance between the tree and the point: " << min_distance << '\n';
 
   // Let us build a tree with a single box
   Box box4(Point(0.0, 0.0), Point(1.0, 1.0));
@@ -92,14 +92,14 @@ int main() {
   // Intersect two trees
   IndexMap candidates_map;
   if (tree.intersect(tree_single, candidates_map)) {
-    std::cout << "Intersection detected between the following boxes:" << std::endl;
+    std::cout << "Intersection detected between the following boxes:\n";
     for (const auto& [key, values] : candidates_map) {
       for (const auto& val : values) {
-        std::cout << "Box " << key << " and Box " << val << std::endl;
+        std::cout << "Box " << key << " and Box " << val << '\n';
       }
     }
   } else {
-    std::cout << "No intersections detected between the trees." << std::endl;
+    std::cout << "No intersections detected between the trees.\n";
   }
 
   return 0;
