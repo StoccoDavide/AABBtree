@@ -20,12 +20,12 @@
 #ifdef AABBTREE_ENABLE_PLOTTING
 #include <matplot/matplot.h>
 using namespace matplot;
-static auto fig{figure(true)};
-static axes_handle ax{fig->current_axes()};
-static auto fig_bb{figure(true)};
-static axes_handle ax_bb{fig_bb->current_axes()};
-static auto fig_tt{figure(true)};
-static axes_handle ax_tt{fig_tt->current_axes()};
+static auto        fig    { figure(true)           };
+static axes_handle ax     { fig->current_axes()    };
+static auto        fig_bb { figure(true)           };
+static axes_handle ax_bb  { fig_bb->current_axes() };
+static auto        fig_tt { figure(true)           };
+static axes_handle ax_tt  { fig_tt->current_axes() };
 
 #ifndef SET_PLOT
 #define SET_PLOT \
@@ -43,22 +43,23 @@ using Real = double;
 using AABBtree::Integer;
 
 // Main function
-std::tuple<Real, Real> ComputeChecks(int n_objects_t1, int n_objects_t2, int n_nodal_objs)
-{
+std::tuple<Real, Real>
+ComputeChecks( int n_objects_t1, int n_objects_t2, int n_nodal_objs ) {
 
-  constexpr Real t_ini{64328.0}; // January 1, 2035
-  constexpr Real t_end{t_ini + 365.0};
-  constexpr Integer t_steps{30};
-  Real dt{(t_end - t_ini)/t_steps};
+  constexpr Real    t_ini   { 64328.0       }; // January 1, 2035
+  constexpr Real    t_end   { t_ini + 365.0 };
+  constexpr Integer t_steps { 30            };
 
-  using Vector = AABBtree::Vector<Real, 3*t_steps>;
-  using Box = AABBtree::Box<Real, 3*t_steps>;
-  using Tree = AABBtree::Tree<Real, 3*t_steps>;
-  using Statistics = Tree::Statistics;
+  Real dt{ (t_end - t_ini)/t_steps };
+
+  using Vector           = AABBtree::Vector<Real, 3*t_steps>;
+  using Box              = AABBtree::Box<Real, 3*t_steps>;
+  using Tree             = AABBtree::Tree<Real, 3*t_steps>;
+  using Statistics       = Tree::Statistics;
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 3*t_steps>;
 
   // Parse asteroids data
-  std::string fname = "./../benchmarks/asteroids.txt"; // from build directory
+  std::string fname{ "./benchmarks/asteroids.txt" }; // from build directory
   std::vector<Keplerian<Real, Integer>> data_1;
   if (!Parse<Real, Integer>(fname, data_1, n_objects_t1, false)) {
     std::cerr << "Error parsing data 1" << std::endl;
@@ -71,9 +72,9 @@ std::tuple<Real, Real> ComputeChecks(int n_objects_t1, int n_objects_t2, int n_n
   }
 
   // Prepare the boxes 1
-  std::unique_ptr<BoxUniquePtrList> boxes_1 = std::make_unique<BoxUniquePtrList>();
+  std::unique_ptr<BoxUniquePtrList> boxes_1{ std::make_unique<BoxUniquePtrList>() };
   boxes_1->reserve(n_objects_t1);
-  for (Integer i{0}; i < n_objects_t1; ++i) {
+  for (  Integer i{0}; i < n_objects_t1; ++i) {
     Vector x_1, y_1, z_1;
     Keplerian<Real, Integer> data_i1 = data_1[i];
     for (Integer j{0}; j < t_steps; ++j) {
@@ -95,11 +96,11 @@ std::tuple<Real, Real> ComputeChecks(int n_objects_t1, int n_objects_t2, int n_n
   }
 
   // Prepare the boxes 2
-  std::unique_ptr<BoxUniquePtrList> boxes_2 = std::make_unique<BoxUniquePtrList>();
+  std::unique_ptr<BoxUniquePtrList> boxes_2{ std::make_unique<BoxUniquePtrList>() };
   boxes_2->reserve(n_objects_t2);
   for (Integer i{0}; i < n_objects_t2; ++i) {
     Vector x_2, y_2, z_2;
-    Keplerian<Real, Integer> data_i2 = data_2[i];
+    Keplerian<Real, Integer> data_i2{ data_2[i] };
     for (Integer j{0}; j < t_steps; ++j) {
       PropagateOrbit(data_i2, t_ini + j*dt, (j == 0) ? t_ini : t_ini + (j-1)*dt);
       KeplerianToCartesian(data_i2, x_2(j), y_2(j), z_2(j));
@@ -122,29 +123,31 @@ std::tuple<Real, Real> ComputeChecks(int n_objects_t1, int n_objects_t2, int n_n
   Tree tree_1, tree_2;
   tree_1.max_nodal_objects(n_nodal_objs);
   tree_2.max_nodal_objects(n_nodal_objs);
-  tree_1.build(std::move(boxes_1));
-  tree_2.build(std::move(boxes_2));
+  tree_1.build( std::move(boxes_1) );
+  tree_2.build( std::move(boxes_2) );
 
   // Query tree-tree
   Statistics stats;
-  IndexMap candidates_query_tt;
-  tree_1.intersect(tree_2, candidates_query_tt);
+  IndexMap   candidates_query_tt;
+
+  tree_1.intersect( tree_2, candidates_query_tt );
   tree_1.stats(stats);
-  Integer checks_query_t1{stats.check_counter};
-  tree_2.intersect(tree_1, candidates_query_tt);
+  Integer checks_query_t1{ stats.check_counter };
+
+  tree_2.intersect( tree_1, candidates_query_tt );
   tree_2.stats(stats);
-  Integer checks_query_t2{stats.check_counter};
+  Integer checks_query_t2{ stats.check_counter };
 
   // Query tree-boxes
   IndexSet candidates_query_bb;
-  Integer checks_query_b1{0};
-  for (Integer i{0}; i < n_objects_t2; ++i) {
-    tree_1.intersect(*tree_2.box(i), candidates_query_bb);
+  Integer  checks_query_b1{0};
+  for ( Integer i{0}; i < n_objects_t2; ++i ) {
+    tree_1.intersect( *tree_2.box(i), candidates_query_bb );
     tree_1.stats(stats);
     checks_query_b1 += stats.check_counter;
   }
   Integer checks_query_b2{0};
-  for (Integer i{0}; i < n_objects_t1; ++i) {
+  for ( Integer i{0}; i < n_objects_t1; ++i ) {
     tree_2.intersect(*tree_1.box(i), candidates_query_bb);
     tree_2.stats(stats);
     checks_query_b2 += stats.check_counter;

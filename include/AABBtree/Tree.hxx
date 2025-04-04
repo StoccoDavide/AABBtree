@@ -39,37 +39,77 @@ namespace AABBtree {
     static_assert(N > 0, "Tree dimension must be positive.");
 
     /**
-    * Structure representing the statistics of the AABB tree.
-    */
+     * \brief Structure representing the statistics of the AABB tree.
+     */
     struct Statistics {
       // Build statistics
-      Integer objects{0};          /**< Number of objects. */
-      Integer nodes{0};            /**< Number of nodes. */
-      Integer leafs{0};            /**< Number of leafs. */
-      Integer long_boxes{0};       /**< Number of long boxes. */
-      Integer depth{0};            /**< Depth of the tree. */
-      Integer left_nodes{0};       /**< Number of left nodes. */
-      Integer left_leafs{0};       /**< Number of left leafs. */
-      Integer left_long_boxes{0};  /**< Number of left long boxes. */
-      Integer left_depth{0};       /**< Depth of the left sub-tree. */
-      Integer right_nodes{0};      /**< Number of right nodes. */
-      Integer right_leafs{0};      /**< Number of right leafs. */
-      Integer right_long_boxes{0}; /**< Number of right long boxes. */
-      Integer right_depth{0};      /**< Depth of the right sub-tree. */
-      Integer dump_counter{0};     /**< Number of dumpings. */
-      Real balance_ratio{0.0};     /**< Balance ratio of the tree. */
-      Real depth_ratio{0.0};       /**< Depth ratio of the tree. */
-
+      Integer objects{0};          /**< Number of objects in the tree. */
+      Integer nodes{0};            /**< Total number of nodes in the tree. */
+      Integer leafs{0};            /**< Number of leaf nodes (nodes with objects). */
+      Integer long_boxes{0};       /**< Number of boxes with aspect ratio > threshold. */
+      Integer depth{0};            /**< Maximum depth of the tree. */
+      Integer left_nodes{0};       /**< Number of nodes in left subtree. */
+      Integer left_leafs{0};       /**< Number of leafs in left subtree. */
+      Integer left_long_boxes{0};  /**< Number of long boxes in left subtree. */
+      Integer left_depth{0};       /**< Depth of left subtree. */
+      Integer right_nodes{0};      /**< Number of nodes in right subtree. */
+      Integer right_leafs{0};      /**< Number of leafs in right subtree. */
+      Integer right_long_boxes{0}; /**< Number of long boxes in right subtree. */
+      Integer right_depth{0};      /**< Depth of right subtree. */
+      Integer dump_counter{0};     /**< Number of tree rebuilds (dumps). */
+      Real    balance_ratio{0.0};  /**< Ratio of left/right subtree sizes (0=perfect balance). */
+      Real    depth_ratio{0.0};    /**< Ratio of left/right subtree depths (0=perfect balance). */
+  
       // Query statistics
-      Integer check_counter{0}; /**< Number of collision check. */
+      Integer check_counter{0}; /**< Total number of collision checks performed. */
+  
+      /**
+       * @brief Reset all statistics to their initial zero state
+       * 
+       * This method efficiently resets all statistics counters to zero and ratios to 0.0,
+       * returning the structure to its default-constructed state. It is equivalent to:
+       * \code
+       * stats = Statistics{};
+       * \endcode
+       * 
+       * @note This operation is noexcept and has constant time complexity O(1)
+       * @post All counters are zero and ratios are 0.0
+       */
+      void reset() noexcept { *this = Statistics{}; }
 
       /**
-      * Reset the statistics.
-      */
-      void reset() {*this = Statistics{};}
+       * \brief Print the tree info to an output stream.
+       * \param[in] os Output stream to print the tree info to.
+       */
+      void print( OutStream & os ) const {
+        // Print the tree info
+        os << "────────────────────────────────────────────────────────────────────────────────\n"
+           << "AABB TREE INFO"
+           << "\n\tAmbient dimension : " << N
+           << "\n\tBasic type        : " << typeid(Real).name()
+           << "\n\tObjects           : " << objects
+           << "\n\tNodes             : " << nodes
+           << "\n\tLeafs             : " << leafs
+           << "\n\tLong boxes        : " << long_boxes
+           << "\n\tDepth             : " << depth
+           << "\n\tLeft nodes        : " << left_nodes
+           << "\n\tLeft leafs        : " << left_leafs
+           << "\n\tLeft long boxes   : " << left_long_boxes
+           << "\n\tLeft depth        : " << left_depth
+           << "\n\tRight nodes       : " << right_nodes
+           << "\n\tRight leafs       : " << right_leafs
+           << "\n\tRight long boxes  : " << right_long_boxes
+           << "\n\tRight depth       : " << right_depth
+           << "\n\tDump counter      : " << dump_counter
+           << "\n\tBalance ratio     : " << balance_ratio
+           << "\n\tDepth ratio       : " << depth_ratio
+           << "\n\tCheck counter     : " << check_counter
+           << "\n────────────────────────────────────────────────────────────────────────────────\n";
+      }
+
     };
 
-  private:
+    private:
     // Basic types definitions
     using Box = Box<Real, N>;
     using BoxUniquePtr = BoxUniquePtr<Real, N>;
@@ -945,31 +985,8 @@ namespace AABBtree {
     void print( OutStream & os ) const  {
       // Retrieve the statistics
       Statistics stats; this->stats(stats);
-
       // Print the tree info
-      os <<
-        "────────────────────────────────────────────────────────────────────────────────" << std::endl <<
-        "AABB TREE INFO" << std::endl <<
-        "\tAmbient dimension : " << N << std::endl <<
-        "\tBasic type        : " << typeid(Real).name() << std::endl <<
-        "\tObjects           : " << stats.objects << std::endl <<
-        "\tNodes             : " << stats.nodes << std::endl <<
-        "\tLeafs             : " << stats.leafs << std::endl <<
-        "\tLong boxes        : " << stats.long_boxes << std::endl <<
-        "\tDepth             : " << stats.depth << std::endl <<
-        "\tLeft nodes        : " << stats.left_nodes << std::endl <<
-        "\tLeft leafs        : " << stats.left_leafs << std::endl <<
-        "\tLeft long boxes   : " << stats.left_long_boxes << std::endl <<
-        "\tLeft depth        : " << stats.left_depth << std::endl <<
-        "\tRight nodes       : " << stats.right_nodes << std::endl <<
-        "\tRight leafs       : " << stats.right_leafs << std::endl <<
-        "\tRight long boxes  : " << stats.right_long_boxes << std::endl <<
-        "\tRight depth       : " << stats.right_depth << std::endl <<
-        "\tDump counter      : " << stats.dump_counter << std::endl <<
-        "\tBalance ratio     : " << stats.balance_ratio << std::endl <<
-        "\tDepth ratio       : " << stats.depth_ratio << std::endl <<
-        "\tCheck counter     : " << stats.check_counter << std::endl <<
-        "────────────────────────────────────────────────────────────────────────────────" << std::endl;
+      stats.print( os );
     }
 
   }; // Tree

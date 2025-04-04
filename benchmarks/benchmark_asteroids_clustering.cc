@@ -41,29 +41,29 @@ using namespace BenchmarkUtilities;
 // Main function
 int main()
 {
-  using Real = double;
+  using Real    = double;
   using Integer = AABBtree::Integer;
 
   constexpr Integer n_asteroids{60000};
   constexpr Integer n_clusters{60000};
   constexpr Integer n_clusters_to_plot{10};
-  constexpr Real t_ini{64328.0}; // January 1, 2035
+  constexpr Real    t_ini{64328.0}; // January 1, 2035
   constexpr Integer n_neighbours{10};
-  constexpr Real t_end{t_ini + 30.0};
+  constexpr Real    t_end{t_ini + 30.0};
   constexpr Integer t_steps{4*30};
   constexpr Integer l_trace{10};
 
-  using Vector = AABBtree::Vector<Real, 3*t_steps>;
-  using Box = AABBtree::Box<Real, 3*t_steps>;
-  using Tree = AABBtree::Tree<Real, 3*t_steps>;
+  using Vector           = AABBtree::Vector<Real, 3*t_steps>;
+  using Box              = AABBtree::Box<Real, 3*t_steps>;
+  using Tree             = AABBtree::Tree<Real, 3*t_steps>;
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 3*t_steps>;
-  using TicToc = BenchmarkUtilities::TicToc<Real>;
+  using TicToc           = BenchmarkUtilities::TicToc<Real>;
 
   // Initialize the timer
   TicToc timer;
 
   // Parse asteroids data
-  std::string fname = "./../benchmarks/asteroids.txt"; // from build directory
+  std::string fname{ "./benchmarks/asteroids.txt" }; // from build directory
   std::vector<Keplerian<Real, Integer>> data;
   timer.tic();
   if (!Parse<Real, Integer>(fname, data, n_asteroids)) {
@@ -77,7 +77,7 @@ int main()
   Real dt{(t_end - t_ini)/t_steps};
 
   // Write on a new file
-  std::unique_ptr<BoxUniquePtrList> boxes = std::make_unique<BoxUniquePtrList>();
+  std::unique_ptr<BoxUniquePtrList> boxes{ std::make_unique<BoxUniquePtrList>() };
   boxes->reserve(n_asteroids);
   std::ofstream asteroids_trace("asteroids_clustering_traces.txt");
   for (Integer i{0}; i < n_asteroids; ++i) {

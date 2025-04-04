@@ -10,6 +10,14 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+# Set default build type to Release if not specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build" FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(AABBtreeVersion)
@@ -57,10 +65,10 @@ target_include_directories(AABBtree INTERFACE
 # but the call to `target_sources` breaks `fetchcontent` compatibility due to absolute paths being
 # added to `INTERFACE_SOURCES`. I tried solving it, but it seems to be poorly documented, supported, etc.
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
-    message(STATUS "AABBtree: CMAKE_BUILD_TYPE not specified, defaulting to ${CMAKE_BUILD_TYPE}")
-  endif()
+  #if(NOT CMAKE_BUILD_TYPE)
+  #  set(CMAKE_BUILD_TYPE "Debug")
+  #  message(STATUS "AABBtree: CMAKE_BUILD_TYPE not specified, defaulting to ${CMAKE_BUILD_TYPE}")
+  #endif()
 
   option(BUILD_TESTS "Build tests" ON)
   option(BUILD_BENCHMARKS "Build benchmarks" OFF)
