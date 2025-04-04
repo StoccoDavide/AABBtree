@@ -21,16 +21,16 @@
 namespace AABBtree {
 
   /**
-  * \brief A class representing a \em non-recursive axis-aligned bounding box tree (AABB tree).
-  *
-  * The Tree class provides an efficient way to store and query a set of axis-aligned bounding boxes
-  * \em non-recursively. It supports various operations such as building the tree, adding axis-aligned
-  * boxes, and performing intersection queries. The Tree class is templated on the type of the
-  * real numbers and the dimensions of the bounding boxes and is based, as the name suggests, on a
-  * novel non-recursive algorithm.
-  * \tparam Real Type of the scalar coefficients
-  * \tparam N Dimension of the ambient space.
-  */
+   * \brief A class representing a \em non-recursive axis-aligned bounding box tree (AABB tree).
+   *
+   * The Tree class provides an efficient way to store and query a set of axis-aligned bounding boxes
+   * \em non-recursively. It supports various operations such as building the tree, adding axis-aligned
+   * boxes, and performing intersection queries. The Tree class is templated on the type of the
+   * real numbers and the dimensions of the bounding boxes and is based, as the name suggests, on a
+   * novel non-recursive algorithm.
+   * \tparam Real Type of the scalar coefficients
+   * \tparam N Dimension of the ambient space.
+   */
   template <typename Real, Integer N>
   class Tree {
   public:
@@ -43,22 +43,22 @@ namespace AABBtree {
     */
     struct Statistics {
       // Build statistics
-      Integer objects{0}; /**< Number of objects. */
-      Integer nodes{0}; /**< Number of nodes. */
-      Integer leafs{0}; /**< Number of leafs. */
-      Integer long_boxes{0}; /**< Number of long boxes. */
-      Integer depth{0}; /**< Depth of the tree. */
-      Integer left_nodes{0}; /**< Number of left nodes. */
-      Integer left_leafs{0}; /**< Number of left leafs. */
-      Integer left_long_boxes{0}; /**< Number of left long boxes. */
-      Integer left_depth{0}; /**< Depth of the left sub-tree. */
-      Integer right_nodes{0}; /**< Number of right nodes. */
-      Integer right_leafs{0}; /**< Number of right leafs. */
+      Integer objects{0};          /**< Number of objects. */
+      Integer nodes{0};            /**< Number of nodes. */
+      Integer leafs{0};            /**< Number of leafs. */
+      Integer long_boxes{0};       /**< Number of long boxes. */
+      Integer depth{0};            /**< Depth of the tree. */
+      Integer left_nodes{0};       /**< Number of left nodes. */
+      Integer left_leafs{0};       /**< Number of left leafs. */
+      Integer left_long_boxes{0};  /**< Number of left long boxes. */
+      Integer left_depth{0};       /**< Depth of the left sub-tree. */
+      Integer right_nodes{0};      /**< Number of right nodes. */
+      Integer right_leafs{0};      /**< Number of right leafs. */
       Integer right_long_boxes{0}; /**< Number of right long boxes. */
-      Integer right_depth{0}; /**< Depth of the right sub-tree. */
-      Integer dump_counter{0}; /**< Number of dumpings. */
-      Real balance_ratio{0.0}; /**< Balance ratio of the tree. */
-      Real depth_ratio{0.0}; /**< Depth ratio of the tree. */
+      Integer right_depth{0};      /**< Depth of the right sub-tree. */
+      Integer dump_counter{0};     /**< Number of dumpings. */
+      Real balance_ratio{0.0};     /**< Balance ratio of the tree. */
+      Real depth_ratio{0.0};       /**< Depth ratio of the tree. */
 
       // Query statistics
       Integer check_counter{0}; /**< Number of collision check. */
@@ -78,70 +78,69 @@ namespace AABBtree {
     using Point = Point<Real, N>;
 
     /**
-    * Structure representing a node of the AABB tree.
-    */
+     * \brief Structure representing a node of the AABB tree.
+     */
     struct Node {
-      Box box; /**< Bounding box of the subtree. */
-      Box box_long; /**< Bounding box of long boxes. */
-      Integer box_ptr; /**< Pointer to the first box in the reordering map of boxes. */
-      Integer box_num; /**< Number of boxes in the subtree. */
+      Box box;             /**< Bounding box of the subtree. */
+      Box box_long;        /**< Bounding box of long boxes. */
+      Integer box_ptr;     /**< Pointer to the first box in the reordering map of boxes. */
+      Integer box_num;     /**< Number of boxes in the subtree. */
       Integer box_tot_num; /**< Total number of boxes in the subtree. */
-      Integer parent; /**< Root node of the subtree. */
-      Integer child_l; /**< Left child of the subtree. */
-      Integer child_r; /**< Right child of the subtree. */
+      Integer parent;      /**< Root node of the subtree. */
+      Integer child_l;     /**< Left child of the subtree. */
+      Integer child_r;     /**< Right child of the subtree. */
     };
 
 
     // Tree hierarchy
     std::unique_ptr<BoxUniquePtrList> m_boxes{nullptr};
-    std::vector<Node> m_tree_structure; /**< Tree structure. */
-    IndexList m_tree_boxes_map; /**< Reordering between the vector of boxes and the tree internal structure. */
-    bool m_dumping_mode{true}; /**< Enable dumping while building the tree. */
+    std::vector<Node>                 m_tree_structure;     /**< Tree structure. */
+    IndexList                         m_tree_boxes_map;     /**< Reordering between the vector of boxes and the tree internal structure. */
+    bool                              m_dumping_mode{true}; /**< Enable dumping while building the tree. */
 
     // Tree parameters
-    Integer m_max_nodal_objects{10}; /**< Maximum number of objects per node. */
-    Real m_separation_ratio_tolerance{0.30}; /**< Tolerance for bounding boxes separation. */
-    Real m_balance_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes balance. */
-    Real m_min_box_size{0.0}; /**< Minimum size tolerance for bounding boxes. */
+    Integer m_max_nodal_objects{10};            /**< Maximum number of objects per node. */
+    Real    m_separation_ratio_tolerance{0.30}; /**< Tolerance for bounding boxes separation. */
+    Real    m_balance_ratio_tolerance{0.25};    /**< Tolerance for bounding boxes balance. */
+    Real    m_min_box_size{0.0};                /**< Minimum size tolerance for bounding boxes. */
 
     // Statistics
     mutable Integer m_check_counter{0}; /**< Number of collision check. */
-    mutable Integer m_dump_counter{0}; /**< Number of dumpings. */
+    mutable Integer m_dump_counter{0};  /**< Number of dumpings. */
 
     // Stack for non-recursive tree building and query
     mutable IndexList m_stack; /**< Tree stack. */
 
   public:
     /**
-    * Class destructor for the \em non-recursive axis-aligned bounding box tree.
-    */
+     * \brief Class destructor for the \em non-recursive axis-aligned bounding box tree.
+     */
     ~Tree() = default;
 
     /**
-    * Class constructor for the \em non-recursive axis-aligned bounding box tree.
-    */
+     * \brief Class constructor for the \em non-recursive axis-aligned bounding box tree.
+     */
     Tree() = default;
 
 
     /**
-    * Get a look at the vector of unique pointers to the bounding boxes.
-    * \return A const reference to the vector of unique pointers to the bounding boxes.
-    */
+     * \brief Get a look at the vector of unique pointers to the bounding boxes.
+     * \return A const reference to the vector of unique pointers to the bounding boxes.
+     */
     BoxUniquePtrList const & boxes() const {return *this->m_boxes;}
 
     /**
-    * Get a look at the i-th unique pointer to the bounding box.
-    * \param[in] i Index of the unique pointer to the bounding box.
-    * \return A const reference to the i-th unique pointer to the bounding box.
-    */
+     * \brief Get a look at the i-th unique pointer to the bounding box.
+     * \param[in] i Index of the unique pointer to the bounding box.
+     * \return A const reference to the i-th unique pointer to the bounding box.
+     */
     BoxUniquePtr const & box(Integer const i) const {return (*this->m_boxes)[i];}
 
     /**
-    * Set the maximum number of objects per node.
-    * \param[in] n Maximum number of objects per node.
-    */
-    void max_nodal_objects(Integer const n)
-    {
+     * \brief Set the maximum number of objects per node.
+     * \param[in] n Maximum number of objects per node.
+     */
+    void max_nodal_objects( Integer const n ) {
       #define CMD "AABBtree::Tree::max_nodal_objects(...): "
       AABBTREE_ASSERT(n > 0, CMD "input must be a positive integer.");
       this->m_max_nodal_objects = n;
@@ -149,17 +148,16 @@ namespace AABBtree {
     }
 
     /**
-    * Get the maximum number of objects per node.
-    * \return The maximum number of objects per node.
-    */
-    Integer max_nodal_objects() const {return this->m_max_nodal_objects;}
+     * \brief Get the maximum number of objects per node.
+     * \return The maximum number of objects per node.
+     */
+    Integer max_nodal_objects() const { return this->m_max_nodal_objects; }
 
     /**
-    * Set the balance ratio tolerance for bounding boxes.
-    * \param[in] ratio Balance ratio tolerance for bounding boxes.
-    */
-    void separation_ratio_tolerance(Real const ratio)
-    {
+     * \brief Set the balance ratio tolerance for bounding boxes.
+     * \param[in] ratio Balance ratio tolerance for bounding boxes.
+     */
+    void separation_ratio_tolerance( Real const ratio ) {
       #define CMD "AABBtree::Tree::separation_ratio_tolerance(...): "
       AABBTREE_ASSERT(ratio > 0.0 && ratio < 1.0, CMD "input must be in the range [0, 1].");
       this->m_separation_ratio_tolerance = ratio;
@@ -167,15 +165,15 @@ namespace AABBtree {
     }
 
     /**
-    * Get the balance ratio tolerance for bounding boxes.
-    * \return The balance ratio tolerance for bounding boxes.
-    */
-    Real separation_ratio_tolerance() const {return this->m_separation_ratio_tolerance;}
+     * \brief Get the balance ratio tolerance for bounding boxes.
+     * \return The balance ratio tolerance for bounding boxes.
+     */
+    Real separation_ratio_tolerance() const { return this->m_separation_ratio_tolerance; }
 
     /**
-    * Set the minimum size for bounding boxes.
-    * \param[in] size Minimum size for bounding boxes.
-    */
+     * \brief Set the minimum size for bounding boxes.
+     * \param[in] size Minimum size for bounding boxes.
+     */
     void min_box_size(Real const size)
     {
       #define CMD "AABBtree::Tree::min_box_size(...): "
@@ -185,68 +183,66 @@ namespace AABBtree {
     }
 
     /**
-    * Get the minimum size for bounding boxes.
-    * \return The minimum size for bounding boxes.
-    */
-    Real min_box_size() const {return this->m_min_box_size;}
+     * \brief Get the minimum size for bounding boxes.
+     * \return The minimum size for bounding boxes.
+     */
+    Real min_box_size() const { return this->m_min_box_size; }
 
     /**
-    * Get the tree structure.
-    * \return The tree structure.
-    */
-    std::vector<Node> const & structure() const {return this->m_tree_structure;}
+     * \brief Get the tree structure.
+     * \return The tree structure.
+     */
+    std::vector<Node> const & structure() const { return this->m_tree_structure; }
 
     /**
-    * Get the i-th tree node.
-    * \param[in] i Index of the node.
-    * \return The i-th tree node.
-    */
-    Node const & node(Integer const i) const {return this->m_tree_structure[i];}
+     * \brief Get the i-th tree node.
+     * \param[in] i Index of the node.
+     * \return The i-th tree node.
+     */
+    Node const & node(Integer const i) const { return this->m_tree_structure[i]; }
 
     /**
-    * Get the number of nodes in the tree.
-    * \return The number of nodes in the tree.
-    */
-    Integer size() const {return this->m_tree_structure.size();}
+     * \brief Get the number of nodes in the tree.
+     * \return The number of nodes in the tree.
+     */
+    Integer size() const { return this->m_tree_structure.size(); }
 
     /**
-    * Enable dumping mode while building the tree.
-    */
-    void enable_dumping_mode() {this->m_dumping_mode = true;}
+     * \brief Enable dumping mode while building the tree.
+     */
+    void enable_dumping_mode() { this->m_dumping_mode = true; }
 
     /**
-    * Disable dumping mode while building the tree.
-    */
-    void disable_dumping_mode() {this->m_dumping_mode = false;}
+     * \brief Disable dumping mode while building the tree.
+     */
+    void disable_dumping_mode() { this->m_dumping_mode = false; }
 
     /**
-    * Set dumping mode while building the tree.
-    * \param[in] mode Dumping mode.
-    */
-    void dumping_mode(bool const mode) {this->m_dumping_mode = mode;}
+     * \brief Set dumping mode while building the tree.
+     * \param[in] mode Dumping mode.
+     */
+    void dumping_mode(bool const mode) { this->m_dumping_mode = mode; }
 
     /**
-    * Check if tree is empty.
-    * \return True if the tree is empty, false otherwise.
-    */
-    bool is_empty() const {return this->m_tree_structure.empty();}
+     * \brief Check if tree is empty.
+     * \return True if the tree is empty, false otherwise.
+     */
+    bool is_empty() const { return this->m_tree_structure.empty(); }
 
     /**
-    * Clear the tree.
-    */
-    void clear()
-    {
+     * \brief Clear the tree.
+     */
+    void clear() {
       this->m_tree_structure.clear();
       this->m_tree_boxes_map.clear();
       this->m_stack.clear();
     }
 
     /**
-    * Build the tree given the bounding boxes.
-    * \param[in] boxes Bounding boxes to build the tree from.
-    */
-    void build(std::unique_ptr<BoxUniquePtrList> boxes)
-    {
+     * \brief Build the tree given the bounding boxes.
+     * \param[in] boxes Bounding boxes to build the tree from.
+     */
+    void build( std::unique_ptr<BoxUniquePtrList> boxes ) {
 
       // Collect the original object boxes
       this->m_boxes = std::move(boxes);
@@ -284,8 +280,7 @@ namespace AABBtree {
       Integer dump{0};
 
       // Main loop that divide the nodes iteratively until all constraints satisfied
-      while (!this->m_stack.empty())
-      {
+      while ( !this->m_stack.empty() ) {
         // Pop the node from stack
         Integer const id{this->m_stack.back()}; this->m_stack.pop_back();
 
@@ -394,16 +389,15 @@ namespace AABBtree {
     }
 
     /**
-    * Intersect the tree with an object.
-    * \param[in] obj Object to intersect with.
-    * \param[out] candidates Intersection result (boxes indexes).
-    * \return True if the object intersects the tree, false otherwise.
-    * \tparam Object Type of the object to intersect with.
-    * \note Object must have a method \c intersects that computes the intersection with a box.
-    */
+     * \brief Intersect the tree with an object.
+     * \param[in] obj Object to intersect with.
+     * \param[out] candidates Intersection result (boxes indexes).
+     * \return True if the object intersects the tree, false otherwise.
+     * \tparam Object Type of the object to intersect with.
+     * \note Object must have a method \c intersects that computes the intersection with a box.
+     */
     template <typename Object>
-    bool intersect(Object const & obj, IndexSet & candidates) const
-    {
+    bool intersect( Object const & obj, IndexSet & candidates ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
@@ -456,13 +450,12 @@ namespace AABBtree {
     }
 
     /**
-    * Intersect the tree with another tree.
-    * \param[in] tree Tree to intersect with.
-    * \param[out] candidates Intersection result (boxes indexes).
-    * \return True if the point intersects the tree, false otherwise.
-    */
-    bool intersect(Tree const & tree, IndexMap & candidates) const
-    {
+     * \brief Intersect the tree with another tree.
+     * \param[in] tree Tree to intersect with.
+     * \param[out] candidates Intersection result (boxes indexes).
+     * \return True if the point intersects the tree, false otherwise.
+     */
+    bool intersect(Tree const & tree, IndexMap & candidates) const {
       // Reset statistics
       this->m_check_counter = 0;
 
@@ -538,12 +531,11 @@ namespace AABBtree {
     }
 
     /**
-    * Self-intersect the tree (i.e., intersect the tree with itself to find all the intersecting boxes).
-    * \param[out] candidates Intersection result (boxes indexes).
-    * \return True if the tree intersects itself, false otherwise.
-    */
-    bool self_intersect(IndexSet & candidates) const
-    {
+     * \brief Self-intersect the tree (i.e., intersect the tree with itself to find all the intersecting boxes).
+     * \param[out] candidates Intersection result (boxes indexes).
+     * \return True if the tree intersects itself, false otherwise.
+     */
+    bool self_intersect( IndexSet & candidates ) const {
       IndexMap candidates_map;
       bool intersects{this->intersect(*this, candidates_map)};
       candidates.clear();
@@ -554,16 +546,15 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the minimum distance between an object and the tree.
-    * \param[in] obj Object to compute the distance to.
-    * \param[out] candidates Minimum distance candidates.
-    * \return The minimum distance between the object and the tree.
-    * \tparam Object Type of the object to compute the distance to.
-    * \note Object must have a method \c interior_distance that computes the distance to a box.
-    */
+     * \brief Compute the minimum distance between an object and the tree.
+     * \param[in] obj Object to compute the distance to.
+     * \param[out] candidates Minimum distance candidates.
+     * \return The minimum distance between the object and the tree.
+     * \tparam Object Type of the object to compute the distance to.
+     * \note Object must have a method \c interior_distance that computes the distance to a box.
+     */
     template <typename Object>
-    Real distance(Object const & obj, IndexSet & candidates) const
-    {
+    Real distance( Object const & obj, IndexSet & candidates ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
@@ -626,13 +617,12 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the minimum distance between the current tree and another tree.
-    * \param[in] tree Tree to compute the distance to.
-    * \param[out] candidates Minimum distance candidates.
-    * \return The minimum distance between the trees.
-    */
-    Real distance(Tree const & tree, IndexMap & candidates) const
-    {
+     * \brief Compute the minimum distance between the current tree and another tree.
+     * \param[in] tree Tree to compute the distance to.
+     * \param[out] candidates Minimum distance candidates.
+     * \return The minimum distance between the trees.
+     */
+    Real distance( Tree const & tree, IndexMap & candidates ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
@@ -728,9 +718,13 @@ namespace AABBtree {
     * \tparam Function Type of the custom distance function.
     */
     template <typename Object, typename Function = std::function<Real(Object const &, Box const &)>>
-    Real closest(Object const & obj, Integer const n, IndexSet & candidates, Function
-      distance_function = [] (Object const & o, Box const & b) {return b.interior_distance(o);}) const
-    {
+    Real
+    closest(
+      Object  const & obj,
+      Integer const   n,
+      IndexSet      & candidates,
+      Function        distance_function = [] (Object const & o, Box const & b) { return b.interior_distance(o); }
+    ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
@@ -799,19 +793,23 @@ namespace AABBtree {
     }
 
     /**
-    * Find the candidates that are within a given distance from a object, using a custom distance function.
-    * \param[in] obj Object to compute the distance to.
-    * \param[in] max_distance Maximum distance to consider.
-    * \param[out] candidates Minimum distance candidates.
-    * \param[in] distance_function Custom distance function (default is the interior distance).
-    * \return True if at least one object is within the given distance, false otherwise.
-    * \tparam Object Type of the object to compute the distance to.
-    * \tparam Function Type of the custom distance function.
-    */
+     * \brief Find the candidates that are within a given distance from a object, using a custom distance function.
+     * \param[in] obj Object to compute the distance to.
+     * \param[in] max_distance Maximum distance to consider.
+     * \param[out] candidates Minimum distance candidates.
+     * \param[in] distance_function Custom distance function (default is the interior distance).
+     * \return True if at least one object is within the given distance, false otherwise.
+     * \tparam Object Type of the object to compute the distance to.
+     * \tparam Function Type of the custom distance function.
+     */
     template <typename Object, typename Function = std::function<Real(Object const &, Box const &)>>
-    bool within_distance(Object const & obj, Real const max_distance, IndexSet & candidates, Function
-      distance_function = [] (Object const & o, Box const & b) {return b.interior_distance(o);}) const
-    {
+    bool
+    within_distance(
+      Object const & obj,
+      Real   const   max_distance,
+      IndexSet     & candidates,
+      Function       distance_function = [] ( Object const & o, Box const & b ) { return b.interior_distance(o); }
+    ) const {
       // Reset statistics
       this->m_check_counter = 0;
 
@@ -865,14 +863,13 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the depth of the tree from a given node.
-    * \param[in] i Index of the node to compute the depth from.
-    * \param[out] d Depth of the tree from the given node.
-    */
-    void depth(Integer const i, Integer & d) const
-    {
+     * \brief Compute the depth of the tree from a given node.
+     * \param[in] i Index of the node to compute the depth from.
+     * \param[out] d Depth of the tree from the given node.
+     */
+    void depth( Integer const i, Integer & d ) const {
       d = 0;
-      if (i < 0) {return;}
+      if (i < 0) return;
       this->m_stack.clear();
       this->m_stack.reserve(2*this->size() + 1);
       this->m_stack.emplace_back(i);
@@ -893,14 +890,13 @@ namespace AABBtree {
     }
 
     /**
-    * Compute the number of leafs, nodes, and long boxes of the tree from a given node.
-    * \param[in] i Index of the node to start the computation from.
-    * \param[out] l Number of leafs of the tree from the given node.
-    * \param[out] n Number of nodes of the tree from the given node.
-    * \param[out] b Number of long boxes of the tree from the given node.
-    */
-    void nodes(Integer const i, Integer & l, Integer & n, Integer & b) const
-    {
+     * \brief Compute the number of leafs, nodes, and long boxes of the tree from a given node.
+     * \param[in] i Index of the node to start the computation from.
+     * \param[out] l Number of leafs of the tree from the given node.
+     * \param[out] n Number of nodes of the tree from the given node.
+     * \param[out] b Number of long boxes of the tree from the given node.
+     */
+    void nodes( Integer const i, Integer & l, Integer & n, Integer & b ) const {
       l = n = b = 0;
       if (i < 0) {return;}
       this->m_stack.clear();
@@ -919,11 +915,10 @@ namespace AABBtree {
     }
 
     /**
-    * Compute some statistics about the current tree.
-    * \param[out] stats Statistics about the tree.
-    */
-    void stats(Statistics & stats) const
-    {
+     * \brief Compute some statistics about the current tree.
+     * \param[out] stats Statistics about the tree.
+     */
+    void stats( Statistics & stats ) const {
       // Reset statistics
       stats.reset();
 
@@ -944,11 +939,10 @@ namespace AABBtree {
     }
 
     /**
-    * Print the tree info to an output stream.
-    * \param[in] os Output stream to print the tree info to.
-    */
-    void print(OutStream & os) const
-    {
+     * \brief Print the tree info to an output stream.
+     * \param[in] os Output stream to print the tree info to.
+     */
+    void print( OutStream & os ) const  {
       // Retrieve the statistics
       Statistics stats; this->stats(stats);
 
