@@ -245,7 +245,7 @@ namespace AABBtree {
      * \brief Get the number of nodes in the tree.
      * \return The number of nodes in the tree.
      */
-    Integer size() const { return this->m_tree_structure.size(); }
+    Integer size() const { return static_cast<Integer>(this->m_tree_structure.size()); }
 
     /**
      * \brief Enable dumping mode while building the tree.
@@ -288,7 +288,7 @@ namespace AABBtree {
       this->m_boxes = std::move(boxes);
 
       // Clear tree structure
-      Integer num_boxes{this->m_boxes->size()};
+      Integer num_boxes{ static_cast<Integer>(this->m_boxes->size()) };
       this->m_tree_structure.clear();
       this->m_tree_structure.reserve(20*num_boxes + 1);
 
@@ -958,12 +958,13 @@ namespace AABBtree {
      * \brief Compute some statistics about the current tree.
      * \param[out] stats Statistics about the tree.
      */
-    void stats( Statistics & stats ) const {
+    void
+    stats( Statistics & stats ) const {
       // Reset statistics
       stats.reset();
 
       // Compute/copy the build statistics
-      stats.objects = this->m_boxes->size();
+      stats.objects = static_cast<Integer>(this->m_boxes->size());
       this->nodes(0, stats.leafs, stats.nodes, stats.long_boxes);
       this->depth(0, stats.depth);
       this->nodes(this->m_tree_structure[0].child_l, stats.left_leafs, stats.left_nodes, stats.left_long_boxes);

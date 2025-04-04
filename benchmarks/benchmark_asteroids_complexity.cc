@@ -18,21 +18,7 @@
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
-#include <matplot/matplot.h>
-using namespace matplot;
-static auto        fig    { figure(true)           };
-static axes_handle ax     { fig->current_axes()    };
-static auto        fig_bb { figure(true)           };
-static axes_handle ax_bb  { fig_bb->current_axes() };
-static auto        fig_tt { figure(true)           };
-static axes_handle ax_tt  { fig_tt->current_axes() };
-
-#ifndef SET_PLOT
-#define SET_PLOT \
-grid(ax, true); \
-grid(ax_bb, true); \
-grid(ax_tt, true);
-#endif
+#include "Plot2D.hh"
 #endif
 
 // Benchmark utilities
@@ -164,15 +150,18 @@ ComputeChecks( int n_objects_t1, int n_objects_t2, int n_nodal_objs ) {
 int main() {
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  SET_PLOT
-  ax_bb->hold(true);
-  ax_bb->xlabel("Number of objects");
-  ax_bb->ylabel("Number of checks");
-  ax_bb->title("Tree-Box intersection");
-  ax_tt->hold(true);
-  ax_tt->xlabel("Number of objects");
-  ax_tt->ylabel("Number of checks");
-  ax_tt->title("Tree-Tree intersection");
+  Plot2D BB;
+  Plot2D TT;
+  BB.grid(true);
+  TT.grid(true);
+  BB.hold(true);
+  BB.xlabel("Number of objects");
+  BB.ylabel("Number of checks");
+  BB.title("Tree-Box intersection");
+  TT.hold(true);
+  TT.xlabel("Number of objects");
+  TT.ylabel("Number of checks");
+  TT.title("Tree-Tree intersection");
   #endif
 
   // Set the number of asteroids for the two trees
@@ -200,13 +189,13 @@ int main() {
       std::cout << "----------------------------------------" << std::endl;
     }
     #ifdef AABBTREE_ENABLE_PLOTTING
-    ax_tt->loglog(n_objects, checks_b_avg)->line_width(1.5).color(colors[j]).line_style("--");
-    ax_tt->loglog(n_objects, checks_t_avg)->line_width(1.5).color(colors[j]).line_style("-");
+    TT.loglog(n_objects, checks_b_avg)->line_width(1.5).color(colors[j]).line_style("--");
+    TT.loglog(n_objects, checks_t_avg)->line_width(1.5).color(colors[j]).line_style("-");
     #endif
   }
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig_tt);
+  TT.show();
   #endif
 
   return 0;

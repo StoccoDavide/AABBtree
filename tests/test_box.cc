@@ -14,6 +14,12 @@
 
 // AABBtree library
 #include "AABBtree.hh"
+
+// Matplot++ library
+#ifdef AABBTREE_ENABLE_PLOTTING
+#include "Plot2D.hh"
+#endif
+
 using namespace AABBtree;
 
 // Catch2 library
@@ -23,26 +29,10 @@ using namespace AABBtree;
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 using namespace Catch::Matchers;
 
-// Matplot++ library
-#ifdef AABBTREE_ENABLE_PLOTTING
-#include <matplot/matplot.h>
-using namespace matplot;
-static auto fig{figure(true)};
-static axes_handle ax{fig->current_axes()};
-#endif
 
 // Test utilities
 #include "TestUtilities.hh"
 using namespace TestUtilities;
-
-#ifdef AABBTREE_ENABLE_PLOTTING
-#ifndef SET_PLOT
-#define SET_PLOT \
-xlim(ax, {-3.0, 3.0}); xlabel(ax, "x"); \
-ylim(ax, {-3.0, 3.0}); ylabel(ax, "y"); \
-grid(ax, true);
-#endif
-#endif
 
 TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
 
@@ -57,11 +47,17 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_2(-2.0, -2.0, 1.0, 1.0);
     Box box_3; box_1.intersect(box_2, box_3);
     #ifdef AABBTREE_ENABLE_PLOTTING
-    SET_PLOT
-    title(ax, "Intersection");
-    plot_box<TestType, 2>(box_1, colors[0], 1.0); ax->hold(true);
-    plot_box<TestType, 2>(box_2, colors[1], 1.0);
-    plot_box<TestType, 2>(box_3, colors[2], 2.0); ax->hold(false); show(fig);
+    Plot2D P;
+    P.xlim({-3.0, 3.0}); P.xlabel("x");
+    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.grid(true);
+    P.title( "Intersection" );
+    P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
+    P.hold(true);
+    P.plot_box<TestType, 2>( box_2, colors[1], 1.0);
+    P.plot_box<TestType, 2>( box_3, colors[2], 2.0);
+    P.hold(false);
+    P.show();
     #endif
     REQUIRE(box_3.min().isApprox(Vector(-1.0, -1.0)));
     REQUIRE(box_3.max().isApprox(Vector(1.0, 1.0)));
@@ -78,11 +74,16 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     TestType d_int{box.interior_distance(pnt, c)};
     TestType d_ext{box.exterior_distance(pnt, f)};
     #ifdef AABBTREE_ENABLE_PLOTTING
-    SET_PLOT
-    title(ax, "Point distance");
-    plot_box<TestType, 2>(box, colors[0], 1.0); ax->hold(true);
-    plot_segment<TestType, 2>(pnt, c, colors[1], 2.0);
-    plot_segment<TestType, 2>(pnt, f, colors[2], 2.0); ax->hold(false); show(fig);
+    Plot2D P;
+    P.xlim({-3.0, 3.0}); P.xlabel("x");
+    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.grid(true);
+    P.title( "Point distance" );
+    P.plot_box<TestType, 2>( box, colors[0], 1.0); P.hold(true);
+    P.plot_segment<TestType, 2>( pnt, c, colors[1], 2.0);
+    P.plot_segment<TestType, 2>( pnt, f, colors[2], 2.0);
+    P.hold(false);
+    P.show();
     #endif
     REQUIRE_THAT(d_int, WithinAbs(box.interior_distance(pnt), tol));
     REQUIRE_THAT(d_ext, WithinAbs(box.exterior_distance(pnt), tol));
@@ -94,11 +95,17 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Vector p_1, p_2;
     TestType d{box_1.interior_distance(box_2, p_1, p_2)};
     #ifdef AABBTREE_ENABLE_PLOTTING
-    SET_PLOT
-    title(ax, "Interior distance");
-    plot_box<TestType, 2>(box_1, colors[0], 1.0); ax->hold(true);
-    plot_box<TestType, 2>(box_2, colors[1], 1.0);
-    plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0); ax->hold(false); show(fig);
+    Plot2D P;
+    P.xlim({-3.0, 3.0}); P.xlabel("x");
+    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.grid(true);
+    P.title( "Interior distance" );
+    P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
+    P.hold(true);
+    P.plot_box<TestType, 2>( box_2, colors[1], 1.0);
+    P.plot_segment<TestType, 2>( p_1, p_2, colors[2], 2.0);
+    P.hold(false);
+    P.show();
     #endif
     REQUIRE_THAT(d, WithinAbs(box_1.interior_distance(box_2), tol));
   }
@@ -109,11 +116,17 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Vector p_1, p_2;
     TestType d{box_1.exterior_distance(box_2, p_1, p_2)};
     #ifdef AABBTREE_ENABLE_PLOTTING
-    SET_PLOT
-    title(ax, "Exterior distance");
-    plot_box<TestType, 2>(box_1, colors[0], 1.0); ax->hold(true);
-    plot_box<TestType, 2>(box_2, colors[1], 1.0);
-    plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0); ax->hold(false); show(fig);
+    Plot2D P;
+    P.xlim({-3.0, 3.0}); P.xlabel("x");
+    P.ylim({-3.0, 3.0}); P.ylabel("y");
+    P.grid(true);
+    P.title( "Exterior distance" );
+    P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
+    P.hold(true);
+    P.plot_box<TestType, 2>( box_2, colors[1], 1.0);
+    P.plot_segment<TestType, 2>( p_1, p_2, colors[2], 2.0);
+    P.hold(false);
+    P.show();
     #endif
     REQUIRE_THAT(d, WithinAbs(box_1.exterior_distance(box_2), tol));
     REQUIRE(p_1.isApprox(Vector(-2.0, -2.0)));

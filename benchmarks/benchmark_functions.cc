@@ -16,22 +16,13 @@
 
 // AABBtree library
 #include "AABBtree.hh"
-using namespace AABBtree;
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
-#include <matplot/matplot.h>
-using namespace matplot;
-static auto fig{figure(true)};
-static axes_handle ax{fig->current_axes()};
+#include "Plot2D.hh"
+#endif
 
-#ifndef SET_PLOT
-#define SET_PLOT \
-xlim(ax, {-3.0, 3.0}); xlabel(ax, "x"); \
-ylim(ax, {-3.0, 3.0}); ylabel(ax, "y"); \
-grid(ax, true);
-#endif
-#endif
+using namespace AABBtree;
 
 // Benchmark utilities
 #include "BenchmarkUtilities.hh"
@@ -106,14 +97,18 @@ int main() {
 
   // Plot the functions
   #ifdef AABBTREE_ENABLE_PLOTTING
-  SET_PLOT
+  Plot2D P;
+  P.xlim({-3.0, 3.0}); P.xlabel("x");
+  P.ylim({-3.0, 3.0}); P.ylabel("y");
+  P.grid(true);
   std::vector<Real> x_f1_vec(x_f1.data(), x_f1.data() + x_f1.size());
   std::vector<Real> y_f1_vec(y_f1.data(), y_f1.data() + y_f1.size());
   std::vector<Real> x_f2_vec(x_f2.data(), x_f2.data() + n_points);
   std::vector<Real> y_f2_vec(y_f2.data(), y_f2.data() + n_points);
-  ax->plot(x_f1_vec, y_f1_vec); ax->hold(true);
-  ax->plot(x_f2_vec, y_f2_vec);
-  show(fig);
+  P.plot(x_f1_vec, y_f1_vec);
+  P.hold(true);
+  P.plot(x_f2_vec, y_f2_vec);
+  P.show();
   #endif
 
   // Create a box
@@ -128,7 +123,7 @@ int main() {
     std::cout << "Candidates: " << candidates_set.size() << std::endl;
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
-      plot_box<Real, 2>(*tree_1.box(i), "r", 0.25);
+      P.plot_box<Real, 2>( *tree_1.box(i), "r", 0.25);
     }
     #endif
   }
@@ -140,20 +135,22 @@ int main() {
     std::cout << "Candidates: " << candidates_set.size() << std::endl;
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
-      plot_box<Real, 2>(*tree_2.box(i), "g", 0.25);
+      P.plot_box<Real, 2>( *tree_2.box(i), "g", 0.25);
     }
     #endif
   }
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
+  P.show();
   #endif
 
   // Create a ray
   Ray<Real, 2> ray(-2.0, -2.0, 1.0, 1.0);
   ray.direction().normalize();
   #ifdef AABBTREE_ENABLE_PLOTTING
-  SET_PLOT
-  plot_ray<Real, 2>(ray, "b", 1.0);
+  P.xlim({-3.0, 3.0}); P.xlabel("x");
+  P.ylim({-3.0, 3.0}); P.ylabel("y");
+  P.grid(true);
+  P.plot_ray<Real, 2>( ray, "b", 1.0);
   #endif
 
   // Intersect ray with tree 1
@@ -163,7 +160,7 @@ int main() {
     std::cout << "Candidates: " << candidates_set.size() << std::endl;
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
-      plot_box<Real, 2>(*tree_1.box(i), "r", 0.25);
+      P.plot_box<Real, 2>( *tree_1.box(i), "r", 0.25);
     }
     #endif
   }
@@ -175,12 +172,12 @@ int main() {
     std::cout << "Candidates: " << candidates_set.size() << std::endl;
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (auto const & i : candidates_set) {
-      plot_box<Real, 2>(*tree_1.box(i), "r", 0.25);
+      P.plot_box<Real, 2>( *tree_1.box(i), "r", 0.25 );
     }
     #endif
   }
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
+  P.show();
   #endif
 
   // Intersect tree 1 with tree 2
@@ -196,13 +193,13 @@ int main() {
         if (segments_1[key].intersect(segments_2[val], point)) {
           tree_points.push_back(point);
           #ifdef AABBTREE_ENABLE_PLOTTING
-          plot_box<Real, 2>(*tree_1.box(key), "r", 0.25);
-          plot_box<Real, 2>(*tree_2.box(val), "g", 0.25);
+          P.plot_box<Real, 2>( *tree_1.box(key), "r", 0.25 );
+          P.plot_box<Real, 2>( *tree_2.box(val), "g", 0.25 );
           //ax->plot({point.x()}, {point.y()}, "o");
           #endif
   }}}}
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
+  P.show();
   #endif
 
   return 0;

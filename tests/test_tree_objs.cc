@@ -26,38 +26,29 @@ using namespace Catch::Matchers;
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
-#include <matplot/matplot.h>
-using namespace matplot;
-static auto fig{figure(true)};
-static axes_handle ax{fig->current_axes()};
+#include "Plot2D.hh"
 #endif
 
 // Test utilities
 #include "TestUtilities.hh"
 using namespace TestUtilities;
 
-#ifdef AABBTREE_ENABLE_PLOTTING
-#ifndef SET_PLOT
-#define SET_PLOT \
-xlim(ax, {-3.0, 3.0}); xlabel(ax, "x"); \
-ylim(ax, {-3.0, 3.0}); ylabel(ax, "y"); \
-grid(ax, true);
-#endif
-#endif
-
 TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
 
   std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
 
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<TestType, 2>;
-  using Vector = AABBtree::Vector<TestType, 2>;
-  using Point = AABBtree::Point<TestType, 2>;
-  using Box = AABBtree::Box<TestType, 2>;
-  using Ray = AABBtree::Ray<TestType, 2>;
+  using Vector           = AABBtree::Vector<TestType, 2>;
+  using Point            = AABBtree::Point<TestType, 2>;
+  using Box              = AABBtree::Box<TestType, 2>;
+  using Ray              = AABBtree::Ray<TestType, 2>;
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  SET_PLOT
-  title(ax, "Build");
+  Plot2D P;
+  P.xlim({-3.0, 3.0}); P.xlabel("x");
+  P.ylim({-3.0, 3.0}); P.ylabel("y");
+  P.grid( true);
+  P.title( "Build");
   #endif
 
   // Build segments
@@ -66,7 +57,7 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
   TestType const length{0.2};
   std::vector<Segment<TestType>> segments(n);
   #ifdef AABBTREE_ENABLE_PLOTTING
-  ax->hold(true);
+  P.hold(true);
   #endif
   Eigen::Matrix<TestType, 2, 2> R;
   for (Integer i{0}; i < n; ++i) {
@@ -75,7 +66,7 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
     R.col(0).normalize(); R.col(1).normalize();
     segments[i].point(1) = segments[i].point(0) + R*Vector(length, 0.0);
     #ifdef AABBTREE_ENABLE_PLOTTING
-    plot_segment<TestType>(segments[i].point(0), segments[i].point(1), colors[6], 1.0);
+    P.plot_segment<TestType>( segments[i].point(0), segments[i].point(1), colors[6], 1.0);
     #endif
   }
 
@@ -87,7 +78,7 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
       if (segments[i].intersect(segments[j], point)) {
         segment_points.push_back(point);
         #ifdef AABBTREE_ENABLE_PLOTTING
-        plot_point<TestType, 2>(point, colors[0], 5.0);
+        P.plot_point<TestType, 2>( point, colors[0], 5.0);
         #endif
   }}}
 
@@ -97,7 +88,7 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
     Box const box{segments[i].bounding_box()};
     boxes->push_back(std::make_unique<Box>(box));
     #ifdef AABBTREE_ENABLE_PLOTTING
-    plot_box<TestType, 2>(box, colors[3], 0.25);
+    P.plot_box<TestType, 2>( box, colors[3], 0.25);
     #endif
   }
 
@@ -106,8 +97,8 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
   tree.build(std::move(boxes));
   tree.print(std::cout);
   #ifdef AABBTREE_ENABLE_PLOTTING
-  plot_tree<TestType, 2>(tree, colors[2], 0.5);
-  show(fig);
+  P.plot_tree<TestType, 2>( tree, colors[2], 0.5);
+  P.show();
   #endif
 
   // Intersect tree
@@ -122,11 +113,11 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
           if (segments[candidates_vec[i]].intersect(segments[candidates_vec[j]], point)) {
             tree_points.push_back(point);
             #ifdef AABBTREE_ENABLE_PLOTTING
-            plot_point<TestType, 2>(point, colors[1], 5.0);
+            P.plot_point<TestType, 2>( point, colors[1], 5.0);
             #endif
   }}}}}
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
+  P.show();
   #endif
 
   // Self intersect tree
@@ -141,11 +132,11 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
           if (segments[candidates_vec[i]].intersect(segments[candidates_vec[j]], point)) {
             tree_points.push_back(point);
             #ifdef AABBTREE_ENABLE_PLOTTING
-            plot_point<TestType, 2>(point, colors[2], 5.0);
+            P.plot_point<TestType, 2>( point, colors[2], 5.0);
             #endif
   }}}}}
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
+  P.show();
   #endif
 
   // Intersect ray
@@ -154,30 +145,30 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
     if (tree.intersect(ray, candidates)) {
       #ifdef AABBTREE_ENABLE_PLOTTING
       for (const auto & i : candidates) {
-        plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+        P.plot_box<TestType, 2>( *tree.box(i), colors[0], 2.0);
       }
       #endif
   }}
   #ifdef AABBTREE_ENABLE_PLOTTING
-  plot_ray<TestType, 2>(ray, colors[0], 1.0);
-  show(fig);
+  P.plot_ray<TestType, 2>( ray, colors[0], 1.0 );
+  P.show();
   #endif
 
   // Box distance
   Vector const point(0.0, 0.0);
   #ifdef AABBTREE_ENABLE_PLOTTING
-  plot_point<TestType, 2>(point, colors[0], 5.0);
+  P.plot_point<TestType, 2>( point, colors[0], 5.0);
   #endif
   TestType const distance{tree.distance(point, candidates)};
   if (distance > 0.0) {
     #ifdef AABBTREE_ENABLE_PLOTTING
     for (const auto & i : candidates) {
-      plot_box<TestType, 2>(*tree.box(i), colors[0], 2.0);
+      P.plot_box<TestType, 2>( *tree.box(i), colors[0], 2.0);
     }
     #endif
   }
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
+  P.show();
   #endif
 
   // Within distance
@@ -186,21 +177,21 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
   #ifdef AABBTREE_ENABLE_PLOTTING
   for (auto const & b : tree.boxes()) {
     if (distance_func(point, *b) <= max_distance) {
-      plot_box<TestType, 2>(*b, colors[0], 5.0);
+      P.plot_box<TestType, 2>( *b, colors[0], 5.0);
     }
   }
   #endif
   TestType const distance_within{tree.within_distance(point, max_distance, candidates, distance_func)};
   if (distance_within > 0.0) {
     #ifdef AABBTREE_ENABLE_PLOTTING
-    plot_circle<TestType, 2>(point, max_distance, colors[0], 2.0);
+    P.plot_circle<TestType, 2>( point, max_distance, colors[0], 2.0);
     for (const auto & i : candidates) {
-      plot_box<TestType, 2>(*tree.box(i), colors[1], 2.5);
+      P.plot_box<TestType, 2>( *tree.box(i), colors[1], 2.5);
     }
     #endif
   }
   #ifdef AABBTREE_ENABLE_PLOTTING
-  show(fig);
-  ax->clear();
+  P.show();
+  P.clear();
   #endif
 }

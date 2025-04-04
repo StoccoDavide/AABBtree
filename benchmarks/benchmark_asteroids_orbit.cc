@@ -17,21 +17,7 @@
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
-#include <matplot/matplot.h>
-using namespace matplot;
-static auto fig{figure(true)};
-static axes_handle ax{fig->current_axes()};
-static auto fig_xy{figure(true)};
-static axes_handle ax_xy{fig_xy->current_axes()};
-static auto fig_xz{figure(true)};
-static axes_handle ax_xz{fig_xz->current_axes()};
-
-#ifndef SET_PLOT
-#define SET_PLOT \
-grid(ax, true); \
-grid(ax_xy, true); \
-grid(ax_xz, true);
-#endif
+#include "Plot2D.hh"
 #endif
 
 // Benchmark utilities
@@ -199,8 +185,10 @@ int main()
   // Plot all the asteroids
   #ifdef AABBTREE_ENABLE_PLOTTING
   {
-    SET_PLOT
-    std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
+    Plot2D XY, XZ;
+    XY.grid(true);
+    XZ.grid(true);
+      std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
     Real max_xy{0.0};
     Real max_xz{0.0};
     for (Integer i{0}; i < n_asteroids; ++i) {
@@ -208,21 +196,23 @@ int main()
       max_xy = std::max(max_xy, std::max(std::abs(x[i]), std::abs(y[i])));
       max_xz = std::max(max_xz, std::max(std::abs(x[i]), std::abs(z[i])));
     }
-    ax_xy->hold(true);
-    ax_xz->hold(true);
-    ax_xy->plot(x, y, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
-    ax_xy->xlim({-max_xy, max_xy}); ax_xy->xlabel("x (AU)");
-    ax_xy->ylim({-max_xy, max_xy}); ax_xy->ylabel("y (AU)");
-    ax_xz->plot(x, z, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
-    ax_xz->xlim({-max_xy, max_xy}); ax_xz->xlabel("x (AU)");
-    ax_xz->ylim({-max_xz, max_xz}); ax_xz->ylabel("z (AU)");
+    XY.hold(true);
+    XZ.hold(true);
+    XY.plot(x, y, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
+    XY.xlim({-max_xy, max_xy}); XY.xlabel("x (AU)");
+    XY.ylim({-max_xy, max_xy}); XY.ylabel("y (AU)");
+    XZ.plot(x, z, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
+    XZ.xlim({-max_xy, max_xy}); XZ.xlabel("x (AU)");
+    XZ.ylim({-max_xz, max_xz}); XZ.ylabel("z (AU)");
   }
   #endif
 
   // Plot the clusters
   #ifdef AABBTREE_ENABLE_PLOTTING
   {
-    SET_PLOT
+    Plot2D XY, XZ;
+    XY.grid(true);
+    XZ.grid(true);
     std::vector<Real> x, y, z;
     for (Integer i{0}; i < n_clusters_to_plot; ++i) {
       x.clear(); y.clear(); z.clear();
@@ -238,24 +228,21 @@ int main()
           PropagateOrbit(data_k, t_ini + l*dt_trace, (l == 0) ? t_ini : t_ini + (l-1)*dt_trace);
           KeplerianToCartesian(data_k, x_trace[l], y_trace[l], z_trace[l]);
         }
-        ax_xy->plot(x_trace, y_trace, "k")->line_width(0.5);
-        ax_xz->plot(x_trace, z_trace, "k")->line_width(0.5);
+        XY.plot(x_trace, y_trace, "k")->line_width(0.5);
+        XZ.plot(x_trace, z_trace, "k")->line_width(0.5);
       }
-      ax_xy->plot(x, y, ".")->marker_size(2.5);
-      ax_xz->plot(x, z, ".")->marker_size(2.5);
+      XY.plot(x, y, ".")->marker_size(2.5);
+      XZ.plot(x, z, ".")->marker_size(2.5);
 
       // Plot the phasing points
-      ax_xy->plot(
-        {phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()},
-        {phasing_points_1[sorting[i]].y(), phasing_points_2[sorting[i]].y()},
-        "r-")->line_width(1.0);
-      ax_xz->plot(
-        {phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()},
-        {phasing_points_1[sorting[i]].z(), phasing_points_2[sorting[i]].z()},
-         "r-")->line_width(1.0);
+      std::vector<Real> X{phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()};
+      std::vector<Real> Y{phasing_points_1[sorting[i]].y(), phasing_points_2[sorting[i]].y()};
+      std::vector<Real> Z{phasing_points_1[sorting[i]].z(), phasing_points_2[sorting[i]].z()};
+      XY.plot( X, Y, "r-" )->line_width(1.0);
+      XZ.plot( X, Z, "r-" )->line_width(1.0);
     }
-    show(fig_xy);
-    show(fig_xz);
+    XY.show();
+    XZ.show();
   }
   #endif
 
