@@ -43,37 +43,34 @@ namespace AABBtree {
      */
     struct Statistics {
       // Build statistics
-      Integer objects{0};          /**< Number of objects in the tree. */
-      Integer nodes{0};            /**< Total number of nodes in the tree. */
-      Integer leafs{0};            /**< Number of leaf nodes (nodes with objects). */
-      Integer long_boxes{0};       /**< Number of boxes with aspect ratio > threshold. */
-      Integer depth{0};            /**< Maximum depth of the tree. */
-      Integer left_nodes{0};       /**< Number of nodes in left subtree. */
-      Integer left_leafs{0};       /**< Number of leafs in left subtree. */
-      Integer left_long_boxes{0};  /**< Number of long boxes in left subtree. */
-      Integer left_depth{0};       /**< Depth of left subtree. */
-      Integer right_nodes{0};      /**< Number of nodes in right subtree. */
-      Integer right_leafs{0};      /**< Number of leafs in right subtree. */
-      Integer right_long_boxes{0}; /**< Number of long boxes in right subtree. */
-      Integer right_depth{0};      /**< Depth of right subtree. */
-      Integer dump_counter{0};     /**< Number of tree rebuilds (dumps). */
-      Real    balance_ratio{0.0};  /**< Ratio of left/right subtree sizes (0=perfect balance). */
-      Real    depth_ratio{0.0};    /**< Ratio of left/right subtree depths (0=perfect balance). */
+      Integer objects{0};          //< Number of objects in the tree.
+      Integer nodes{0};            //< Total number of nodes in the tree.
+      Integer leafs{0};            //< Number of leaf nodes (nodes with objects).
+      Integer long_boxes{0};       //< Number of boxes with aspect ratio > threshold.
+      Integer depth{0};            //< Maximum depth of the tree.
+      Integer left_nodes{0};       //< Number of nodes in left subtree.
+      Integer left_leafs{0};       //< Number of leafs in left subtree.
+      Integer left_long_boxes{0};  //< Number of long boxes in left subtree.
+      Integer left_depth{0};       //< Depth of left subtree.
+      Integer right_nodes{0};      //< Number of nodes in right subtree.
+      Integer right_leafs{0};      //< Number of leafs in right subtree.
+      Integer right_long_boxes{0}; //< Number of long boxes in right subtree.
+      Integer right_depth{0};      //< Depth of right subtree.
+      Integer dump_counter{0};     //< Number of tree rebuilds (dumps).
+      Real    balance_ratio{0.0};  //< Ratio of left/right subtree sizes (0=perfect balance).
+      Real    depth_ratio{0.0};    //< Ratio of left/right subtree depths (0=perfect balance).
   
       // Query statistics
-      Integer check_counter{0}; /**< Total number of collision checks performed. */
+      Integer check_counter{0}; //< Total number of collision checks performed.
   
       /**
-       * @brief Reset all statistics to their initial zero state
+       * \brief Reset all statistics to their initial zero state
        * 
-       * This method efficiently resets all statistics counters to zero and ratios to 0.0,
-       * returning the structure to its default-constructed state. It is equivalent to:
-       * \code
-       * stats = Statistics{};
-       * \endcode
+       * This method efficiently resets all statistics counters to zero and ratios to 0,
+       * returning the structure to its default-constructed state.
        * 
-       * @note This operation is noexcept and has constant time complexity O(1)
-       * @post All counters are zero and ratios are 0.0
+       * \note This operation is noexcept and has constant time complexity O(1)
+       * \post All counters are zero and ratios are 0
        */
       void reset() noexcept { *this = Statistics{}; }
 
@@ -109,7 +106,7 @@ namespace AABBtree {
 
     };
 
-    private:
+  private:
     // Basic types definitions
     using Box              = Box<Real, N>;
     using BoxUniquePtr     = BoxUniquePtr<Real, N>;
@@ -121,35 +118,34 @@ namespace AABBtree {
      * \brief Structure representing a node of the AABB tree.
      */
     struct Node {
-      Box box;             /**< Bounding box of the subtree. */
-      Box box_long;        /**< Bounding box of long boxes. */
-      Integer box_ptr;     /**< Pointer to the first box in the reordering map of boxes. */
-      Integer box_num;     /**< Number of boxes in the subtree. */
-      Integer box_tot_num; /**< Total number of boxes in the subtree. */
-      Integer parent;      /**< Root node of the subtree. */
-      Integer child_l;     /**< Left child of the subtree. */
-      Integer child_r;     /**< Right child of the subtree. */
+      Box     box;         //< Bounding box of the subtree.
+      Box     box_long;    //< Bounding box of long boxes.
+      Integer box_ptr;     //< Pointer to the first box in the reordering map of boxes.
+      Integer box_num;     //< Number of boxes in the subtree.
+      Integer box_tot_num; //< Total number of boxes in the subtree.
+      Integer parent;      //< Root node of the subtree.
+      Integer child_l;     //< Left child of the subtree.
+      Integer child_r;     //< Right child of the subtree.
     };
 
-
     // Tree hierarchy
-    std::unique_ptr<BoxUniquePtrList> m_boxes{nullptr};
-    std::vector<Node>                 m_tree_structure;     /**< Tree structure. */
-    IndexList                         m_tree_boxes_map;     /**< Reordering between the vector of boxes and the tree internal structure. */
-    bool                              m_dumping_mode{true}; /**< Enable dumping while building the tree. */
+    std::unique_ptr<BoxUniquePtrList> m_boxes_ptr{nullptr};
+    std::vector<Node>                 m_tree_structure;     //< Tree structure.
+    IndexList                         m_tree_boxes_map;     //< Reordering between the vector of boxes and the tree internal structure.
+    bool                              m_dumping_mode{true}; //< Enable dumping while building the tree.
 
     // Tree parameters
-    Integer m_max_nodal_objects{10};            /**< Maximum number of objects per node. */
-    Real    m_separation_ratio_tolerance{0.30}; /**< Tolerance for bounding boxes separation. */
-    Real    m_balance_ratio_tolerance{0.25};    /**< Tolerance for bounding boxes balance. */
-    Real    m_min_box_size{0.0};                /**< Minimum size tolerance for bounding boxes. */
+    Integer m_max_nodal_objects{10};            //< Maximum number of objects per node.
+    Real    m_separation_ratio_tolerance{0.30}; //< Tolerance for bounding boxes separation.
+    Real    m_balance_ratio_tolerance{0.25};    //< Tolerance for bounding boxes balance.
+    Real    m_min_box_size{0.0};                //< Minimum size tolerance for bounding boxes.
 
     // Statistics
-    mutable Integer m_check_counter{0}; /**< Number of collision check. */
-    mutable Integer m_dump_counter{0};  /**< Number of dumpings. */
+    mutable Integer m_check_counter{0}; //< Number of collision check.
+    mutable Integer m_dump_counter{0};  //< Number of dumpings.
 
     // Stack for non-recursive tree building and query
-    mutable IndexList m_stack; /**< Tree stack. */
+    mutable IndexList m_stack; //< Tree stack.
 
   public:
     /**
@@ -162,19 +158,18 @@ namespace AABBtree {
      */
     Tree() = default;
 
-
     /**
      * \brief Get a look at the vector of unique pointers to the bounding boxes.
      * \return A const reference to the vector of unique pointers to the bounding boxes.
      */
-    BoxUniquePtrList const & boxes() const { return *m_boxes; }
+    BoxUniquePtrList const & boxes() const { return *m_boxes_ptr; }
 
     /**
      * \brief Get a look at the i-th unique pointer to the bounding box.
      * \param[in] i Index of the unique pointer to the bounding box.
      * \return A const reference to the i-th unique pointer to the bounding box.
      */
-    BoxUniquePtr const & box(Integer const i) const { return (*m_boxes)[i]; }
+    BoxUniquePtr const & box(Integer const i) const { return (*m_boxes_ptr)[i]; }
 
     /**
      * \brief Set the maximum number of objects per node.
@@ -280,13 +275,15 @@ namespace AABBtree {
      * \param[in] boxes Bounding boxes to build the tree from.
      */
     void
-    build( std::unique_ptr<BoxUniquePtrList> boxes ) {
+    build( std::unique_ptr<BoxUniquePtrList> boxes_ptr ) {
 
       // Collect the original object boxes
-      m_boxes = std::move(boxes);
+      m_boxes_ptr = std::move(boxes_ptr);
+
+      BoxUniquePtrList & boxes{ *m_boxes_ptr };
 
       // Clear tree structure
-      Integer num_boxes{ static_cast<Integer>( m_boxes->size() ) };
+      Integer num_boxes{ static_cast<Integer>( boxes.size() ) };
       m_tree_structure.clear();
       m_tree_structure.reserve(20*num_boxes + 1);
 
@@ -303,7 +300,7 @@ namespace AABBtree {
       Integer depth{ std::ceil( std::log2(num_boxes) ) };
       root.box.set_empty();
       m_tree_boxes_map.reserve(2*depth);
-      for ( BoxUniquePtr const & box : *m_boxes ) {
+      for ( BoxUniquePtr const & box : boxes ) {
         root.box.extend(*box);
         m_tree_boxes_map.emplace_back(root.box_num++);
       }
@@ -345,7 +342,7 @@ namespace AABBtree {
         Integer id_end     { node.box_ptr + node.box_num };
         Real    baricenter { 0 };
         while (id_ini < id_end) {
-          Box const & box_id{ *(*m_boxes)[m_tree_boxes_map[id_ini]] };
+          Box const & box_id{ *boxes[m_tree_boxes_map[id_ini]] };
           typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
           switch (side) {
             case Box::Side::LEFT:
@@ -379,7 +376,7 @@ namespace AABBtree {
         id_end = node.box_ptr + node.box_num;
         while ( id_ini < id_end ) {
           Integer ipos{ m_tree_boxes_map[id_ini] };
-          if ( (*m_boxes)[ipos]->baricenter(axis) < separation_line ) {
+          if ( boxes[ipos]->baricenter(axis) < separation_line ) {
             ++id_ini; ++n_left; // In right position do nothing
           } else {
             --id_end; ++n_right; // In right position swap the current box with the last one
@@ -415,18 +412,18 @@ namespace AABBtree {
         node.box_num = n_long;
         node.box_long.set_empty();
         for ( Integer i{0}; i < n_long; ++i ) 
-          node.box_long.extend( *(*m_boxes)[ m_tree_boxes_map[j++] ] );
+          node.box_long.extend( *boxes[ m_tree_boxes_map[j++] ] );
         
         node_l.box.set_empty();
         node_l.box_ptr = j;
         for (Integer i{0}; i < n_left; ++i)
-          node_l.box.extend( *(*m_boxes)[m_tree_boxes_map[j++] ] );
+          node_l.box.extend( *boxes[m_tree_boxes_map[j++] ] );
         node_l.box_long = node_l.box;
 
         node_r.box.set_empty();
         node_r.box_ptr = j;
         for (Integer i{0}; i < n_right; ++i)
-          node_r.box.extend( *(*m_boxes)[m_tree_boxes_map[j++] ] );
+          node_r.box.extend( *boxes[m_tree_boxes_map[j++] ] );
         node_r.box_long = node_r.box;
 
         // Push nodes on tree structure
@@ -457,7 +454,7 @@ namespace AABBtree {
       if ( this->is_empty() ) return false;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes{*m_boxes};
+      BoxUniquePtrList const & boxes{ *m_boxes_ptr };
 
       // Setup the stack
       m_stack.clear();
@@ -516,8 +513,8 @@ namespace AABBtree {
       if ( this->is_empty() || tree.is_empty() ) return false;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes_1{ *m_boxes };
-      BoxUniquePtrList const & boxes_2{ *tree.m_boxes  };
+      BoxUniquePtrList const & boxes_1{ *m_boxes_ptr      };
+      BoxUniquePtrList const & boxes_2{ *tree.m_boxes_ptr };
 
       // Setup the stack
       m_stack.clear();
@@ -531,6 +528,7 @@ namespace AABBtree {
       // Main loop that checks the intersection iteratively
       candidates.clear();
       while ( !m_stack.empty() ) {
+
         // Pop the node from stack (reversed order)
         Integer const id_s2 { m_stack.back() }; m_stack.pop_back();
         Integer const id_2  { id_s2 >= 0 ? id_s2 : negate(id_s2) };
@@ -539,7 +537,7 @@ namespace AABBtree {
 
         // Get the node
         Node const & node_1{ m_tree_structure[id_1] };
-        Node const & node_2{ tree.m_tree_structure[id_2]  };
+        Node const & node_2{ tree.m_tree_structure[id_2] };
 
         // If the boxes are not intersecting, skip the nodes
         ++m_check_counter;
@@ -566,17 +564,28 @@ namespace AABBtree {
         }
 
         // Push children of both trees on the stack if they are not leafs
-        auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
+        auto stack_emplace_back = [this]( Integer const node_1, Integer const node_2 ) {
           m_stack.emplace_back(node_1);
           m_stack.emplace_back(node_2);
         };
-        if ( id_s1 >= 0 ) {
-          stack_emplace_back( node_1.child_l, id_s2 );
-          stack_emplace_back( node_1.child_r, id_s2 );
-          if ( node_1.box_num > 0 ) stack_emplace_back( negate(id_1), id_2 );
-        } else if ( id_s2 >= 0 ) {
-          stack_emplace_back( id_s1, node_2.child_l );
-          stack_emplace_back( id_s1, node_2.child_r );
+        if ( node_1.box_tot_num > node_2.box_tot_num ) { // split first larger tree
+          if ( id_s1 >= 0 ) {
+            stack_emplace_back( node_1.child_l, id_s2 );
+            stack_emplace_back( node_1.child_r, id_s2 );
+            if ( node_1.box_num > 0 ) stack_emplace_back( negate(id_1), id_2 );
+          } else if ( id_s2 >= 0 ) { // and id_s1 < 0
+            stack_emplace_back( id_s1, node_2.child_l );
+            stack_emplace_back( id_s1, node_2.child_r );
+          }
+        } else {
+          if ( id_s2 >= 0 ) {
+            stack_emplace_back( id_s1, node_2.child_l );
+            stack_emplace_back( id_s1, node_2.child_r );
+            if ( node_2.box_num > 0 ) stack_emplace_back( id_1, negate(id_2) );
+          } else if ( id_s1 >= 0 ) { // and id_s2 < 2
+            stack_emplace_back( node_1.child_l, id_s2 );
+            stack_emplace_back( node_1.child_r, id_s2 );
+          }
         }
       }
 
@@ -614,10 +623,10 @@ namespace AABBtree {
       m_check_counter = 0;
 
       // Return a negative value if the tree is empty
-      if (this->is_empty() || this->is_empty()) {return -1.0;}
+      if ( this->is_empty() || this->is_empty() ) return -1;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes{*m_boxes};
+      BoxUniquePtrList const & boxes{ *m_boxes_ptr };
 
       // Setup the stack
       m_stack.clear();
@@ -682,11 +691,11 @@ namespace AABBtree {
       m_check_counter = 0;
 
       // Return if the tree is empty
-      if (this->is_empty() || tree.is_empty()) {return -1.0;}
+      if ( this->is_empty() || tree.is_empty() ) return -1;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes_1{*m_boxes};
-      BoxUniquePtrList const & boxes_2{*tree.m_boxes};
+      BoxUniquePtrList const & boxes_1{ *m_boxes_ptr      };
+      BoxUniquePtrList const & boxes_2{ *tree.m_boxes_ptr };
 
       // Setup the stack
       m_stack.clear();
@@ -695,7 +704,7 @@ namespace AABBtree {
       m_stack.emplace_back(0);
 
       // Negate the id of the node to distinguish the tree
-      auto negate = [] (Integer const id) {return -1-id;};
+      auto negate = [] (Integer const id) { return -1-id; };
 
       // Main loop that checks the intersection iteratively
       Real distance{std::numeric_limits<Real>::max()};
@@ -784,10 +793,10 @@ namespace AABBtree {
       m_check_counter = 0;
 
       // Return if the tree is empty
-      if (this->is_empty()) {return -1.0;}
+      if ( this->is_empty() ) return -1;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes{*m_boxes};
+      BoxUniquePtrList const & boxes{ *m_boxes_ptr };
 
       // Setup the stack
       m_stack.clear();
@@ -869,10 +878,10 @@ namespace AABBtree {
       m_check_counter = 0;
 
       // Return if the tree is empty
-      if (this->is_empty()) {return false;}
+      if ( this->is_empty() ) return false;
 
       // Collect the original object boxes
-      BoxUniquePtrList const & boxes{*m_boxes};
+      BoxUniquePtrList const & boxes{ *m_boxes_ptr };
 
       // Setup the stack
       m_stack.clear();
@@ -977,7 +986,7 @@ namespace AABBtree {
       stats.reset();
 
       // Compute/copy the build statistics
-      stats.objects = static_cast<Integer>(m_boxes->size());
+      stats.objects = static_cast<Integer>(m_boxes_ptr->size());
       this->nodes( 0, stats.leafs, stats.nodes, stats.long_boxes );
       this->depth( 0, stats.depth );
       this->nodes( m_tree_structure[0].child_l, stats.left_leafs, stats.left_nodes, stats.left_long_boxes );
