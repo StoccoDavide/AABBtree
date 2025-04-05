@@ -234,7 +234,7 @@ namespace AABBtree {
      */
     Integer longest_axis() const
     {
-      Vector sizes{this->sizes()};
+      Vector sizes{ m_max - m_min };
       return std::distance(sizes.data(), std::max_element(sizes.data(), sizes.data() + N));
     }
 
@@ -281,24 +281,17 @@ namespace AABBtree {
     Real baricenter(Integer i) const {return 0.5*(m_min(i) + m_max(i));}
 
     /**
-     * \brief Compute the sizes of the box in all dimensions
-     * \return Vector containing the size along each dimension
-     */
-    Vector sizes() const {return m_max - m_min;}
-
-    /**
      * \brief Compute the volume of the box
      * \return Product of sizes in all dimensions
      */
-    Real volume() const {return this->sizes().prod();}
+    Real volume() const { return (m_max-m_min).prod(); }
 
     /**
      * \brief Compute the surface area of the box
      * \return Sum of areas of all faces
      */
-    Real surface() const
-    {
-      Vector sizes{this->sizes()};
+    Real surface() const    {
+      Vector sizes { m_max - m_min };
       Real area{0.0};
       for (Integer i{0}; i < N; ++i) {
         Real prod{1.0};
@@ -315,7 +308,7 @@ namespace AABBtree {
      * \return Vector from min to max corner
      * \note For the length of the diagonal, use diagonal().norm()
      */
-    Vector diagonal() const {return this->sizes();}
+    Vector diagonal() const { return m_max-m_min; }
 
     /**
      * \brief Set the box to be degenerate (containing a single point)

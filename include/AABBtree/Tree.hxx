@@ -326,21 +326,26 @@ namespace AABBtree {
         if ( node.box_num < m_max_nodal_objects ) continue;
 
         // Compute the separation line and tolerance
-        Vector                    sizes;
-        Eigen::Vector<Integer, N> sorting;
-        node.box.sort_axes_length(sizes, sorting);
+        Vector  sizes{ node.box.max() - node.box.min() };
+        Integer sorting[N]; std::iota(sorting, sorting+N, 0);
+        auto compare = [&sizes](Integer i, Integer j) -> bool { return sizes[i] > sizes[j]; };
+        std::sort( sorting, sorting+N, compare );
+        //std::make_heap( sorting, sorting+N, compare );
+
+        Integer n_long, n_left, n_right, id_ini, id_end;
+
+
 
         Integer axis                 { sorting[dump] };
         Real    separation_line      { node.box.baricenter(axis) };
         Real    separation_tolerance { sizes[axis] * m_separation_ratio_tolerance };
 
         // Separate short and long boxes and compute short boxes baricenter
-        Integer n_long     { 0 };
-        Integer n_left     { 0 };
-        Integer n_right    { 0 };
-        Integer id_ini     { node.box_ptr };
-        Integer id_end     { node.box_ptr + node.box_num };
-        Real    baricenter { 0 };
+        n_long = n_left = n_right = 0;
+        id_ini = node.box_ptr;
+        id_end = node.box_ptr + node.box_num;
+
+        Real baricenter { 0 };
         while (id_ini < id_end) {
           Box const & box_id{ *boxes[m_tree_boxes_map[id_ini]] };
           typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
