@@ -130,14 +130,14 @@ namespace AABBtree {
 
     // Tree hierarchy
     std::unique_ptr<BoxUniquePtrList> m_boxes_ptr{nullptr};
-    std::vector<Node>                 m_tree_structure;     //< Tree structure.
-    IndexList                         m_tree_boxes_map;     //< Reordering between the vector of boxes and the tree internal structure.
-    bool                              m_dumping_mode{true}; //< Enable dumping while building the tree.
+    std::vector<Node>                 m_tree_structure;        //< Tree structure.
+    IndexList                         m_tree_boxes_map;        //< Reordering between the vector of boxes and the tree internal structure.
+    bool                              m_dumping_mode{true};    //< Enable dumping while building the tree.
 
     // Tree parameters
     Integer m_max_nodal_objects{10};            //< Maximum number of objects per node.
-    Real    m_separation_ratio_tolerance{0.30}; //< Tolerance for bounding boxes separation.
-    Real    m_balance_ratio_tolerance{0.25};    //< Tolerance for bounding boxes balance.
+    Real    m_separation_ratio_tolerance{0.25}; //< Tolerance for bounding boxes separation.
+    Real    m_balance_ratio_tolerance{0.1};     //< Tolerance for bounding boxes balance.
     Real    m_min_box_size{0.0};                //< Minimum size tolerance for bounding boxes.
 
     // Statistics
@@ -207,10 +207,9 @@ namespace AABBtree {
      * \brief Set the minimum size for bounding boxes.
      * \param[in] size Minimum size for bounding boxes.
      */
-    void min_box_size(Real const size)
-    {
+    void min_box_size( Real const size ) {
       constexpr char CMD[]{ "AABBtree::Tree::min_box_size(...): " };
-      AABBTREE_ASSERT(size >= 0.0, CMD << "input must be a non-negative real number.");
+      AABBTREE_ASSERT( size >= 0.0, CMD << "input must be a non-negative real number." );
       m_min_box_size = size;
     }
 
@@ -231,7 +230,7 @@ namespace AABBtree {
      * \param[in] i Index of the node.
      * \return The i-th tree node.
      */
-    Node const & node(Integer const i) const { return m_tree_structure[i]; }
+    Node const & node( Integer const i ) const { return m_tree_structure[i]; }
 
     /**
      * \brief Get the number of nodes in the tree.
@@ -253,7 +252,7 @@ namespace AABBtree {
      * \brief Set dumping mode while building the tree.
      * \param[in] mode Dumping mode.
      */
-    void dumping_mode(bool const mode) { m_dumping_mode = mode; }
+    void dumping_mode( bool const mode ) { m_dumping_mode = mode; }
 
     /**
      * \brief Check if tree is empty.
@@ -306,13 +305,12 @@ namespace AABBtree {
       }
       m_tree_structure.emplace_back(root);
 
+      IndexList m_map(m_tree_boxes_map.size());
+
       // Setup the stack
       m_stack.clear();
       m_stack.reserve(2*num_boxes + 1);
       m_stack.emplace_back(0);
-
-      // Setup the dump counter (axis to try)
-      Integer dump{0};
 
       // Main loop that divide the nodes iteratively until all constraints satisfied
       while ( !m_stack.empty() ) {
@@ -332,48 +330,65 @@ namespace AABBtree {
         std::sort( sorting, sorting+N, compare );
         //std::make_heap( sorting, sorting+N, compare );
 
-        Integer n_long, n_left, n_right, id_ini, id_end;
+        Integer axis, n_long, n_left, n_right, id_ini, id_end;
+        Real    separation_line;
 
+        Integer n_long_saved{node.box_num+1};
+        Integer n_diff_saved{node.box_num+1};
+        Integer axis_saved{sorting[0]};
 
+        // salva la porzione di indici nella zona di lavoro
+        //std::copy_n( m_tree_boxes_map.data()+node.box_ptr, node.box_num+1, m_map.data()+node.box_ptr );
 
-        Integer axis                 { sorting[dump] };
-        Real    separation_line      { node.box.baricenter(axis) };
-        Real    separation_tolerance { sizes[axis] * m_separation_ratio_tolerance };
+        for ( Integer dump{0}; dump < N; ++dump ) {
+          axis            = sorting[dump];
+          separation_line = node.box.baricenter(axis);
 
-        // Separate short and long boxes and compute short boxes baricenter
-        n_long = n_left = n_right = 0;
-        id_ini = node.box_ptr;
-        id_end = node.box_ptr + node.box_num;
+          // Separate short and long boxes and compute short boxes baricenter
+          n_long = n_left = n_right = 0;
+          id_ini = node.box_ptr;
+          id_end = node.box_ptr + node.box_num;
 
-        Real baricenter { 0 };
-        while (id_ini < id_end) {
-          Box const & box_id{ *boxes[m_tree_boxes_map[id_ini]] };
-          typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
-          switch (side) {
-            case Box::Side::LEFT:
-              ++n_left; // Left boxes are moved to the end
-              std::swap( m_tree_boxes_map[id_ini], m_tree_boxes_map[--id_end] );
-              break;
-            case Box::Side::RIGHT:
-              ++n_right; // Right boxes are moved to the end
-              std::swap( m_tree_boxes_map[id_ini], m_tree_boxes_map[--id_end] );
-              break;
-            default: ++n_long; ++id_ini;
+          Real baricenter           { 0 };
+          Real separation_tolerance { sizes[axis] * m_separation_ratio_tolerance };
+          while ( id_ini < id_end ) {
+            Box const & box_id{ *boxes[m_tree_boxes_map[id_ini]] };
+            typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
+            switch (side) {
+              case Box::Side::LEFT: // Left boxes are moved to the end
+                ++n_left;  --id_end; std::swap( m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end] );
+                break;
+              case Box::Side::RIGHT: // Right boxes are moved to the end
+                ++n_right; --id_end; std::swap( m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end] );
+                break;
+              default:
+                ++n_long; ++id_ini;
+            }
+            baricenter += box_id.max()[axis] + box_id.min()[axis];
           }
-          baricenter += box_id.max()[axis] + box_id.min()[axis];
-        }
-        baricenter /= 2.0*node.box_num;
+          baricenter /= 2.0*node.box_num;
 
-        // If the left and right children are yet not balanced, dump the splitting axis
-        if ( m_dumping_mode && n_long > m_max_nodal_objects ) {
-          if ( std::min(n_left, n_right) < m_balance_ratio_tolerance * std::max(n_left, n_right) ) {
-            if ( dump < N-1 ) { ++dump; m_stack.push_back(id); continue; }
+          // salva soluzione migliore se migliora n_long o n_diff
+          Integer n_diff{ std::abs( n_left - n_right ) };
+          if ( n_long_saved > n_long || n_diff_saved > n_diff ) {
+            n_long_saved = n_long;
+            n_diff_saved = n_diff;
+            axis_saved   = axis;
+            std::copy_n( m_tree_boxes_map.data()+node.box_ptr, node.box_num, m_map.data()+node.box_ptr );
           }
-        }
-        // FIXME: n_long > m_max_nodal_objects, where do I put the long boxes?
 
-        // Reset the dump counter
-        dump = 0;
+          //if ( m_dumping_mode ) break;
+          if ( n_long > m_max_nodal_objects ) continue;
+
+          // If the left and right children are yet not balanced, dump the splitting axis
+          if ( std::min(n_left, n_right) >= m_balance_ratio_tolerance * std::max(n_left, n_right) ) break;
+        }
+
+        // usa migliore salvato
+        std::copy_n( m_map.data()+node.box_ptr, node.box_num, m_tree_boxes_map.data()+node.box_ptr );
+        n_long = n_long_saved;
+        axis   = axis_saved;
+        separation_line = node.box.baricenter(axis);
 
         // Separate the left and right boxes
         n_left = n_right = 0;

@@ -292,7 +292,7 @@ namespace AABBtree {
      */
     Real surface() const    {
       Vector sizes { m_max - m_min };
-      Real area{0.0};
+      Real area{0};
       for (Integer i{0}; i < N; ++i) {
         Real prod{1.0};
         for (Integer j{0}; j < N; ++j)
@@ -421,8 +421,15 @@ namespace AABBtree {
      *         Side::INSIDE otherwise
      */
     Side which_side( Real const x, Real const tol, Integer const dim ) const {
-      if (x < m_min(dim) + tol) return Side::LEFT;
-      if (x > m_max(dim) - tol) return Side::RIGHT;
+      Real const mi       { m_min(dim)   };
+      Real const ma       { m_max(dim)   };
+      bool const on_left  { x < mi + tol };
+      bool const on_right { x > ma - tol };
+      if ( on_left && on_right) {
+        return (mi+ma)/2 < x ? Side::LEFT : Side::RIGHT;
+      }
+      if ( on_left  ) return Side::LEFT;
+      if ( on_right ) return Side::RIGHT;
       return Side::INSIDE;
     }
 
