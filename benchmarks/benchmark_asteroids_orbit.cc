@@ -37,7 +37,9 @@ int main()
   constexpr Integer n_neighbours{2};
   constexpr Real    t_end{t_ini + 10.0*365.0};
   constexpr Integer t_steps{10.0*365};
+  #ifdef AABBTREE_ENABLE_PLOTTING
   constexpr Integer l_trace{365};
+  #endif
 
   using Vector           = AABBtree::Vector<Real, 3*t_steps>;
   using Box              = AABBtree::Box<Real, 3*t_steps>;

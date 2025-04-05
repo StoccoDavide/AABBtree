@@ -466,25 +466,23 @@ namespace AABBtree {
       while (!m_stack.empty()) {
 
         // Pop the node from stack
-        Integer const id{m_stack.back()}; m_stack.pop_back();
+        Integer const id{ m_stack.back() }; m_stack.pop_back();
 
         // Get the node
-        Node const & node{m_tree_structure[id]};
+        Node const & node{ m_tree_structure[id] };
 
         // If the object do not intersects the box, skip the node
-        ++m_check_counter;
-        if ( !node.box.intersects(obj) ) continue;
+        if ( ++m_check_counter; !node.box.intersects(obj) ) continue;
 
-        // Intersect the object with the long boxes on the node
+        // Intersect the object with the long boxes on the node.
+        // If it is a leaf long boxes are also the nodes of the leaf.
         if ( node.box_num > 0 ) {
-          ++m_check_counter;
-          if ( node.box_long.intersects(obj) ) {
+          if ( ++m_check_counter; node.box_long.intersects(obj) ) {
             Integer const id_ini{node.box_ptr};
             Integer const id_end{node.box_ptr + node.box_num};
             for ( Integer i{id_ini}; i < id_end; ++i ) {
               Integer const pos{ m_tree_boxes_map[i] };
-              ++m_check_counter;
-              if (boxes[pos]->intersects(obj)) candidates.insert(pos);
+              if ( ++m_check_counter; boxes[pos]->intersects(obj) ) candidates.insert(pos);
             }
           }
         }
@@ -523,6 +521,7 @@ namespace AABBtree {
       m_stack.emplace_back(0);
 
       // Negate the id of the node to distinguish the tree
+      // if 0 --> -1, 1 --> -2, 2 --> -3
       auto negate = [] ( Integer const id ) { return -1-id; };
 
       // Main loop that checks the intersection iteratively
@@ -531,60 +530,83 @@ namespace AABBtree {
 
         // Pop the node from stack (reversed order)
         Integer const id_s2 { m_stack.back() }; m_stack.pop_back();
-        Integer const id_2  { id_s2 >= 0 ? id_s2 : negate(id_s2) };
+        Integer const id_2  { id_s2 < 0 ? negate(id_s2) : id_s2 };
         Integer const id_s1 { m_stack.back() }; m_stack.pop_back();
-        Integer const id_1  { id_s1 >= 0 ? id_s1 : negate(id_s1) };
+        Integer const id_1  { id_s1 < 0 ? negate(id_s1) : id_s1 };
 
         // Get the node
         Node const & node_1{ m_tree_structure[id_1] };
         Node const & node_2{ tree.m_tree_structure[id_2] };
 
         // If the boxes are not intersecting, skip the nodes
-        ++m_check_counter;
-        if ( !node_1.box.intersects(node_2.box) ) continue;
+        if ( ++m_check_counter; !node_1.box.intersects(node_2.box) ) continue;
 
         // Intersect the long boxes on the nodes
+        // If both are leaf then intersect the corresponding boxes
         if ( node_1.box_num > 0 && node_2.box_num > 0 ) {
-          ++m_check_counter;
-          if ( node_1.box_long.intersects(node_2.box_long) ) {
+          if ( ++m_check_counter; node_1.box_long.intersects(node_2.box_long) ) {
             Integer const id_1_ini{ node_1.box_ptr                  };
             Integer const id_1_end{ node_1.box_ptr + node_1.box_num };
             Integer const id_2_ini{ node_2.box_ptr                  };
             Integer const id_2_end{ node_2.box_ptr + node_2.box_num };
-            for ( Integer i{id_1_ini}; i < id_1_end; ++i ) {
-              Integer const pos_1{ m_tree_boxes_map[i] };
+            if ( node_1.box_num < node_2.box_num ) {
+              for ( Integer i{id_1_ini}; i < id_1_end; ++i ) {
+                Integer const pos_1{ m_tree_boxes_map[i] };
+                if ( ++m_check_counter; !boxes_1[pos_1]->intersects(node_2.box_long) ) continue;
+                for ( Integer j{id_2_ini}; j < id_2_end; ++j ) {
+                  Integer const pos_2{ tree.m_tree_boxes_map[j] };
+                  if ( ++m_check_counter; boxes_1[pos_1]->intersects(*boxes_2[pos_2]) ) candidates[pos_1].insert(pos_2);
+                }
+              }
+            } else {
               for ( Integer j{id_2_ini}; j < id_2_end; ++j ) {
                 Integer const pos_2{ tree.m_tree_boxes_map[j] };
-                ++m_check_counter;
-                if ( boxes_1[pos_1]->intersects(*boxes_2[pos_2]) )
-                  candidates[pos_1].insert(pos_2);
+                if ( ++m_check_counter; !boxes_2[pos_2]->intersects(node_1.box_long) ) continue;
+                for ( Integer i{id_1_ini}; i < id_1_end; ++i ) {
+                  Integer const pos_1{ m_tree_boxes_map[i] };
+                    if ( ++m_check_counter; boxes_1[pos_1]->intersects(*boxes_2[pos_2]) ) candidates[pos_1].insert(pos_2);
+                }
               }
             }
           }
         }
+        
+        // controlla se entrambe foglie
+        bool const leaf_1{ node_1.child_l < 0 };
+        bool const leaf_2{ node_2.child_l < 0 };
+        if ( leaf_1 && leaf_2 ) continue; // finita esplorazione questo ramo
 
         // Push children of both trees on the stack if they are not leafs
         auto stack_emplace_back = [this]( Integer const node_1, Integer const node_2 ) {
           m_stack.emplace_back(node_1);
           m_stack.emplace_back(node_2);
         };
-        if ( node_1.box_tot_num > node_2.box_tot_num ) { // split first larger tree
-          if ( id_s1 >= 0 ) {
-            stack_emplace_back( node_1.child_l, id_s2 );
-            stack_emplace_back( node_1.child_r, id_s2 );
-            if ( node_1.box_num > 0 ) stack_emplace_back( negate(id_1), id_2 );
-          } else if ( id_s2 >= 0 ) { // and id_s1 < 0
-            stack_emplace_back( id_s1, node_2.child_l );
-            stack_emplace_back( id_s1, node_2.child_r );
-          }
+        
+        if ( leaf_1 ) {
+          stack_emplace_back( id_1, node_2.child_l );
+          stack_emplace_back( id_1, node_2.child_r );
+        } else if ( leaf_2 ) {
+          stack_emplace_back( node_1.child_l, id_2 );
+          stack_emplace_back( node_1.child_r, id_2 );
         } else {
-          if ( id_s2 >= 0 ) {
-            stack_emplace_back( id_s1, node_2.child_l );
-            stack_emplace_back( id_s1, node_2.child_r );
-            if ( node_2.box_num > 0 ) stack_emplace_back( id_1, negate(id_2) );
-          } else if ( id_s1 >= 0 ) { // and id_s2 < 2
-            stack_emplace_back( node_1.child_l, id_s2 );
-            stack_emplace_back( node_1.child_r, id_s2 );
+          if ( node_1.box_tot_num > node_2.box_tot_num ) { // split first larger tree
+            if ( id_s1 >= 0 ) {
+              stack_emplace_back( node_1.child_l, id_s2 );
+              stack_emplace_back( node_1.child_r, id_s2 );
+              if ( node_1.box_num > 0 ) stack_emplace_back( negate(id_1), id_2 );
+            } else if ( id_s2 >= 0 ) { // and id_s1 < 0
+              stack_emplace_back( id_s1, node_2.child_l );
+              stack_emplace_back( id_s1, node_2.child_r );
+            }
+          } else {
+            if ( id_s2 >= 0 ) {
+              stack_emplace_back( id_s1, node_2.child_l );
+              stack_emplace_back( id_s1, node_2.child_r );
+              if ( node_2.box_num > 0 ) stack_emplace_back( id_1, negate(id_2) );
+            } else if ( id_s1 >= 0 ) { // and id_s2 < 2
+              stack_emplace_back( node_1.child_l, id_s2 );
+              stack_emplace_back( node_1.child_r, id_s2 );
+            }
           }
         }
       }
@@ -654,8 +676,8 @@ namespace AABBtree {
 
         // Compute the distance between the object and the long boxes on the node
         if (node.box_num > 0) {
-          ++m_check_counter;
-          if (node.box_long.interior_distance(obj) <= distance) {
+          
+          if ( ++m_check_counter; node.box_long.interior_distance(obj) <= distance) {
             Integer const id_ini{ node.box_ptr                };
             Integer const id_end{ node.box_ptr + node.box_num };
             for (Integer i{id_ini}; i < id_end; ++i) {
@@ -730,8 +752,7 @@ namespace AABBtree {
 
         // Compute the distance between the long boxes on the nodes
         if (node_1.box_num > 0 && node_2.box_num > 0) {
-          ++m_check_counter;
-          if (node_1.box_long.interior_distance(node_2.box_long) <= distance) {
+          if (++m_check_counter; node_1.box_long.interior_distance(node_2.box_long) <= distance) {
             Integer const id_1_ini{ node_1.box_ptr                  };
             Integer const id_1_end{ node_1.box_ptr + node_1.box_num };
             Integer const id_2_ini{ node_2.box_ptr                  };
@@ -743,7 +764,9 @@ namespace AABBtree {
                 ++m_check_counter;
                 tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
                 if (tmp_distance < distance) {
-                  candidates.clear(); candidates[pos_1].insert(pos_2); distance = tmp_distance;
+                  candidates.clear();
+                  candidates[pos_1].insert(pos_2);
+                  distance = tmp_distance;
                 } else if (tmp_distance == distance) {
                   candidates[pos_1].insert(pos_2);
                 }

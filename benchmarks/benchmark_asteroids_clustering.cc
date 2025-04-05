@@ -38,7 +38,9 @@ main() {
   constexpr Integer n_neighbours{10};
   constexpr Real    t_end{t_ini + 30.0};
   constexpr Integer t_steps{4*30};
+  #ifdef AABBTREE_ENABLE_PLOTTING
   constexpr Integer l_trace{10};
+  #endif
 
   using Vector           = AABBtree::Vector<Real, 3*t_steps>;
   using Box              = AABBtree::Box<Real, 3*t_steps>;

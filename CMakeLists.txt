@@ -47,6 +47,17 @@ if(NOT CMAKE_INSTALL_PREFIX)
   message(STATUS "AABBtree: CMAKE_INSTALL_PREFIX not specified, defaulting to ${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
+
+if (APPLE OR UNIX)
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.17.0" AND CMAKE_GENERATOR STREQUAL "Xcode")
+    # imposta anche la versione minima di macOS
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0" CACHE STRING "Minimum macOS version" FORCE)
+    set(CMAKE_XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" )
+    set(CMAKE_XCODE_GENERATE_SCHEME TRUE )
+  endif()
+endif()
+
+
 # Dependencies
 include(AABBtreeEigen3)
 
@@ -71,9 +82,14 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   #endif()
 
   option(BUILD_TESTS "Build tests" ON)
-  option(BUILD_BENCHMARKS "Build benchmarks" OFF)
-  option(BUILD_EXAMPLES "Build examples" OFF)
-  option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" OFF)
+  option(BUILD_BENCHMARKS "Build benchmarks" ON)
+  option(BUILD_EXAMPLES "Build examples" ON)
+
+  if( CMAKE_GENERATOR STREQUAL "Xcode")
+    option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" ON)
+  else()
+    option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" OFF)
+  endif()
 
   file(GLOB_RECURSE HEADER_FILES_HH "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh")
   file(GLOB_RECURSE HEADER_FILES_HXX "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hxx")
