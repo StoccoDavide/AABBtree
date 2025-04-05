@@ -416,15 +416,15 @@ namespace AABBtree {
      * \param[in] x Coordinate to classify
      * \param[in] tol Tolerance for classification
      * \param[in] dim Dimension to consider
-     * \return Side::LEFT if x < min[dim]+tol,
-     *         Side::RIGHT if x > max[dim]-tol,
+     * \return Side::LEFT  if max[dim] < x+tol,
+     *         Side::RIGHT if x-tol < min[dim],
      *         Side::INSIDE otherwise
      */
     Side which_side( Real const x, Real const tol, Integer const dim ) const {
       Real const mi       { m_min(dim)   };
       Real const ma       { m_max(dim)   };
-      bool const on_left  { x < mi + tol };
-      bool const on_right { x > ma - tol };
+      bool const on_left  { ma < x + tol };
+      bool const on_right { x - tol < mi };
       if ( on_left && on_right) {
         return (mi+ma)/2 < x ? Side::LEFT : Side::RIGHT;
       }

@@ -138,7 +138,6 @@ namespace AABBtree {
     Integer m_max_nodal_objects{10};            //< Maximum number of objects per node.
     Real    m_separation_ratio_tolerance{0.25}; //< Tolerance for bounding boxes separation.
     Real    m_balance_ratio_tolerance{0.1};     //< Tolerance for bounding boxes balance.
-    Real    m_min_box_size{0.0};                //< Minimum size tolerance for bounding boxes.
 
     // Statistics
     mutable Integer m_check_counter{0}; //< Number of collision check.
@@ -169,7 +168,7 @@ namespace AABBtree {
      * \param[in] i Index of the unique pointer to the bounding box.
      * \return A const reference to the i-th unique pointer to the bounding box.
      */
-    BoxUniquePtr const & box(Integer const i) const { return (*m_boxes_ptr)[i]; }
+    BoxUniquePtr const & box( Integer const i ) const { return (*m_boxes_ptr)[i]; }
 
     /**
      * \brief Set the maximum number of objects per node.
@@ -202,22 +201,6 @@ namespace AABBtree {
      * \return The balance ratio tolerance for bounding boxes.
      */
     Real separation_ratio_tolerance() const { return m_separation_ratio_tolerance; }
-
-    /**
-     * \brief Set the minimum size for bounding boxes.
-     * \param[in] size Minimum size for bounding boxes.
-     */
-    void min_box_size( Real const size ) {
-      constexpr char CMD[]{ "AABBtree::Tree::min_box_size(...): " };
-      AABBTREE_ASSERT( size >= 0.0, CMD << "input must be a non-negative real number." );
-      m_min_box_size = size;
-    }
-
-    /**
-     * \brief Get the minimum size for bounding boxes.
-     * \return The minimum size for bounding boxes.
-     */
-    Real min_box_size() const { return m_min_box_size; }
 
     /**
      * \brief Get the tree structure.
@@ -331,7 +314,7 @@ namespace AABBtree {
         //std::make_heap( sorting, sorting+N, compare );
 
         Integer axis, n_long, n_left, n_right, id_ini, id_end;
-        Real    separation_line;
+        Real    separation_line, separation_tolerance;
 
         Integer n_long_saved{node.box_num+1};
         Integer n_diff_saved{node.box_num+1};
@@ -341,16 +324,16 @@ namespace AABBtree {
         //std::copy_n( m_tree_boxes_map.data()+node.box_ptr, node.box_num+1, m_map.data()+node.box_ptr );
 
         for ( Integer dump{0}; dump < N; ++dump ) {
-          axis            = sorting[dump];
-          separation_line = node.box.baricenter(axis);
+          axis                 = sorting[dump];
+          separation_line      = node.box.baricenter(axis);
+          separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
 
           // Separate short and long boxes and compute short boxes baricenter
           n_long = n_left = n_right = 0;
           id_ini = node.box_ptr;
           id_end = node.box_ptr + node.box_num;
 
-          Real baricenter           { 0 };
-          Real separation_tolerance { sizes[axis] * m_separation_ratio_tolerance };
+          Real baricenter{ 0 };
           while ( id_ini < id_end ) {
             Box const & box_id{ *boxes[m_tree_boxes_map[id_ini]] };
             typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
@@ -386,21 +369,28 @@ namespace AABBtree {
 
         // usa migliore salvato
         std::copy_n( m_map.data()+node.box_ptr, node.box_num, m_tree_boxes_map.data()+node.box_ptr );
-        n_long = n_long_saved;
-        axis   = axis_saved;
-        separation_line = node.box.baricenter(axis);
+        n_long               = n_long_saved;
+        axis                 = axis_saved;
+        separation_line      = node.box.baricenter(axis);
+        separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
 
         // Separate the left and right boxes
         n_left = n_right = 0;
         id_ini = node.box_ptr + n_long;
         id_end = node.box_ptr + node.box_num;
         while ( id_ini < id_end ) {
-          Integer ipos{ m_tree_boxes_map[id_ini] };
-          if ( boxes[ipos]->baricenter(axis) < separation_line ) {
+          Box const & box_id{ *boxes[m_tree_boxes_map[id_ini]] };
+          typename Box::Side const side{ box_id.which_side(separation_line, separation_tolerance, axis) };
+          switch (side) {
+          case Box::Side::LEFT: // Left boxes are moved to the end
             ++id_ini; ++n_left; // In right position do nothing
-          } else {
+            break;
+          case Box::Side::RIGHT: // Right boxes are moved to the end
             --id_end; ++n_right; // In right position swap the current box with the last one
             std::swap( m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end] );
+            break;
+          default:
+            break;
           }
         }
 
@@ -569,6 +559,7 @@ namespace AABBtree {
             Integer const id_1_end{ node_1.box_ptr + node_1.box_num };
             Integer const id_2_ini{ node_2.box_ptr                  };
             Integer const id_2_end{ node_2.box_ptr + node_2.box_num };
+            // -------------
             if ( node_1.box_num < node_2.box_num ) {
               for ( Integer i{id_1_ini}; i < id_1_end; ++i ) {
                 Integer const pos_1{ m_tree_boxes_map[i] };
@@ -848,7 +839,7 @@ namespace AABBtree {
 
       // Candidate vector distance and index
       using Pair = std::pair<Real, Integer>;
-      auto cmp = [](const Pair & a, const Pair & b) {return a.first < b.first;};
+      auto cmp = [](const Pair & a, const Pair & b) { return a.first < b.first; };
       std::priority_queue<Pair, std::vector<Pair>, decltype(cmp)> queue(cmp);
 
       // Main loop that checks the intersection iteratively
