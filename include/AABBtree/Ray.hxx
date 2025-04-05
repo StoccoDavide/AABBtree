@@ -137,44 +137,44 @@ namespace AABBtree {
     template<typename NewReal>
     Ray<NewReal, N> cast() const {
       if constexpr (std::is_same<Real, NewReal>::value) return *this;
-      return Ray<NewReal, N>(this->m_origin.template cast<NewReal>(), this->m_direction.template cast<NewReal>());
+      return Ray<NewReal, N>(m_origin.template cast<NewReal>(), m_direction.template cast<NewReal>());
     }
 
     /**
      * \brief Get the reference to the ray origin.
      * \return The reference to the ray origin.
      */
-    Point & origin() { return this->m_origin; }
+    Point & origin() { return m_origin; }
 
     /**
      * \brief Get the const reference to the ray origin.
      * \return The const reference to the ray origin.
      */
-    Point const & origin() const { return this->m_origin; }
+    Point const & origin() const { return m_origin; }
 
     /**
      * \brief Get the reference to the ray direction.
      * \return The reference to the ray direction.
      */
-    Vector & direction() { return this->m_direction; }
+    Vector & direction() { return m_direction; }
 
     /**
      * \brief Get the const reference to the ray direction.
      * \return The const reference to the ray direction.
      */
-    Vector const & direction() const { return this->m_direction; }
+    Vector const & direction() const { return m_direction; }
 
     /**
      * \brief Normalize the direction of the ray.
      * \return A reference to the current ray.
      */
-    Ray & normalize() { this->m_direction.normalize(); return *this; }
+    Ray & normalize() { m_direction.normalize(); return *this; }
 
     /**
      * \brief Normalize the direction of the ray.
      * \return A copy of the current normalized ray.
      */
-    Ray normalized() const { return Ray(this->m_origin, this->m_direction.normalized()); }
+    Ray normalized() const { return Ray(m_origin, m_direction.normalized()); }
 
     /**
      * \brief Check if the current ray is approximately equal to another ray.
@@ -182,21 +182,21 @@ namespace AABBtree {
      * \param[in] tol Tolerance to use for the comparison.
      */
     bool is_approx( Ray const & r, Real const tol = DUMMY_TOL ) const
-    { return this->m_origin.isApprox(r.m_origin, tol) && this->m_direction.isApprox(r.m_direction, tol); }
+    { return m_origin.isApprox(r.m_origin, tol) && m_direction.isApprox(r.m_direction, tol); }
 
     /**
      * \brief Translate the current ray by a given vector.
      * \param[in] t Vector to translate the ray by.
      * \return A reference to the current ray.
      */
-    Ray & translate(Vector const & t) { this->m_origin += t; return *this; }
+    Ray & translate(Vector const & t) { m_origin += t; return *this; }
 
     /**
      * \brief Translate the current ray by a given vector.
      * \param[in] t Vector to translate the ray by.
      * \return A copy of the current translated ray.
      */
-    Ray translated(Vector const & t) const { return Ray(this->m_origin + t, this->m_direction); }
+    Ray translated(Vector const & t) const { return Ray(m_origin + t, m_direction); }
 
     /**
      * \brief Transform the current ray by a given vector.
@@ -206,7 +206,7 @@ namespace AABBtree {
      */
     template <typename Transform>
     Ray transformed(Transform const & t) const
-    { return Ray(this->m_origin.transform(t), this->m_direction.rotate(t)); }
+    { return Ray(m_origin.transform(t), m_direction.rotate(t)); }
 
     /**
      * \brief Transform the current ray by a given vector.
@@ -216,8 +216,8 @@ namespace AABBtree {
      */
     template <typename Transform>
     Ray & transform( Transform const & t ) {
-      this->m_origin.transform(t);
-      this->m_direction.rotate(t);
+      m_origin.transform(t);
+      m_direction.rotate(t);
       return *this;
     }
 
@@ -228,8 +228,8 @@ namespace AABBtree {
      * \return True if the point is inside the ray, false otherwise.
      */
     bool contains( Point const & p, Real tol = DUMMY_TOL ) const {
-      Vector v((p - this->m_origin).normalized());
-      return std::abs(v.cross(this->m_direction).norm()) < tol && v.dot(this->m_direction) >= -tol;
+      Vector v((p - m_origin).normalized());
+      return std::abs(v.cross(m_direction).norm()) < tol && v.dot(m_direction) >= -tol;
     }
 
     /**
@@ -239,16 +239,16 @@ namespace AABBtree {
      * \return True if the current ray intersects the given box, false otherwise.
      */
     bool intersects( Box<Real, N> const & b, Real tol = DUMMY_TOL ) const {
-      if (b.contains(this->m_origin)) return true;
+      if (b.contains(m_origin)) return true;
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
       Vector t_min, t_max; t_min.setConstant(-MAX), t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
-        if (std::abs(this->m_direction[i]) > tol) {
-          t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
-          t_max[i] = (b_max[i] - this->m_origin[i])/this->m_direction[i];
+        if (std::abs(m_direction[i]) > tol) {
+          t_min[i] = (b_min[i] - m_origin[i])/m_direction[i];
+          t_max[i] = (b_max[i] - m_origin[i])/m_direction[i];
           if (t_min[i] > t_max[i]) {std::swap(t_min[i], t_max[i]);}
-        } else if (this->m_origin[i] < b_min[i] || this->m_origin[i] > b_max[i]) {
+        } else if (m_origin[i] < b_min[i] || m_origin[i] > b_max[i]) {
           return false;
         }
       }
@@ -266,24 +266,24 @@ namespace AABBtree {
      * \return True if the current ray intersects the given box, false otherwise.
      */
     bool intersect( Box<Real, N> const & b, Point & c, Point & f, Real tol = DUMMY_TOL ) const {
-      if (b.contains(this->m_origin)) return true;
+      if (b.contains(m_origin)) return true;
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
       Vector t_min, t_max; t_min.setConstant(-MAX), t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
-        if (std::abs(this->m_direction[i]) > tol) {
-          t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
-          t_max[i] = (b_max[i] - this->m_origin[i])/this->m_direction[i];
+        if (std::abs(m_direction[i]) > tol) {
+          t_min[i] = (b_min[i] - m_origin[i])/m_direction[i];
+          t_max[i] = (b_max[i] - m_origin[i])/m_direction[i];
           if (t_min[i] > t_max[i]) {std::swap(t_min[i], t_max[i]);}
-        } else if (this->m_origin[i] < b_min[i] || this->m_origin[i] > b_max[i]) {
+        } else if (m_origin[i] < b_min[i] || m_origin[i] > b_max[i]) {
           return false;
         }
       }
       Real t_entry{t_min.maxCoeff()};
       Real t_exit{t_max.minCoeff()};
       if (t_entry > t_exit && t_exit < -tol) {return false;}
-      c = this->m_origin + t_entry*this->m_direction;
-      f = this->m_origin + t_exit*this->m_direction;
+      c = m_origin + t_entry*m_direction;
+      f = m_origin + t_exit*m_direction;
       return true;
     }
 
@@ -294,8 +294,8 @@ namespace AABBtree {
      * \return The squared distance between the ray and the point.
      */
     Real squared_distance( Point const & p, Real tol = DUMMY_TOL ) const {
-      Real t{(p - this->m_origin).dot(this->m_direction)/this->m_direction.squaredNorm()};
-      return (this->m_origin + std::max(static_cast<Real>(-tol), t) * this->m_direction - p).squaredNorm();
+      Real t{(p - m_origin).dot(m_direction)/m_direction.squaredNorm()};
+      return (m_origin + std::max(static_cast<Real>(-tol), t) * m_direction - p).squaredNorm();
     }
 
     /**
@@ -307,8 +307,8 @@ namespace AABBtree {
      */
     Real squared_distance( Point const & p, Point & c, Real tol = DUMMY_TOL ) const
     {
-      Real t{(p - this->m_origin).transpose().dot(this->m_direction)/this->m_direction.squaredNorm()};
-      c = this->m_origin + std::max(static_cast<Real>(-tol), t) * this->m_direction;
+      Real t{(p - m_origin).transpose().dot(m_direction)/m_direction.squaredNorm()};
+      c = m_origin + std::max(static_cast<Real>(-tol), t) * m_direction;
       return (c - p).squaredNorm();
     }
 
@@ -353,28 +353,28 @@ namespace AABBtree {
      * \note The squared distance is positive if the ray and the box do not intersect, zero otherwise.
      */
     Real squared_interior_distance( Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL ) const {
-      if (b.contains(this->m_origin)) return 0;
+      if (b.contains(m_origin)) return 0;
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
 
       // Compute intersection parameters
       Vector t_min, t_max; t_min.setConstant(-MAX); t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
-        if (std::abs(this->m_direction[i]) > tol) {
-          t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
-          t_max[i] = (b_max[i] - this->m_origin[i])/this->m_direction[i];
+        if (std::abs(m_direction[i]) > tol) {
+          t_min[i] = (b_min[i] - m_origin[i])/m_direction[i];
+          t_max[i] = (b_max[i] - m_origin[i])/m_direction[i];
           if (t_min[i] > t_max[i]) {std::swap(t_min[i], t_max[i]);}
-        } else if (this->m_origin[i] < b_min[i] || this->m_origin[i] > b_max[i]) {
+        } else if (m_origin[i] < b_min[i] || m_origin[i] > b_max[i]) {
           // Ray is parallel and outside the box and non-intersecting
-          b.interior_distance(this->m_origin, p2);
+          b.interior_distance(m_origin, p2);
           Vector sides{b_max - b_min};
           this->distance(p2, p1);
           for (Integer j{0}; j < N; ++j){
             if (j == i) {continue;}
-            if (this->m_direction[j] > 0.0) {p1[j] += 0.5*sides[j]; p2[j] += 0.5*sides[j];}
+            if (m_direction[j] > 0.0) {p1[j] += 0.5*sides[j]; p2[j] += 0.5*sides[j];}
             else {p1[j] -= 0.5*sides[j]; p2[j] -= 0.5*sides[j];}
           }
-          return (p2 - this->m_origin).norm();
+          return (p2 - m_origin).norm();
         }
       }
 
@@ -384,17 +384,17 @@ namespace AABBtree {
 
       // Compute closest point if no intersection
       for (Integer i{0}; i < N; ++i) {
-        if      (this->m_origin[i] < b_min[i]) { p2[i] = b_min[i]; }
-        else if (this->m_origin[i] > b_max[i]) { p2[i] = b_max[i]; }
-        else                                   { p2[i] = this->m_origin[i]; }
+        if      (m_origin[i] < b_min[i]) { p2[i] = b_min[i]; }
+        else if (m_origin[i] > b_max[i]) { p2[i] = b_max[i]; }
+        else                             { p2[i] = m_origin[i]; }
       }
 
       // Project closest point onto the ray
-      Vector v(p2 - this->m_origin);
-      Real t_proj{ v.dot(this->m_direction)/this->m_direction.squaredNorm() };
-      if ( t_proj < 0 ) { p1 = this->m_origin; return v.norm(); }
+      Vector v(p2 - m_origin);
+      Real t_proj{ v.dot(m_direction)/m_direction.squaredNorm() };
+      if ( t_proj < 0 ) { p1 = m_origin; return v.norm(); }
 
-      p1 = this->m_origin + t_proj * this->m_direction;;
+      p1 = m_origin + t_proj * m_direction;;
       return (p2 - p1).squaredNorm();
     }
 
@@ -441,28 +441,28 @@ namespace AABBtree {
      * \return The squared distance between the ray and the box.
      */
     Real squared_exterior_distance( Box<Real, N> const & b, Point & p1, Point & p2, Real tol = DUMMY_TOL ) const {
-      if (b.contains(this->m_origin)) {return 0.0;}
+      if (b.contains(m_origin)) return 0;
       Point const & b_min{b.min()};
       Point const & b_max{b.max()};
 
       // Compute intersection parameters
       Vector t_min, t_max; t_min.setConstant(-MAX); t_max.setConstant(MAX);
       for (Integer i{0}; i < N; ++i) {
-        if (std::abs(this->m_direction[i]) > tol) {
-          t_min[i] = (b_min[i] - this->m_origin[i])/this->m_direction[i];
-          t_max[i] = (b_max[i] - this->m_origin[i])/this->m_direction[i];
+        if (std::abs(m_direction[i]) > tol) {
+          t_min[i] = (b_min[i] - m_origin[i])/m_direction[i];
+          t_max[i] = (b_max[i] - m_origin[i])/m_direction[i];
           if (t_min[i] > t_max[i]) {std::swap(t_min[i], t_max[i]);}
-        } else if (this->m_origin[i] < b_min[i] || this->m_origin[i] > b_max[i]) {
+        } else if (m_origin[i] < b_min[i] || m_origin[i] > b_max[i]) {
           // Ray is parallel and outside the box and non-intersecting
-          b.exterior_distance(this->m_origin, p2);
+          b.exterior_distance(m_origin, p2);
           Vector sides{b_max - b_min};
           this->distance(p2, p1);
           for (Integer j{0}; j < N; ++j){
             if (j == i) {continue;}
-            if (this->m_direction[j] > 0.0) {p1[j] -= 0.5*sides[j]; p2[j] -= 0.5*sides[j];}
+            if (m_direction[j] > 0.0) {p1[j] -= 0.5*sides[j]; p2[j] -= 0.5*sides[j];}
             else {p1[j] += 0.5*sides[j]; p2[j] += 0.5*sides[j];}
           }
-          return (p2 - this->m_origin).norm();
+          return (p2 - m_origin).norm();
         }
       }
 
@@ -472,17 +472,17 @@ namespace AABBtree {
 
       // Compute closest point if no intersection
       for (Integer i{0}; i < N; ++i) {
-        if (this->m_origin[i] < b_min[i]) {p2[i] = b_max[i];}
-        else if (this->m_origin[i] > b_max[i]) {p2[i] = b_min[i];}
-        else {p2[i] = this->m_origin[i];}
+        if      ( m_origin[i] < b_min[i] ) p2[i] = b_max[i];
+        else if ( m_origin[i] > b_max[i] ) p2[i] = b_min[i];
+        else                               p2[i] = m_origin[i];
       }
 
       // Project closest point onto the ray
-      Vector v(p2 - this->m_origin);
-      Real t_proj{v.dot(this->m_direction)/this->m_direction.squaredNorm()};
-      if (t_proj < 0.0) {p1 = this->m_origin; return v.norm();}
+      Vector v(p2 - m_origin);
+      Real t_proj{v.dot(m_direction)/m_direction.squaredNorm()};
+      if ( t_proj < 0 ) { p1 = m_origin; return v.norm(); }
 
-      p1 = this->m_origin + t_proj * this->m_direction;;
+      p1 = m_origin + t_proj * m_direction;;
       return (p2 - p1).squaredNorm();
     }
 
@@ -517,8 +517,8 @@ namespace AABBtree {
       os <<
         "────────────────────────────────────────────────────────────────────────────────\n" <<
         "RAY INFO\n" <<
-        "\to = " << this->m_origin.transpose()    << '\n' <<
-        "\td = " << this->m_direction.transpose() << '\n' <<
+        "\to = " << m_origin.transpose()    << '\n' <<
+        "\td = " << m_direction.transpose() << '\n' <<
         "────────────────────────────────────────────────────────────────────────────────\n";
     }
 

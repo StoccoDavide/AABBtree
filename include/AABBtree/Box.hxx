@@ -81,8 +81,8 @@ namespace AABBtree {
      */
     Box()
     {
-      this->m_min.setConstant(MAX);
-      this->m_max.setConstant(MIN);
+      m_min.setConstant(MAX);
+      m_max.setConstant(MIN);
     }
 
     /**
@@ -165,33 +165,33 @@ namespace AABBtree {
     Box<NewReal, N> cast() const
     {
       if constexpr (std::is_same<Real, NewReal>::value) return *this;
-      return Box<NewReal,N>(this->m_min.template cast<NewReal>(),
-                            this->m_max.template cast<NewReal>());
+      return Box<NewReal,N>(m_min.template cast<NewReal>(),
+                            m_max.template cast<NewReal>());
     }
 
     /**
      * Get the minimal corner.
      * \return The minimal corner of the box.
      */
-    Point const & min() const { return this->m_min; }
+    Point const & min() const { return m_min; }
 
     /**
      * Get a non const reference to the minimal corner.
      * \return The minimal corner of the box.
      */
-    Point & min() { return this->m_min; }
+    Point & min() { return m_min; }
 
     /**
      * Get the maximal corner.
      * \return The maximal corner of the box.
      */
-    Point const & max() const { return this->m_max; }
+    Point const & max() const { return m_max; }
 
     /**
      * Get a non const reference to the maximal corner.
      * \return The maximal corner of the box.
      */
-    Point & max() { return this->m_max; }
+    Point & max() { return m_max; }
 
     /**
      * Reorder the corners of the box such that the minimal corner
@@ -199,8 +199,8 @@ namespace AABBtree {
      */
     void reorder() {
       for (Integer i{0}; i < N; ++i) {
-        if ( this->m_min[i] > this->m_max[i] )
-          std::swap(this->m_min[i], this->m_max[i]);
+        if ( m_min[i] > m_max[i] )
+          std::swap( m_min[i], m_max[i] );
       }
     }
 
@@ -209,7 +209,7 @@ namespace AABBtree {
      * the maximal corner in any dimension.
      * \return True if the box is empty, false otherwise.
      */
-    bool is_empty() const { return (this->m_max.array() < this->m_min.array()).any(); }
+    bool is_empty() const { return (m_max.array() < m_min.array()).any(); }
 
     /**
      * \brief Check if this box is approximately equal to another box
@@ -218,7 +218,7 @@ namespace AABBtree {
      * \return True if boxes are approximately equal within tolerance
      */
     bool is_approx(Box const & b, Real const tol /*= DUMMY_TOL*/) const
-    { return this->m_min.isApprox(b.m_min, tol) && this->m_max.isApprox(b.m_max, tol); }
+    { return m_min.isApprox(b.m_min, tol) && m_max.isApprox(b.m_max, tol); }
 
     /**
      * Check if the current box is degenrate, i.e., it has zero volume.
@@ -226,7 +226,7 @@ namespace AABBtree {
      * \return True if the box is degenerate, false otherwise.
      */
     bool is_degenerate(Real const tol /*= DUMMY_TOL*/) const
-    { return this->m_min.isApprox(this->m_max, tol); }
+    { return m_min.isApprox(m_max, tol); }
 
     /**
      * \brief Find the longest axis of the box
@@ -249,8 +249,8 @@ namespace AABBtree {
       Integer axis{-1};
       max_length = -1;
       for (Integer i{0}; i < N; ++i) {
-        if (Real const tmp_length{this->m_max(i) - this->m_min(i)}; max_length < tmp_length)
-          {max_length = tmp_length; mid_point = 0.5*(this->m_max(i) + this->m_min(i)); axis = i;}
+        if (Real const tmp_length{m_max(i) - m_min(i)}; max_length < tmp_length)
+          {max_length = tmp_length; mid_point = 0.5*(m_max(i) + m_min(i)); axis = i;}
       }
       return axis;
     }
@@ -262,7 +262,7 @@ namespace AABBtree {
      */
     void sort_axes_length(Vector & sizes, Eigen::Vector<Integer, N> & ipos) const
     {
-      sizes = this->m_max - this->m_min;
+      sizes = m_max - m_min;
       ipos = Eigen::Vector<Integer, N>::LinSpaced(N, 0, N - 1);
       std::sort(ipos.data(), ipos.data() + N, [&sizes](Integer i, Integer j) {return sizes[i] > sizes[j];});
     }
@@ -271,20 +271,20 @@ namespace AABBtree {
      * \brief Compute the barycenter of the box
      * \return Point at the center of the box
      */
-    Point baricenter() const { return 0.5*(this->m_min + this->m_max); }
+    Point baricenter() const { return 0.5*(m_min + m_max); }
 
     /**
      * \brief Compute the barycenter coordinate along a specific dimension
      * \param[in] i Dimension index
      * \return Barycenter coordinate along dimension i
      */
-    Real baricenter(Integer i) const {return 0.5*(this->m_min(i) + this->m_max(i));}
+    Real baricenter(Integer i) const {return 0.5*(m_min(i) + m_max(i));}
 
     /**
      * \brief Compute the sizes of the box in all dimensions
      * \return Vector containing the size along each dimension
      */
-    Vector sizes() const {return this->m_max - this->m_min;}
+    Vector sizes() const {return m_max - m_min;}
 
     /**
      * \brief Compute the volume of the box
@@ -322,17 +322,16 @@ namespace AABBtree {
      * \param[in] p Point to set the box to
      */
     void set_degenerate(Point const & p) {
-      this->m_min = p;
-      this->m_max = p;
+      m_min = p;
+      m_max = p;
     }
 
     /**
      * Set the box to be empty.
      */
-    void set_empty()
-    {
-      this->m_min.setConstant(MAX);
-      this->m_max.setConstant(MIN);
+    void set_empty() {
+      m_min.setConstant(MAX);
+      m_max.setConstant(MIN);
     }
 
     /**
@@ -341,8 +340,8 @@ namespace AABBtree {
      * \return True if boxes intersect, false otherwise
      */
     bool intersects(Box const & b) const {
-      return (this->m_min.array() <= b.m_max.array()).all() &&
-             (b.m_min.array() <= this->m_max.array()).all();
+      return (m_min.array() <= b.m_max.array()).all() &&
+             (b.m_min.array() <= m_max.array()).all();
     }
 
     /**
@@ -351,10 +350,9 @@ namespace AABBtree {
      * \param[out] b_out Resulting intersection box
      * \return True if intersection exists, false otherwise
      */
-    bool intersect(Box const & b_in, Box & b_out) const
-    {
-      b_out.m_min = this->m_min.cwiseMax(b_in.m_min);
-      b_out.m_max = this->m_max.cwiseMin(b_in.m_max);
+    bool intersect(Box const & b_in, Box & b_out) const {
+      b_out.m_min = m_min.cwiseMax(b_in.m_min);
+      b_out.m_max = m_max.cwiseMin(b_in.m_max);
       return (b_out.m_min.array() <= b_out.m_max.array()).all();
     }
 
@@ -364,21 +362,21 @@ namespace AABBtree {
      * \return The smallest box containing both boxes
      */
     Box merged(Box const & b) const
-    { return Box(this->m_min.cwiseMin(b.m_min), this->m_max.cwiseMax(b.m_max)); }
+    { return Box(m_min.cwiseMin(b.m_min), m_max.cwiseMax(b.m_max)); }
 
     /**
      * \brief Translate the box by a given vector
      * \param[in] t Translation vector
      * \return Reference to this box after translation
      */
-    Box & translate(Vector const & t) { this->m_min += t; this->m_max += t; return *this; }
+    Box & translate(Vector const & t) { m_min += t; m_max += t; return *this; }
 
     /**
      * \brief Create a translated copy of this box
      * \param[in] t Translation vector
      * \return New translated box
      */
-    Box translated(Vector const & t) const {return Box(this->m_min + t, this->m_max + t);}
+    Box translated(Vector const & t) const {return Box(m_min + t, m_max + t);}
 
     /**
      * \brief Create a transformed copy of this box
@@ -390,7 +388,7 @@ namespace AABBtree {
     template <typename Transform>
     Box transformed(Transform const & t) const
     {
-      Box result( this->m_min.transform(t), this->m_max.transform(t) );
+      Box result( m_min.transform(t), m_max.transform(t) );
       result.reorder();
       return result;
     }
@@ -404,8 +402,8 @@ namespace AABBtree {
      */
     template <typename Transform>
     Box & transform(Transform const & t) {
-      this->m_min.transform(t);
-      this->m_max.transform(t);
+      m_min.transform(t);
+      m_max.transform(t);
       this->reorder();
       return *this;
     }
@@ -430,8 +428,8 @@ namespace AABBtree {
      *         Side::INSIDE otherwise
      */
     Side which_side( Real const x, Real const tol, Integer const dim ) const {
-      if (x < this->m_min(dim) + tol) {return Side::LEFT;}
-      if (x > this->m_max(dim) - tol) {return Side::RIGHT;}
+      if (x < m_min(dim) + tol) return Side::LEFT;
+      if (x > m_max(dim) - tol) return Side::RIGHT;
       return Side::INSIDE;
     }
 
@@ -441,8 +439,8 @@ namespace AABBtree {
      * \return True if point is inside or on boundary, false otherwise
      */
     bool contains(Point const & p) const {
-      return (this->m_min.array() <= p.array()).all() &&
-             (p.array() <= this->m_max.array()).all();
+      return (m_min.array() <= p.array()).all() &&
+             (p.array() <= m_max.array()).all();
     }
 
     /**
@@ -452,8 +450,8 @@ namespace AABBtree {
      * \note Equivalent to contains()
      */
     bool intersects(Point const & p) const {
-      return (this->m_min.array() <= p.array()).all() &&
-             (p.array() <= this->m_max.array()).all();
+      return (m_min.array() <= p.array()).all() &&
+             (p.array() <= m_max.array()).all();
     }
 
     /**
@@ -462,8 +460,8 @@ namespace AABBtree {
      * \return True if b is entirely within this box, false otherwise
      */
     bool contains(Box const & b) const {
-      return (this->m_min.array() <= b.m_min.array()).all() &&
-             (b.m_max.array() <= this->m_max.array()).all();
+      return (m_min.array() <= b.m_min.array()).all() &&
+             (b.m_max.array() <= m_max.array()).all();
     }
 
     /**
@@ -473,8 +471,8 @@ namespace AABBtree {
      */
     template<typename Derived>
     Box & extend( Point const & p ) {
-      this->m_min = this->m_min.cwiseMin(p);
-      this->m_max = this->m_max.cwiseMax(p);
+      m_min = m_min.cwiseMin(p);
+      m_max = m_max.cwiseMax(p);
       return *this;
     }
 
@@ -485,8 +483,8 @@ namespace AABBtree {
      * \note Merging with an empty box may result in a box bigger than *this
      */
     Box & extend( Box const & b ) {
-      this->m_min = this->m_min.cwiseMin(b.m_min);
-      this->m_max = this->m_max.cwiseMax(b.m_max);
+      m_min = m_min.cwiseMin(b.m_min);
+      m_max = m_max.cwiseMax(b.m_max);
       return *this;
     }
 
@@ -501,8 +499,8 @@ namespace AABBtree {
     {
       Real dist2{0.0};
       for (Integer i{0}; i < N; ++i) {
-        if (this->m_min[i] > p[i]) {Real aux{this->m_min[i] - p[i]}; dist2 += aux*aux;}
-        else if (p[i] > this->m_max[i]) {Real aux{p[i] - this->m_max[i]}; dist2 += aux*aux;}
+        if      ( m_min[i] > p[i] ) { Real aux{m_min[i] - p[i]}; dist2 += aux*aux; }
+        else if ( p[i] > m_max[i] ) { Real aux{p[i] - m_max[i]}; dist2 += aux*aux; }
       }
       return dist2;
     }
@@ -518,7 +516,7 @@ namespace AABBtree {
      */
     Real squared_interior_distance(Point const & p, Point & c) const {
       if (this->contains(p)) return 0;
-      c = p.cwiseMax(this->m_min).cwiseMin(this->m_max);
+      c = p.cwiseMax(m_min).cwiseMin(m_max);
       return (p - c).squaredNorm();
     }
 
@@ -551,8 +549,8 @@ namespace AABBtree {
     Real squared_exterior_distance( Point const & p ) const {
       Real dist2{Real(0)};
       for (Integer i{0}; i < N; ++i) {
-        Real const aux1{ std::abs(this->m_min[i] - p[i]) };
-        Real const aux2{ std::abs(this->m_max[i] - p[i]) };
+        Real const aux1{ std::abs(m_min[i] - p[i]) };
+        Real const aux2{ std::abs(m_max[i] - p[i]) };
         Real const aux3{ std::max(aux1,aux2) };
         dist2 += aux3*aux3;
       }
@@ -569,9 +567,9 @@ namespace AABBtree {
      */
     Real squared_exterior_distance( Point const & p, Point & f ) const {
       for (Integer i{0}; i < N; ++i) {
-        Real const aux1{ std::abs(this->m_min[i] - p[i]) };
-        Real const aux2{ std::abs(this->m_max[i] - p[i]) };
-        f[i] = aux1 > aux2 ? this->m_min[i] : this->m_max[i];
+        Real const aux1{ std::abs(m_min[i] - p[i]) };
+        Real const aux2{ std::abs(m_max[i] - p[i]) };
+        f[i] = aux1 > aux2 ? m_min[i] : m_max[i];
       }
       return (f - p).squaredNorm();
     }
@@ -606,9 +604,9 @@ namespace AABBtree {
       if ( this->intersects(b) ) return 0;
       Real dist2{Real(0)};
       for ( Integer i{0}; i < N; ++i ) {
-        Real aux{ this->m_min[i] - b.m_max[i] };
+        Real aux{ m_min[i] - b.m_max[i] };
         if ( aux < 0 ) {
-          aux = b.m_min[i] - this->m_max[i];
+          aux = b.m_min[i] - m_max[i];
           if ( aux < 0 ) continue;
         }
         dist2 += aux*aux;
@@ -628,10 +626,10 @@ namespace AABBtree {
     Real squared_interior_distance( Box const & b, Point & p1, Point & p2 ) const {
       if ( this->intersects(b) ) return 0;
       for ( Integer i{0}; i < N; ++ i) {
-        if      ( this->m_min[i] > b.m_max[i] ) { p1[i] = b.m_max[i];     p2[i] = this->m_min[i]; }
-        else if ( b.m_min[i] > this->m_max[i] ) { p1[i] = this->m_max[i]; p2[i] = b.m_min[i];     }
+        if      ( m_min[i] > b.m_max[i] ) { p1[i] = b.m_max[i];     p2[i] = m_min[i]; }
+        else if ( b.m_min[i] > m_max[i] ) { p1[i] = m_max[i]; p2[i] = b.m_min[i];     }
         else {
-          p1[i] = p2[i] = 0.5*(std::min(this->m_max[i], b.m_max[i]) + std::max(this->m_min[i], b.m_min[i]));
+          p1[i] = p2[i] = 0.5*(std::min(m_max[i], b.m_max[i]) + std::max(m_min[i], b.m_min[i]));
         }
       }
       return (p2 - p1).squaredNorm();
@@ -666,7 +664,7 @@ namespace AABBtree {
     Real squared_exterior_distance( Box const & b ) const {
       Real dist2{ Real(0) };
       for ( Integer i{0}; i < N; ++i ) {
-        Real const aux{ std::max(this->m_max[i], b.m_max[i]) - std::min(this->m_min[i], b.m_min[i]) };
+        Real const aux{ std::max(m_max[i], b.m_max[i]) - std::min(m_min[i], b.m_min[i]) };
         dist2 += aux*aux;
       }
       return dist2;
@@ -681,8 +679,8 @@ namespace AABBtree {
      * \return The squared distance between the boxes.
      */
     Real squared_exterior_distance( Box const & b, Point & p1, Point & p2 ) const {
-      p1 = b.m_min.cwiseMin(this->m_min);
-      p2 = b.m_max.cwiseMax(this->m_max);
+      p1 = b.m_min.cwiseMin(m_min);
+      p2 = b.m_max.cwiseMax(m_max);
       return (p2 - p1).squaredNorm();
     }
 
@@ -826,8 +824,8 @@ namespace AABBtree {
       os <<
         "────────────────────────────────────────────────────────────────────────────────\n" <<
         "BOX INFO\n" <<
-        "\tmin = " << this->m_min.transpose() << '\n' <<
-        "\tmax = " << this->m_max.transpose() << '\n' <<
+        "\tmin = " << m_min.transpose() << '\n' <<
+        "\tmax = " << m_max.transpose() << '\n' <<
         "────────────────────────────────────────────────────────────────────────────────\n";
     }
 
