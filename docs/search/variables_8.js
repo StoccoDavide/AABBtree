@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['parent_0',['parent',['../struct_a_a_b_btree_1_1_tree_1_1_node.html#a00de0c78b6bb9516493dc50fc802c740',1,'AABBtree::Tree::Node']]]
+  ['objects_0',['objects',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#af9678b067679f37d956495e0859070a6',1,'AABBtree::Tree::Statistics']]]
 ];

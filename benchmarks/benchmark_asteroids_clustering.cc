@@ -52,7 +52,7 @@ main() {
   TicToc timer;
 
   // Parse asteroids data
-  std::string fname{ "./benchmarks/asteroids.txt" }; // from build directory
+  std::string fname{ "./../benchmarks/asteroids.txt" }; // from build directory
   std::vector<Keplerian<Real, Integer>> data;
   timer.tic();
   if (!Parse<Real, Integer>(fname, data, n_asteroids)) {
@@ -101,10 +101,6 @@ main() {
   std::cout << "Tree built in " << timer.elapsed_us() << " us\n";
   tree.print(std::cout);
 
-  #ifdef AABBTREE_ENABLE_PLOTTING
-  //{show(fig);}
-  #endif
-
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
@@ -113,6 +109,7 @@ main() {
     if (i % 1000 == 0) {
       std::cout << "Cluster " << i << " of " << n_clusters << '\n';
     }
+
     // Clustering
     clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
     [] (Box const & b1, Box const & b2) {
@@ -142,7 +139,7 @@ main() {
 
   // Save the clusters
   std::ofstream asteroids_cluster("asteroids_clustering_clusters.txt");
-  for ( Integer i{0}; i < n_clusters; ++i ) {
+  for (Integer i{0}; i < n_clusters; ++i ) {
     asteroids_cluster << i << " " << sorting[i] << " " << clusters_distance[sorting[i]];
     for (Integer j : clusters[sorting[i]]) {
       asteroids_cluster << " " << j;
@@ -153,10 +150,9 @@ main() {
 
   // Plot all the asteroids
   #ifdef AABBTREE_ENABLE_PLOTTING
+  Plot2D XY;
+  Plot2D XZ;
   {
-    Plot2D XY;
-    Plot2D XZ;
-    //plot_set_grid( ax );
     std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
     Real mXY{0.0};
     Real mXZ{0.0};
@@ -179,10 +175,8 @@ main() {
   // Plot the clusters
   #ifdef AABBTREE_ENABLE_PLOTTING
   {
-    Plot2D XY;
-    Plot2D XZ;
     std::vector<Real> x, y, z;
-    for (Integer i{0}; i < n_clusters_to_plot; ++i) {
+    for (Integer i{0}; i < std::min(n_clusters, n_clusters_to_plot); ++i) {
       x.clear(); y.clear(); z.clear();
       x.resize(n_neighbours); y.resize(n_neighbours); z.resize(n_neighbours);
       Integer j{0};
@@ -202,15 +196,16 @@ main() {
       XY.plot(x, y, ".")->marker_size(2.5);
       XZ.plot(x, z, ".")->marker_size(2.5);
     }
-    XY.show();
-    XZ.show();
   }
+  XY.show();
+  XZ.show();
   #endif
 
   for (Integer i{0}; i < n_clusters_to_plot; ++i) {
     std::cout << "Cluster " << i << " distance: " << std::scientific <<
     clusters_distance[sorting[i]] << '\n';
   }
+
   std::cout << "Clusters found in " << timer.elapsed_us() << " us\n";
   std::cout << "Average time per cluster: " << timer.elapsed_us()/n_clusters << " us\n";
 

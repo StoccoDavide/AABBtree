@@ -189,17 +189,17 @@ $(function(){initNavTree('_a_a_b_btree_8hh_source.html',''); initResizable(true)
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">// Assert for AABBtree</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#ifndef AABBTREE_ASSERT</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="_a_a_b_btree_8hh.html#a1f3111afdf68b79f9ceda049544ba89f">   46</a></span><span class="preprocessor">#define AABBTREE_ASSERT(COND, MSG) if (!(COND)) {AABBTREE_ERROR(MSG);}</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="_a_a_b_btree_8hh.html#a1f3111afdf68b79f9ceda049544ba89f">   46</a></span><span class="preprocessor">#define AABBTREE_ASSERT(COND, MSG) if (!(COND)) { AABBTREE_ERROR(MSG); }</span></div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">// Warning for AABBtree</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#ifndef AABBTREE_WARNING</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="_a_a_b_btree_8hh.html#a6ea9ae947f7a5c7f7e7883441106bfc7">   51</a></span><span class="preprocessor">#define AABBTREE_WARNING(MSG) {std::cout &lt;&lt; MSG &lt;&lt; std::endl;}</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="_a_a_b_btree_8hh.html#a6ea9ae947f7a5c7f7e7883441106bfc7">   51</a></span><span class="preprocessor">#define AABBTREE_WARNING(MSG) { std::cout &lt;&lt; MSG &lt;&lt; &#39;\n&#39; }</span></div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">// Warning assert for AABBtree</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#ifndef AABBTREE_ASSERT_WARNING</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="_a_a_b_btree_8hh.html#ac3ef72b60da7b61caf725496eb87bee0">   56</a></span><span class="preprocessor">#define AABBTREE_ASSERT_WARNING(COND, MSG) if (!(COND)) {AABBTREE_WARNING(MSG);}</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="_a_a_b_btree_8hh.html#ac3ef72b60da7b61caf725496eb87bee0">   56</a></span><span class="preprocessor">#define AABBTREE_ASSERT_WARNING(COND, MSG) if (!(COND)) { AABBTREE_WARNING(MSG); }</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment">// Default integer AABBtree type</span></div>
@@ -238,7 +238,7 @@ $(function(){initNavTree('_a_a_b_btree_8hh_source.html',''); initResizable(true)
 <div class="ttc" id="a_box_8hxx_html"><div class="ttname"><a href="_box_8hxx.html">Box.hxx</a></div></div>
 <div class="ttc" id="a_ray_8hxx_html"><div class="ttname"><a href="_ray_8hxx.html">Ray.hxx</a></div></div>
 <div class="ttc" id="a_tree_8hxx_html"><div class="ttname"><a href="_tree_8hxx.html">Tree.hxx</a></div></div>
-<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a></div><div class="ttdoc">Class container for an axis-aligned box.</div><div class="ttdef"><b>Definition</b> Box.hxx:34</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a></div><div class="ttdoc">A class representing an axis-aligned bounding box (AABB) in N-dimensional space.</div><div class="ttdef"><b>Definition</b> Box.hxx:49</div></div>
 <div class="ttc" id="anamespace_a_a_b_btree_html"><div class="ttname"><a href="namespace_a_a_b_btree.html">AABBtree</a></div><div class="ttdoc">Namespace for the AABBtree library.</div><div class="ttdef"><b>Definition</b> AABBtree.hh:70</div></div>
 <div class="ttc" id="anamespace_a_a_b_btree_html_a2c3f1cf50895b1ca2e990a35626cada4"><div class="ttname"><a href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">AABBtree::OutStream</a></div><div class="ttdeci">std::basic_ostream&lt; char &gt; OutStream</div><div class="ttdef"><b>Definition</b> AABBtree.hh:84</div></div>
 <div class="ttc" id="anamespace_a_a_b_btree_html_a3076e2acccd9d95fea5910dea68e2fa9"><div class="ttname"><a href="namespace_a_a_b_btree.html#a3076e2acccd9d95fea5910dea68e2fa9">AABBtree::Point</a></div><div class="ttdeci">Eigen::Vector&lt; Real, N &gt; Point</div><div class="ttdef"><b>Definition</b> AABBtree.hh:91</div></div>

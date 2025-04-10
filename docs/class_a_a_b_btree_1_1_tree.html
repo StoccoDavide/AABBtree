@@ -142,6 +142,7 @@ $(function(){initNavTree('class_a_a_b_btree_1_1_tree.html',''); initResizable(tr
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_a_a_b_btree_1_1_tree-members.html">List of all members</a>  </div>
@@ -179,10 +180,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae0309bfb1daf5bcd7874d91e99659644"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a756c32cb2ba8e1920ffe41784a16961d" id="r_a756c32cb2ba8e1920ffe41784a16961d"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a756c32cb2ba8e1920ffe41784a16961d">separation_ratio_tolerance</a> () const</td></tr>
 <tr class="separator:a756c32cb2ba8e1920ffe41784a16961d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77341a1e517d0fcf9755f665b685a347" id="r_a77341a1e517d0fcf9755f665b685a347"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77341a1e517d0fcf9755f665b685a347">min_box_size</a> (Real const <a class="el" href="#a153e0efe09a795de410dd43c52c8fcf2">size</a>)</td></tr>
-<tr class="separator:a77341a1e517d0fcf9755f665b685a347"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe154a6341fea201bb1cbcc0ee129a93" id="r_abe154a6341fea201bb1cbcc0ee129a93"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe154a6341fea201bb1cbcc0ee129a93">min_box_size</a> () const</td></tr>
-<tr class="separator:abe154a6341fea201bb1cbcc0ee129a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c18388fd405601fdbab667a6e3c6561" id="r_a9c18388fd405601fdbab667a6e3c6561"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c18388fd405601fdbab667a6e3c6561">structure</a> () const</td></tr>
 <tr class="separator:a9c18388fd405601fdbab667a6e3c6561"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9302d1b8ceed5681d7d63c08848d1ec" id="r_aa9302d1b8ceed5681d7d63c08848d1ec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9302d1b8ceed5681d7d63c08848d1ec">node</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i) const</td></tr>
@@ -199,8 +196,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adf755ec22ce742984bfd91693a66747a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5026296ed41a346a5a6a774e7b0ef481" id="r_a5026296ed41a346a5a6a774e7b0ef481"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5026296ed41a346a5a6a774e7b0ef481">clear</a> ()</td></tr>
 <tr class="separator:a5026296ed41a346a5a6a774e7b0ef481"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a536762af87d60a91c9b412b3968882ac" id="r_a536762af87d60a91c9b412b3968882ac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a536762af87d60a91c9b412b3968882ac">build</a> (std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt; <a class="el" href="#ae2dd1d764202f1fad879db777c2c9545">boxes</a>)</td></tr>
-<tr class="separator:a536762af87d60a91c9b412b3968882ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fd40fa4b647373fff5867aa61295e6e" id="r_a0fd40fa4b647373fff5867aa61295e6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0fd40fa4b647373fff5867aa61295e6e">build</a> (std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt; boxes_ptr)</td></tr>
+<tr class="separator:a0fd40fa4b647373fff5867aa61295e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecfbd9710e2078d9d51cfaba6d484769" id="r_aecfbd9710e2078d9d51cfaba6d484769"><td class="memTemplParams" colspan="2">template&lt;typename Object&gt; </td></tr>
 <tr class="memitem:aecfbd9710e2078d9d51cfaba6d484769"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aecfbd9710e2078d9d51cfaba6d484769">intersect</a> (Object const &amp;obj, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates) const</td></tr>
 <tr class="separator:aecfbd9710e2078d9d51cfaba6d484769"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,12 +210,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac1aa9bbca13e25ebcea21dcf991fc248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1deed7eb803e029487abc3e30d4c608" id="r_ad1deed7eb803e029487abc3e30d4c608"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1deed7eb803e029487abc3e30d4c608">distance</a> (<a class="el" href="class_a_a_b_btree_1_1_tree.html">Tree</a> const &amp;tree, <a class="el" href="namespace_a_a_b_btree.html#a46a02a2772464805830f5ca336094870">IndexMap</a> &amp;candidates) const</td></tr>
 <tr class="separator:ad1deed7eb803e029487abc3e30d4c608"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80ad07d812f82623139b72fd67caef55" id="r_a80ad07d812f82623139b72fd67caef55"><td class="memTemplParams" colspan="2">template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </td></tr>
-<tr class="memitem:a80ad07d812f82623139b72fd67caef55"><td class="memTemplItemLeft" align="right" valign="top">Real&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a80ad07d812f82623139b72fd67caef55">closest</a> (<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;point, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const n, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function distance_function=[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;p, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(p);}) const</td></tr>
-<tr class="separator:a80ad07d812f82623139b72fd67caef55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16ef61b10384d6df974a15ff4fce3242" id="r_a16ef61b10384d6df974a15ff4fce3242"><td class="memTemplParams" colspan="2">template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </td></tr>
-<tr class="memitem:a16ef61b10384d6df974a15ff4fce3242"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a16ef61b10384d6df974a15ff4fce3242">within_distance</a> (<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;point, Real const max_distance, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function distance_function=[](<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;p, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(p);}) const</td></tr>
-<tr class="separator:a16ef61b10384d6df974a15ff4fce3242"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01577188aeb973eb7a3bca98f1f93220" id="r_a01577188aeb973eb7a3bca98f1f93220"><td class="memTemplParams" colspan="2">template&lt;typename Object, typename Function = std::function&lt;Real(Object const &amp;, Box const &amp;)&gt;&gt; </td></tr>
+<tr class="memitem:a01577188aeb973eb7a3bca98f1f93220"><td class="memTemplItemLeft" align="right" valign="top">Real&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a01577188aeb973eb7a3bca98f1f93220">closest</a> (Object const &amp;obj, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const n, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function distance_function=[](Object const &amp;o, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(o);}) const</td></tr>
+<tr class="separator:a01577188aeb973eb7a3bca98f1f93220"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf0ef77d253164f506e79c9217b8a6ae" id="r_acf0ef77d253164f506e79c9217b8a6ae"><td class="memTemplParams" colspan="2">template&lt;typename Object, typename Function = std::function&lt;Real(Object const &amp;, Box const &amp;)&gt;&gt; </td></tr>
+<tr class="memitem:acf0ef77d253164f506e79c9217b8a6ae"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acf0ef77d253164f506e79c9217b8a6ae">within_distance</a> (Object const &amp;obj, Real const max_distance, <a class="el" href="namespace_a_a_b_btree.html#a7aa2d6a7939cd105ef18d0b5ea476cca">IndexSet</a> &amp;candidates, Function distance_function=[](Object const &amp;o, <a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a> const &amp;b) {return b.interior_distance(o);}) const</td></tr>
+<tr class="separator:acf0ef77d253164f506e79c9217b8a6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a159ce0f28a69b58a63ea09abac3150" id="r_a8a159ce0f28a69b58a63ea09abac3150"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a159ce0f28a69b58a63ea09abac3150">depth</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;d) const</td></tr>
 <tr class="separator:a8a159ce0f28a69b58a63ea09abac3150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72b47a92dcabaf12d494767721ca7b3d" id="r_a72b47a92dcabaf12d494767721ca7b3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72b47a92dcabaf12d494767721ca7b3d">nodes</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> const i, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;l, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;n, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> &amp;b) const</td></tr>
@@ -227,6 +224,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad9abb2e3c734ba5f61b966e434f0907a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca1a357714752e27e3494fa1dcd4f6ea" id="r_aca1a357714752e27e3494fa1dcd4f6ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca1a357714752e27e3494fa1dcd4f6ea">print</a> (<a class="el" href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">OutStream</a> &amp;os) const</td></tr>
 <tr class="separator:aca1a357714752e27e3494fa1dcd4f6ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ac211a14729776c93ca4d18a2ece564ed" id="r_ac211a14729776c93ca4d18a2ece564ed"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac211a14729776c93ca4d18a2ece564ed">EPS</a> {std::numeric_limits&lt;Real&gt;::epsilon()}</td></tr>
+<tr class="separator:ac211a14729776c93ca4d18a2ece564ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab705c8e42919696509ace512d8635d73" id="r_ab705c8e42919696509ace512d8635d73"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab705c8e42919696509ace512d8635d73">INF</a> {std::numeric_limits&lt;Real&gt;::infinity()}</td></tr>
+<tr class="separator:ab705c8e42919696509ace512d8635d73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d3af1bb7dcb9e5a2f0506612f181e5f" id="r_a5d3af1bb7dcb9e5a2f0506612f181e5f"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d3af1bb7dcb9e5a2f0506612f181e5f">DUMMY_TOL</a> {<a class="el" href="#ac211a14729776c93ca4d18a2ece564ed">EPS</a>*static_cast&lt;Real&gt;(100.0)}</td></tr>
+<tr class="separator:a5d3af1bb7dcb9e5a2f0506612f181e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
 Private Types</h2></td></tr>
@@ -240,31 +246,35 @@ Private Types</h2></td></tr>
 <tr class="separator:ac7a8f69109c4f90238d76a42fed77c3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa832007e63709982c6379b57b8ffd77a" id="r_aa832007e63709982c6379b57b8ffd77a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> = <a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&lt;Real, N&gt;</td></tr>
 <tr class="separator:aa832007e63709982c6379b57b8ffd77a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53cec83ffedb65d64f035c31a2ffc495" id="r_a53cec83ffedb65d64f035c31a2ffc495"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a> = std::tuple&lt;<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, Real&gt;</td></tr>
+<tr class="separator:a53cec83ffedb65d64f035c31a2ffc495"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a395c05baad182d96739d01b823796682" id="r_a395c05baad182d96739d01b823796682"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a395c05baad182d96739d01b823796682">PriorityQueue</a> = std::priority_queue&lt;<a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>, std::vector&lt;<a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>&gt;, std::function&lt;bool(<a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>, <a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>)&gt;&gt;</td></tr>
+<tr class="separator:a395c05baad182d96739d01b823796682"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:afc5ddd8137d0ca67d4243541cd39b80a" id="r_afc5ddd8137d0ca67d4243541cd39b80a"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc5ddd8137d0ca67d4243541cd39b80a">m_boxes</a> {nullptr}</td></tr>
-<tr class="separator:afc5ddd8137d0ca67d4243541cd39b80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b9c9d294c7a7cbee627f3086e6b085a" id="r_a2b9c9d294c7a7cbee627f3086e6b085a"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b9c9d294c7a7cbee627f3086e6b085a">m_boxes_ptr</a> {nullptr}</td></tr>
+<tr class="separator:a2b9c9d294c7a7cbee627f3086e6b085a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa8009bf7ddf296eb7cd30281e981b88" id="r_afa8009bf7ddf296eb7cd30281e981b88"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_a_a_b_btree_1_1_tree_1_1_node.html">Node</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa8009bf7ddf296eb7cd30281e981b88">m_tree_structure</a></td></tr>
 <tr class="separator:afa8009bf7ddf296eb7cd30281e981b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdf0751289c44c1563c9fb62cf9bfde3" id="r_abdf0751289c44c1563c9fb62cf9bfde3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#ab7f50fe1e8fa820f8be13ac74c244cc5">IndexList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdf0751289c44c1563c9fb62cf9bfde3">m_tree_boxes_map</a></td></tr>
 <tr class="separator:abdf0751289c44c1563c9fb62cf9bfde3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a5773df0f4316047a6feaf93e927da2" id="r_a8a5773df0f4316047a6feaf93e927da2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a5773df0f4316047a6feaf93e927da2">m_dumping_mode</a> {true}</td></tr>
 <tr class="separator:a8a5773df0f4316047a6feaf93e927da2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f031878cb331577c243a40b3082601d" id="r_a5f031878cb331577c243a40b3082601d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f031878cb331577c243a40b3082601d">m_max_nodal_objects</a> {1}</td></tr>
+<tr class="memitem:a5f031878cb331577c243a40b3082601d" id="r_a5f031878cb331577c243a40b3082601d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f031878cb331577c243a40b3082601d">m_max_nodal_objects</a> {10}</td></tr>
 <tr class="separator:a5f031878cb331577c243a40b3082601d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8910734f7976650755d164f238e1186" id="r_aa8910734f7976650755d164f238e1186"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8910734f7976650755d164f238e1186">m_separation_ratio_tolerance</a> {0.1}</td></tr>
+<tr class="memitem:aa8910734f7976650755d164f238e1186" id="r_aa8910734f7976650755d164f238e1186"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8910734f7976650755d164f238e1186">m_separation_ratio_tolerance</a> {0.25}</td></tr>
 <tr class="separator:aa8910734f7976650755d164f238e1186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97f20a4e5de491a063825ca59013f0b3" id="r_a97f20a4e5de491a063825ca59013f0b3"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97f20a4e5de491a063825ca59013f0b3">m_balance_ratio_tolerance</a> {0.25}</td></tr>
+<tr class="memitem:a97f20a4e5de491a063825ca59013f0b3" id="r_a97f20a4e5de491a063825ca59013f0b3"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97f20a4e5de491a063825ca59013f0b3">m_balance_ratio_tolerance</a> {0.1}</td></tr>
 <tr class="separator:a97f20a4e5de491a063825ca59013f0b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa68163c6ab2cbe7460a8ea361c31658d" id="r_aa68163c6ab2cbe7460a8ea361c31658d"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa68163c6ab2cbe7460a8ea361c31658d">m_min_box_size</a> {0.0}</td></tr>
-<tr class="separator:aa68163c6ab2cbe7460a8ea361c31658d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b4eb43367220af367546926322388b1" id="r_a0b4eb43367220af367546926322388b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b4eb43367220af367546926322388b1">m_check_counter</a> {0}</td></tr>
 <tr class="separator:a0b4eb43367220af367546926322388b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9a43b9b304fa185e0e59a555550a9ff" id="r_aa9a43b9b304fa185e0e59a555550a9ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9a43b9b304fa185e0e59a555550a9ff">m_dump_counter</a> {0}</td></tr>
 <tr class="separator:aa9a43b9b304fa185e0e59a555550a9ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad432f394ff66959d23784ef3f61d1808" id="r_ad432f394ff66959d23784ef3f61d1808"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#ab7f50fe1e8fa820f8be13ac74c244cc5">IndexList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad432f394ff66959d23784ef3f61d1808">m_stack</a></td></tr>
 <tr class="separator:ad432f394ff66959d23784ef3f61d1808"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a80b4a56ca07f90473759bb3bffe2d9" id="r_a0a80b4a56ca07f90473759bb3bffe2d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a395c05baad182d96739d01b823796682">PriorityQueue</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a80b4a56ca07f90473759bb3bffe2d9">m_queue</a></td></tr>
+<tr class="separator:a0a80b4a56ca07f90473759bb3bffe2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt;<br />
@@ -361,6 +371,54 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::Point = <a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&lt;Real, N&gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a395c05baad182d96739d01b823796682" name="a395c05baad182d96739d01b823796682"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a395c05baad182d96739d01b823796682">&#9670;&#160;</a></span>PriorityQueue</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::PriorityQueue = std::priority_queue&lt;<a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>, std::vector&lt;<a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>&gt;, std::function&lt;bool(<a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>, <a class="el" href="#a53cec83ffedb65d64f035c31a2ffc495">QueueItem</a>)&gt;&gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a53cec83ffedb65d64f035c31a2ffc495" name="a53cec83ffedb65d64f035c31a2ffc495"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53cec83ffedb65d64f035c31a2ffc495">&#9670;&#160;</a></span>QueueItem</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::QueueItem = std::tuple&lt;<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, Real&gt;</td>
         </tr>
       </table>
   </td>
@@ -516,8 +574,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a536762af87d60a91c9b412b3968882ac" name="a536762af87d60a91c9b412b3968882ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a536762af87d60a91c9b412b3968882ac">&#9670;&#160;</a></span>build()</h2>
+<a id="a0fd40fa4b647373fff5867aa61295e6e" name="a0fd40fa4b647373fff5867aa61295e6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fd40fa4b647373fff5867aa61295e6e">&#9670;&#160;</a></span>build()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -530,7 +588,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="memname">void <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::build </td>
           <td>(</td>
-          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>boxes</em></span></td><td>)</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>boxes_ptr</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -542,7 +600,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Build the tree given the bounding boxes. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">boxes</td><td>Bounding boxes to build the tree from. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boxes_ptr</td><td>Bounding boxes to build the tree from. </td></tr>
   </table>
   </dd>
 </dl>
@@ -577,15 +635,15 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a80ad07d812f82623139b72fd67caef55" name="a80ad07d812f82623139b72fd67caef55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80ad07d812f82623139b72fd67caef55">&#9670;&#160;</a></span>closest()</h2>
+<a id="a01577188aeb973eb7a3bca98f1f93220" name="a01577188aeb973eb7a3bca98f1f93220"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01577188aeb973eb7a3bca98f1f93220">&#9670;&#160;</a></span>closest()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
 <div class="memtemplate">
-template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </div>
+template&lt;typename Object, typename Function = std::function&lt;Real(Object const &amp;, Box const &amp;)&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -593,7 +651,7 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
         <tr>
           <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::closest </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span>, </td>
+          <td class="paramtype">Object const &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -608,7 +666,7 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>distance_function</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[]&#160;(<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&#160;const&#160;&amp;&#160;p,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(p);}</span>&#160;) const</td>
+          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>distance_function</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[]&#160;(Object&#160;const&#160;&amp;&#160;o,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(o);}</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -617,9 +675,9 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Find the first \( n \) candidates from a point. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Find the first \( n \) candidates from an object, using a custom distance function. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>Object to compute the distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">n</td><td>Number of candidates to find. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>First \( n \) candidates. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">distance_function</td><td>Custom distance function (default is the interior distance). </td></tr>
@@ -629,6 +687,7 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
 <dl class="section return"><dt>Returns</dt><dd>The maximum distance between the candidates and the point. The return value is negative if no candidates are found. </dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
+    <tr><td class="paramname">Object</td><td>Type of the object to compute the distance to. </td></tr>
     <tr><td class="paramname">Function</td><td>Type of the custom distance function. </td></tr>
   </table>
   </dd>
@@ -1026,67 +1085,6 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="abe154a6341fea201bb1cbcc0ee129a93" name="abe154a6341fea201bb1cbcc0ee129a93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe154a6341fea201bb1cbcc0ee129a93">&#9670;&#160;</a></span>min_box_size() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::min_box_size </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Get the minimum size for bounding boxes. </p><dl class="section return"><dt>Returns</dt><dd>The minimum size for bounding boxes. </dd></dl>
-
-</div>
-</div>
-<a id="a77341a1e517d0fcf9755f665b685a347" name="a77341a1e517d0fcf9755f665b685a347"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77341a1e517d0fcf9755f665b685a347">&#9670;&#160;</a></span>min_box_size() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::min_box_size </td>
-          <td>(</td>
-          <td class="paramtype">Real const</td>          <td class="paramname"><span class="paramname"><em>size</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Set the minimum size for bounding boxes. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>Minimum size for bounding boxes. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="aa9302d1b8ceed5681d7d63c08848d1ec" name="aa9302d1b8ceed5681d7d63c08848d1ec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa9302d1b8ceed5681d7d63c08848d1ec">&#9670;&#160;</a></span>node()</h2>
 
@@ -1388,15 +1386,15 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a16ef61b10384d6df974a15ff4fce3242" name="a16ef61b10384d6df974a15ff4fce3242"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16ef61b10384d6df974a15ff4fce3242">&#9670;&#160;</a></span>within_distance()</h2>
+<a id="acf0ef77d253164f506e79c9217b8a6ae" name="acf0ef77d253164f506e79c9217b8a6ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf0ef77d253164f506e79c9217b8a6ae">&#9670;&#160;</a></span>within_distance()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
 <div class="memtemplate">
-template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box const &amp;)&gt;&gt; </div>
+template&lt;typename Object, typename Function = std::function&lt;Real(Object const &amp;, Box const &amp;)&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1404,7 +1402,7 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
         <tr>
           <td class="memname">bool <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::within_distance </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span>, </td>
+          <td class="paramtype">Object const &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1419,7 +1417,7 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>distance_function</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[]&#160;(<a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a>&#160;const&#160;&amp;&#160;p,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(p);}</span>&#160;) const</td>
+          <td class="paramtype">Function</td>          <td class="paramname"><span class="paramname"><em>distance_function</em></span><span class="paramdefsep"> = </span><span class="paramdefval">[]&#160;(Object&#160;const&#160;&amp;&#160;o,&#160;<a class="el" href="#af16ebe0542be4ec2bae7900059cac8d9">Box</a>&#160;const&#160;&amp;&#160;b)&#160;{return&#160;b.interior_distance(o);}</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1428,9 +1426,9 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Find the candidates that are within a given distance from a point, using a custom distance function. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Find the candidates that are within a given distance from a object, using a custom distance function. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">point</td><td><a class="el" href="#aa832007e63709982c6379b57b8ffd77a">Point</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>Object to compute the distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_distance</td><td>Maximum distance to consider. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">candidates</td><td>Minimum distance candidates. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">distance_function</td><td>Custom distance function (default is the interior distance). </td></tr>
@@ -1440,6 +1438,7 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
 <dl class="section return"><dt>Returns</dt><dd>True if at least one object is within the given distance, false otherwise. </dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
+    <tr><td class="paramname">Object</td><td>Type of the object to compute the distance to. </td></tr>
     <tr><td class="paramname">Function</td><td>Type of the custom distance function. </td></tr>
   </table>
   </dd>
@@ -1448,6 +1447,81 @@ template&lt;typename Function = std::function&lt;Real(Point const &amp;, Box con
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a5d3af1bb7dcb9e5a2f0506612f181e5f" name="a5d3af1bb7dcb9e5a2f0506612f181e5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d3af1bb7dcb9e5a2f0506612f181e5f">&#9670;&#160;</a></span>DUMMY_TOL</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::DUMMY_TOL {<a class="el" href="#ac211a14729776c93ca4d18a2ece564ed">EPS</a>*static_cast&lt;Real&gt;(100.0)}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Default tolerance for the scalar type </p>
+
+</div>
+</div>
+<a id="ac211a14729776c93ca4d18a2ece564ed" name="ac211a14729776c93ca4d18a2ece564ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac211a14729776c93ca4d18a2ece564ed">&#9670;&#160;</a></span>EPS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::EPS {std::numeric_limits&lt;Real&gt;::epsilon()}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Machine epsilon for the scalar type. </p>
+
+</div>
+</div>
+<a id="ab705c8e42919696509ace512d8635d73" name="ab705c8e42919696509ace512d8635d73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab705c8e42919696509ace512d8635d73">&#9670;&#160;</a></span>INF</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::INF {std::numeric_limits&lt;Real&gt;::infinity()}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Infinity value for the scalar type. </p>
+
+</div>
+</div>
 <a id="a97f20a4e5de491a063825ca59013f0b3" name="a97f20a4e5de491a063825ca59013f0b3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a97f20a4e5de491a063825ca59013f0b3">&#9670;&#160;</a></span>m_balance_ratio_tolerance</h2>
 
@@ -1460,7 +1534,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_balance_ratio_tolerance {0.25}</td>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_balance_ratio_tolerance {0.1}</td>
         </tr>
       </table>
   </td>
@@ -1473,8 +1547,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="afc5ddd8137d0ca67d4243541cd39b80a" name="afc5ddd8137d0ca67d4243541cd39b80a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc5ddd8137d0ca67d4243541cd39b80a">&#9670;&#160;</a></span>m_boxes</h2>
+<a id="a2b9c9d294c7a7cbee627f3086e6b085a" name="a2b9c9d294c7a7cbee627f3086e6b085a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b9c9d294c7a7cbee627f3086e6b085a">&#9670;&#160;</a></span>m_boxes_ptr</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1485,7 +1559,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt;<a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a>&gt; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_boxes {nullptr}</td>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="#a5ad0dbaee8687f3986ffcee744b42e3f">BoxUniquePtrList</a>&gt; <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_boxes_ptr {nullptr}</td>
         </tr>
       </table>
   </td>
@@ -1584,7 +1658,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_max_nodal_objects {1}</td>
+          <td class="memname"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_max_nodal_objects {10}</td>
         </tr>
       </table>
   </td>
@@ -1597,8 +1671,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="aa68163c6ab2cbe7460a8ea361c31658d" name="aa68163c6ab2cbe7460a8ea361c31658d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa68163c6ab2cbe7460a8ea361c31658d">&#9670;&#160;</a></span>m_min_box_size</h2>
+<a id="a0a80b4a56ca07f90473759bb3bffe2d9" name="a0a80b4a56ca07f90473759bb3bffe2d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a80b4a56ca07f90473759bb3bffe2d9">&#9670;&#160;</a></span>m_queue</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1609,16 +1683,16 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_min_box_size {0.0}</td>
+          <td class="memname"><a class="el" href="#a395c05baad182d96739d01b823796682">PriorityQueue</a> <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_queue</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Minimum size tolerance for bounding boxes. </p>
+<p>Queue for tree traversal. </p>
 
 </div>
 </div>
@@ -1634,7 +1708,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_separation_ratio_tolerance {0.1}</td>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::m_separation_ratio_tolerance {0.25}</td>
         </tr>
       </table>
   </td>

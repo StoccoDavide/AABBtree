@@ -40,8 +40,7 @@ var class_a_a_b_btree_1_1_ray =
     [ "translated", "class_a_a_b_btree_1_1_ray.html#a3e6b8192800247ff5ca6402f2c2080e4", null ],
     [ "DUMMY_TOL", "class_a_a_b_btree_1_1_ray.html#a030b65b627cc28039f51cf304483fed5", null ],
     [ "EPS", "class_a_a_b_btree_1_1_ray.html#ab26efb92f3c4716cb6735b6737df96c2", null ],
+    [ "INF", "class_a_a_b_btree_1_1_ray.html#aa12d2c57b6a4834e459e573387ebad6f", null ],
     [ "m_direction", "class_a_a_b_btree_1_1_ray.html#a24478776f3c50e04797d762c882fc9ee", null ],
-    [ "m_origin", "class_a_a_b_btree_1_1_ray.html#a9912b7fd7e82732fb66b9168003266d7", null ],
-    [ "MAX", "class_a_a_b_btree_1_1_ray.html#a66e4bd094bd54d63e93becbdc615096d", null ],
-    [ "MIN", "class_a_a_b_btree_1_1_ray.html#a9f0e58c746a6f3019dccf34961eae7df", null ]
+    [ "m_origin", "class_a_a_b_btree_1_1_ray.html#a9912b7fd7e82732fb66b9168003266d7", null ]
 ];

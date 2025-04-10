@@ -1,6 +1,7 @@
 var struct_a_a_b_btree_1_1_tree_1_1_statistics =
 [
-    [ "reset", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a9ed0d78c19a337ce600dee1682a96aee", null ],
+    [ "print", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html#acef31fe173776881e8186de72bcfc8a2", null ],
+    [ "reset", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a1de679ca63b3bf64c53ce3e3c5ae6e06", null ],
     [ "balance_ratio", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html#ada7a502c7f5c5503308d7658f869883a", null ],
     [ "check_counter", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a3e9667eeb843fd5737b8246609efc96e", null ],
     [ "depth", "struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a49c8c7464328a1e3c56a6f0c688a685e", null ],

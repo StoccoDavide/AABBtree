@@ -1,20 +1,9 @@
 var searchData=
 [
-  ['m_5fbalance_5fratio_5ftolerance_0',['m_balance_ratio_tolerance',['../class_a_a_b_btree_1_1_tree.html#a97f20a4e5de491a063825ca59013f0b3',1,'AABBtree::Tree']]],
-  ['m_5fboxes_1',['m_boxes',['../class_a_a_b_btree_1_1_tree.html#afc5ddd8137d0ca67d4243541cd39b80a',1,'AABBtree::Tree']]],
-  ['m_5fcheck_5fcounter_2',['m_check_counter',['../class_a_a_b_btree_1_1_tree.html#a0b4eb43367220af367546926322388b1',1,'AABBtree::Tree']]],
-  ['m_5fdirection_3',['m_direction',['../class_a_a_b_btree_1_1_ray.html#a24478776f3c50e04797d762c882fc9ee',1,'AABBtree::Ray']]],
-  ['m_5fdump_5fcounter_4',['m_dump_counter',['../class_a_a_b_btree_1_1_tree.html#aa9a43b9b304fa185e0e59a555550a9ff',1,'AABBtree::Tree']]],
-  ['m_5fdumping_5fmode_5',['m_dumping_mode',['../class_a_a_b_btree_1_1_tree.html#a8a5773df0f4316047a6feaf93e927da2',1,'AABBtree::Tree']]],
-  ['m_5fmax_6',['m_max',['../class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9',1,'AABBtree::Box']]],
-  ['m_5fmax_5fnodal_5fobjects_7',['m_max_nodal_objects',['../class_a_a_b_btree_1_1_tree.html#a5f031878cb331577c243a40b3082601d',1,'AABBtree::Tree']]],
-  ['m_5fmin_8',['m_min',['../class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d',1,'AABBtree::Box']]],
-  ['m_5fmin_5fbox_5fsize_9',['m_min_box_size',['../class_a_a_b_btree_1_1_tree.html#aa68163c6ab2cbe7460a8ea361c31658d',1,'AABBtree::Tree']]],
-  ['m_5forigin_10',['m_origin',['../class_a_a_b_btree_1_1_ray.html#a9912b7fd7e82732fb66b9168003266d7',1,'AABBtree::Ray']]],
-  ['m_5fseparation_5fratio_5ftolerance_11',['m_separation_ratio_tolerance',['../class_a_a_b_btree_1_1_tree.html#aa8910734f7976650755d164f238e1186',1,'AABBtree::Tree']]],
-  ['m_5fstack_12',['m_stack',['../class_a_a_b_btree_1_1_tree.html#ad432f394ff66959d23784ef3f61d1808',1,'AABBtree::Tree']]],
-  ['m_5ftree_5fboxes_5fmap_13',['m_tree_boxes_map',['../class_a_a_b_btree_1_1_tree.html#abdf0751289c44c1563c9fb62cf9bfde3',1,'AABBtree::Tree']]],
-  ['m_5ftree_5fstructure_14',['m_tree_structure',['../class_a_a_b_btree_1_1_tree.html#afa8009bf7ddf296eb7cd30281e981b88',1,'AABBtree::Tree']]],
-  ['max_15',['MAX',['../class_a_a_b_btree_1_1_box.html#ab413a1e7280d4f7166f53b01b8cf4b79',1,'AABBtree::Box::MAX'],['../class_a_a_b_btree_1_1_ray.html#a66e4bd094bd54d63e93becbdc615096d',1,'AABBtree::Ray::MAX']]],
-  ['min_16',['MIN',['../class_a_a_b_btree_1_1_box.html#aa43bddd74a1d3ef191d68589159bfae5',1,'AABBtree::Box::MIN'],['../class_a_a_b_btree_1_1_ray.html#a9f0e58c746a6f3019dccf34961eae7df',1,'AABBtree::Ray::MIN']]]
+  ['leafs_0',['leafs',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#ac28402e7aba1b255fb96dcade59fe01a',1,'AABBtree::Tree::Statistics']]],
+  ['left_5fdepth_1',['left_depth',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#aec8d976989d8f47cc6389f8b66ed253d',1,'AABBtree::Tree::Statistics']]],
+  ['left_5fleafs_2',['left_leafs',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a791162db05577caf201aaddd03bc41f7',1,'AABBtree::Tree::Statistics']]],
+  ['left_5flong_5fboxes_3',['left_long_boxes',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#acb4d4dc5a1eac54295e2e88d10c30f6a',1,'AABBtree::Tree::Statistics']]],
+  ['left_5fnodes_4',['left_nodes',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#aa4cd202ae85b784d5c2f32a62a437fbe',1,'AABBtree::Tree::Statistics']]],
+  ['long_5fboxes_5',['long_boxes',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a72d1b7d1ed67625b22470f34ab542aed',1,'AABBtree::Tree::Statistics']]]
 ];

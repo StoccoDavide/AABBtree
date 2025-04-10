@@ -57,7 +57,7 @@ namespace TestUtilities {
       return Box<Real, 2>(
         std::min(this->m_p_1[0], this->m_p_2[0]), std::min(this->m_p_1[1], this->m_p_2[1]),
         std::max(this->m_p_1[0], this->m_p_2[0]), std::max(this->m_p_1[1], this->m_p_2[1])
-      );;
+      );
     }
     bool intersect(Segment const & segment, Vector2 & point) const {
       Real const & t_x_1{this->m_p_1[0]};   Real const & t_y_1{this->m_p_1[1]};
@@ -80,14 +80,10 @@ namespace TestUtilities {
   #ifdef AABBTREE_ENABLE_PLOTTING
   // Plot a segment
   template <typename Real>
-  void
-  plot_segment(
-    plot_obj            & ax,
-    Segment<Real> const & segment,
-    std::string   const & color,
-    Real          const   line_width = 1
-  ) {
-    plot_segment<Real, 2>( ax, segment.p_1(), segment.p_2(), color, line_width );
+  void plot_segment(plot_obj & ax, Segment<Real> const & segment, std::string const & color,
+    Real const line_width = 1.0)
+  {
+    plot_segment<Real, 2>(ax, segment.p_1(), segment.p_2(), color, line_width);
   }
   #endif // AABBTREE_ENABLE_PLOTTING
 

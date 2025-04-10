@@ -146,11 +146,15 @@ $(function(){initNavTree('struct_a_a_b_btree_1_1_tree_1_1_statistics.html',''); 
   <div class="headertitle"><div class="title">AABBtree::Tree&lt; Real, N &gt;::Statistics Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_tree_8hxx_source.html">Tree.hxx</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9ed0d78c19a337ce600dee1682a96aee" id="r_a9ed0d78c19a337ce600dee1682a96aee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ed0d78c19a337ce600dee1682a96aee">reset</a> ()</td></tr>
-<tr class="separator:a9ed0d78c19a337ce600dee1682a96aee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1de679ca63b3bf64c53ce3e3c5ae6e06" id="r_a1de679ca63b3bf64c53ce3e3c5ae6e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1de679ca63b3bf64c53ce3e3c5ae6e06">reset</a> () noexcept</td></tr>
+<tr class="separator:a1de679ca63b3bf64c53ce3e3c5ae6e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acef31fe173776881e8186de72bcfc8a2" id="r_acef31fe173776881e8186de72bcfc8a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acef31fe173776881e8186de72bcfc8a2">print</a> (<a class="el" href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">OutStream</a> &amp;os) const</td></tr>
+<tr class="separator:acef31fe173776881e8186de72bcfc8a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -193,8 +197,41 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt;<br />
 struct AABBtree::Tree&lt; Real, N &gt;::Statistics</div><p>Structure representing the statistics of the AABB tree. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9ed0d78c19a337ce600dee1682a96aee" name="a9ed0d78c19a337ce600dee1682a96aee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ed0d78c19a337ce600dee1682a96aee">&#9670;&#160;</a></span>reset()</h2>
+<a id="acef31fe173776881e8186de72bcfc8a2" name="acef31fe173776881e8186de72bcfc8a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acef31fe173776881e8186de72bcfc8a2">&#9670;&#160;</a></span>print()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_a_a_b_btree_1_1_tree.html">AABBtree::Tree</a>&lt; Real, N &gt;::Statistics::print </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespace_a_a_b_btree.html#a2c3f1cf50895b1ca2e990a35626cada4">OutStream</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Print the tree info to an output stream. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">os</td><td>Output stream to print the tree info to. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1de679ca63b3bf64c53ce3e3c5ae6e06" name="a1de679ca63b3bf64c53ce3e3c5ae6e06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1de679ca63b3bf64c53ce3e3c5ae6e06">&#9670;&#160;</a></span>reset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,11 +250,14 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reset the statistics. </p>
+<p>Reset all statistics to their initial zero state</p>
+<p>This method efficiently resets all statistics counters to zero and ratios to 0, returning the structure to its default-constructed state.</p>
+<dl class="section note"><dt>Note</dt><dd>This operation is noexcept and has constant time complexity O(1) </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>All counters are zero and ratios are 0 </dd></dl>
 
 </div>
 </div>
@@ -235,7 +275,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Balance ratio of the tree. </p>
+<p>Ratio of left/right subtree sizes (0=perfect balance). </p>
 
 </div>
 </div>
@@ -252,7 +292,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of collision check. </p>
+<p>Total number of collision checks performed. </p>
 
 </div>
 </div>
@@ -269,7 +309,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Depth of the tree. </p>
+<p>Maximum depth of the tree. </p>
 
 </div>
 </div>
@@ -286,7 +326,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Depth ratio of the tree. </p>
+<p>Ratio of left/right subtree depths (0=perfect balance). </p>
 
 </div>
 </div>
@@ -303,7 +343,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of dumpings. </p>
+<p>Number of tree rebuilds (dumps). </p>
 
 </div>
 </div>
@@ -320,7 +360,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of leafs. </p>
+<p>Number of leaf nodes (nodes with objects). </p>
 
 </div>
 </div>
@@ -337,7 +377,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Depth of the left sub-tree. </p>
+<p>Depth of left subtree. </p>
 
 </div>
 </div>
@@ -354,7 +394,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of left leafs. </p>
+<p>Number of leafs in left subtree. </p>
 
 </div>
 </div>
@@ -371,7 +411,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of left long boxes. </p>
+<p>Number of long boxes in left subtree. </p>
 
 </div>
 </div>
@@ -388,7 +428,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of left nodes. </p>
+<p>Number of nodes in left subtree. </p>
 
 </div>
 </div>
@@ -405,7 +445,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of long boxes. </p>
+<p>Number of boxes with aspect ratio &gt; threshold. </p>
 
 </div>
 </div>
@@ -422,7 +462,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of nodes. </p>
+<p>Total number of nodes in the tree. </p>
 
 </div>
 </div>
@@ -439,7 +479,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of objects. </p>
+<p>Number of objects in the tree. </p>
 
 </div>
 </div>
@@ -456,7 +496,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Depth of the right sub-tree. </p>
+<p>Depth of right subtree. </p>
 
 </div>
 </div>
@@ -473,7 +513,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of right leafs. </p>
+<p>Number of leafs in right subtree. </p>
 
 </div>
 </div>
@@ -490,7 +530,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of right long boxes. </p>
+<p>Number of long boxes in right subtree. </p>
 
 </div>
 </div>
@@ -507,7 +547,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of right nodes. </p>
+<p>Number of nodes in right subtree. </p>
 
 </div>
 </div>

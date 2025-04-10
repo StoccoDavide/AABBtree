@@ -50,7 +50,7 @@ endif()
 
 if (APPLE OR UNIX)
   if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.17.0" AND CMAKE_GENERATOR STREQUAL "Xcode")
-    # imposta anche la versione minima di macOS
+    # Set the minimum macOS version for Xcode
     set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0" CACHE STRING "Minimum macOS version" FORCE)
     set(CMAKE_XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" )
     set(CMAKE_XCODE_GENERATE_SCHEME TRUE )

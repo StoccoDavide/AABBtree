@@ -32,7 +32,7 @@ int main()
 
   constexpr Integer n_asteroids{60000};
   constexpr Integer n_clusters{60000};
-  constexpr Integer n_clusters_to_plot{10};
+  constexpr Integer n_clusters_to_plot{1};
   constexpr Real    t_ini{64328.0}; // January 1, 2035
   constexpr Integer n_neighbours{2};
   constexpr Real    t_end{t_ini + 10.0*365.0};
@@ -51,7 +51,7 @@ int main()
   TicToc timer;
 
   // Parse asteroids data
-  std::string fname{ "./benchmarks/asteroids.txt" }; // from build directory
+  std::string fname{ "./../benchmarks/asteroids.txt" }; // from build directory
   std::vector<Keplerian<Real, Integer>> data;
   timer.tic();
   if (!Parse<Real, Integer>(fname, data, n_asteroids)) {
@@ -99,10 +99,6 @@ int main()
   timer.tic(); tree.build(std::move(boxes)); timer.toc();
   std::cout << "Tree built in " << timer.elapsed_us() << " us\n";
   tree.print(std::cout);
-
-  #ifdef AABBTREE_ENABLE_PLOTTING
-  //{show(fig);}
-  #endif
 
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
@@ -159,7 +155,7 @@ int main()
   }
 
   // Save the phasing points and time
-  std::ofstream asteroids_phasing("asteroids_phasing_phasing.txt");
+  std::ofstream asteroids_phasing("asteroids_phasing_points.txt");
   for (Integer i{0}; i < n_clusters; ++i) {
     asteroids_phasing << i << " " << phasing_time[i] << " " << phasing_points_1[i].transpose() <<
     " " << phasing_points_2[i].transpose() << '\n';
@@ -186,8 +182,8 @@ int main()
 
   // Plot all the asteroids
   #ifdef AABBTREE_ENABLE_PLOTTING
+  Plot2D XY, XZ;
   {
-    Plot2D XY, XZ;
     XY.grid(true);
     XZ.grid(true);
       std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
@@ -212,11 +208,10 @@ int main()
   // Plot the clusters
   #ifdef AABBTREE_ENABLE_PLOTTING
   {
-    Plot2D XY, XZ;
     XY.grid(true);
     XZ.grid(true);
     std::vector<Real> x, y, z;
-    for (Integer i{0}; i < n_clusters_to_plot; ++i) {
+    for (Integer i{0}; i < std::min(n_clusters, n_clusters_to_plot); ++i) {
       x.clear(); y.clear(); z.clear();
       x.resize(n_neighbours); y.resize(n_neighbours); z.resize(n_neighbours);
       Integer j{0};
@@ -240,12 +235,12 @@ int main()
       std::vector<Real> X{phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()};
       std::vector<Real> Y{phasing_points_1[sorting[i]].y(), phasing_points_2[sorting[i]].y()};
       std::vector<Real> Z{phasing_points_1[sorting[i]].z(), phasing_points_2[sorting[i]].z()};
-      XY.plot( X, Y, "r-" )->line_width(1.0);
-      XZ.plot( X, Z, "r-" )->line_width(1.0);
+      XY.plot(X, Y, "r-")->line_width(1.0);
+      XZ.plot(X, Z, "r-")->line_width(1.0);
     }
-    XY.show();
-    XZ.show();
   }
+  XY.show();
+  XZ.show();
   #endif
 
   for (Integer i{0}; i < n_clusters_to_plot; ++i) {

@@ -150,7 +150,7 @@ $(function(){initNavTree('class_a_a_b_btree_1_1_box.html',''); initResizable(tru
 </div><!--header-->
 <div class="contents">
 
-<p>Class container for an axis-aligned box.  
+<p>A class representing an axis-aligned bounding box (AABB) in N-dimensional space.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_box_8hxx_source.html">Box.hxx</a>&gt;</code></p>
@@ -210,14 +210,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab2cfd36b0b72269a19d501836eb2cda4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada2b96790c11ba4934a72c8e60c6e90f" id="r_ada2b96790c11ba4934a72c8e60c6e90f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada2b96790c11ba4934a72c8e60c6e90f">longest_axis</a> (Real &amp;max_length, Real &amp;mid_point) const</td></tr>
 <tr class="separator:ada2b96790c11ba4934a72c8e60c6e90f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72db6bb99930ac21bc29f7fd0ac28f1b" id="r_a72db6bb99930ac21bc29f7fd0ac28f1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72db6bb99930ac21bc29f7fd0ac28f1b">sort_axes_length</a> (<a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> &amp;<a class="el" href="#a6dbb7fe7d6d1762465a8baba0e9fdb8b">sizes</a>, Eigen::Vector&lt; <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, N &gt; &amp;ipos) const</td></tr>
+<tr class="memitem:a72db6bb99930ac21bc29f7fd0ac28f1b" id="r_a72db6bb99930ac21bc29f7fd0ac28f1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72db6bb99930ac21bc29f7fd0ac28f1b">sort_axes_length</a> (<a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> &amp;sizes, Eigen::Vector&lt; <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, N &gt; &amp;ipos) const</td></tr>
 <tr class="separator:a72db6bb99930ac21bc29f7fd0ac28f1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5b990da2a46a32808ad12d4f2db03d8" id="r_aa5b990da2a46a32808ad12d4f2db03d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5b990da2a46a32808ad12d4f2db03d8">baricenter</a> () const</td></tr>
 <tr class="separator:aa5b990da2a46a32808ad12d4f2db03d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a347eade35e84554bf4014a9df3f29b51" id="r_a347eade35e84554bf4014a9df3f29b51"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a347eade35e84554bf4014a9df3f29b51">baricenter</a> (<a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i) const</td></tr>
 <tr class="separator:a347eade35e84554bf4014a9df3f29b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dbb7fe7d6d1762465a8baba0e9fdb8b" id="r_a6dbb7fe7d6d1762465a8baba0e9fdb8b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6dbb7fe7d6d1762465a8baba0e9fdb8b">sizes</a> () const</td></tr>
-<tr class="separator:a6dbb7fe7d6d1762465a8baba0e9fdb8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af428580546b8f2e490a69659e25cfade" id="r_af428580546b8f2e490a69659e25cfade"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af428580546b8f2e490a69659e25cfade">volume</a> () const</td></tr>
 <tr class="separator:af428580546b8f2e490a69659e25cfade"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b3703f9cb73b8fb6607764f7e7fd16b" id="r_a4b3703f9cb73b8fb6607764f7e7fd16b"><td class="memItemLeft" align="right" valign="top">Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b3703f9cb73b8fb6607764f7e7fd16b">surface</a> () const</td></tr>
@@ -334,22 +332,33 @@ Private Attributes</h2></td></tr>
 Static Private Attributes</h2></td></tr>
 <tr class="memitem:a29a694000a76f0ff8399784d2026624a" id="r_a29a694000a76f0ff8399784d2026624a"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a> {std::numeric_limits&lt;Real&gt;::epsilon()}</td></tr>
 <tr class="separator:a29a694000a76f0ff8399784d2026624a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab413a1e7280d4f7166f53b01b8cf4b79" id="r_ab413a1e7280d4f7166f53b01b8cf4b79"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab413a1e7280d4f7166f53b01b8cf4b79">MAX</a> {static_cast&lt;Real&gt;(1.0)/<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>}</td></tr>
-<tr class="separator:ab413a1e7280d4f7166f53b01b8cf4b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa43bddd74a1d3ef191d68589159bfae5" id="r_aa43bddd74a1d3ef191d68589159bfae5"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa43bddd74a1d3ef191d68589159bfae5">MIN</a> {-<a class="el" href="#ab413a1e7280d4f7166f53b01b8cf4b79">MAX</a>}</td></tr>
-<tr class="separator:aa43bddd74a1d3ef191d68589159bfae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d01831740cbe5f65cf18568a77b4c66" id="r_a0d01831740cbe5f65cf18568a77b4c66"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d01831740cbe5f65cf18568a77b4c66">INF</a> {std::numeric_limits&lt;Real&gt;::infinity()}</td></tr>
+<tr class="separator:a0d01831740cbe5f65cf18568a77b4c66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c829dc9c264319f837c63de1a314e58" id="r_a4c829dc9c264319f837c63de1a314e58"><td class="memItemLeft" align="right" valign="top">static constexpr Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a> {<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>*static_cast&lt;Real&gt;(100.0)}</td></tr>
 <tr class="separator:a4c829dc9c264319f837c63de1a314e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt;<br />
-class AABBtree::Box&lt; Real, N &gt;</div><p>This class represents an axis-aligned box as a pair of opposite corners, i.e., a minimal corner and a maximal corner. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+class AABBtree::Box&lt; Real, N &gt;</div><p>This class represents an axis-aligned bounding box (AABB) defined by two opposite corners:</p><ul>
+<li>Minimum corner (lower bounds in all dimensions);</li>
+<li>Maximum corner (upper bounds in all dimensions).</li>
+</ul>
+<p>The <a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> class provides various geometric operations including:</p><ul>
+<li>Intersection and containment tests;</li>
+<li>Distance calculations;</li>
+<li>Transformation operations;</li>
+<li>Volume and surface area computations.</li>
+</ul>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Real</td><td>Type of the scalar coefficients </td></tr>
+    <tr><td class="paramname">Real</td><td>Floating-point scalar type (must be float or double). </td></tr>
     <tr><td class="paramname">N</td><td>Dimension of the ambient space. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>The box is considered empty if any component of the minimum corner is greater than the corresponding component of the maximum corner. </dd>
+<dd>
+All methods are thread-safe unless explicitly noted otherwise. </dd></dl>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="aec2bcdd0765da428f38e116d706ecadc" name="aec2bcdd0765da428f38e116d706ecadc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aec2bcdd0765da428f38e116d706ecadc">&#9670;&#160;</a></span>BoxUniquePtr</h2>
@@ -420,9 +429,6 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<blockquote class="doxtable">
-<p>Dummy tolerance for the scalar type. </p>
-</blockquote>
 
 </div>
 </div>
@@ -472,6 +478,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Enumeration for relative position with respect to the box. </p>
 <table class="fieldtable">
 <tr><th colspan="3">Enumerator</th></tr><tr><td class="fieldname"><a id="acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758" name="acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758"></a>LEFT&#160;</td><td class="fieldinit">-1&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c" name="acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c"></a>INSIDE&#160;</td><td class="fieldinit">0&#160;</td><td class="fielddoc"></td></tr>
@@ -533,7 +540,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Class constructor for an empty axis-aligned box. </p>
+<p>Default constructor creating an empty box whether the minimal and maximal corners are set to the maximum and minimum representable values, respectively. </p>
 
 </div>
 </div>
@@ -563,7 +570,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Copy constructor for a axis-aligned box given another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to copy. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to copy. </td></tr>
   </table>
   </dd>
 </dl>
@@ -847,7 +854,7 @@ template&lt;typename OtherReal&gt; </div>
 </div><div class="memdoc">
 <p>Copy constructor for a axis-aligned box given another box with a different scalar type. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to copy. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to copy. </td></tr>
   </table>
   </dd>
 </dl>
@@ -885,7 +892,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the baricenter of the box. </p><dl class="section return"><dt>Returns</dt><dd>The baricenter of the box. </dd></dl>
+<p>Compute the barycenter of the box. </p><dl class="section return"><dt>Returns</dt><dd><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a> at the center of the box. </dd></dl>
 
 </div>
 </div>
@@ -913,7 +920,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the baricenter of the box. </p><dl class="section return"><dt>Returns</dt><dd>The baricenter of the box. </dd></dl>
+<p>Compute the barycenter coordinate along a specific dimension. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">i</td><td>Dimension index. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Barycenter coordinate along the i-thdimension. </dd></dl>
 
 </div>
 </div>
@@ -945,7 +958,7 @@ template&lt;typename NewReal&gt; </div>
 </div><div class="memdoc">
 <p>Cast the current object to a new scalar type. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">NewReal</td><td>the new scalar type </td></tr>
+    <tr><td class="paramname">NewReal</td><td>the new scalar type. </td></tr>
   </table>
   </dd>
 </dl>
@@ -977,13 +990,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if the current box contains a given box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Check if this box completely contains another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to check. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the current box contains the given box, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the box is entirely within this box, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -1011,13 +1024,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if the point is inside the box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Check if a point is inside the box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a> to check. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the point is inside the box, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if point is inside or on boundary, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -1045,8 +1058,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the bounding box diagonal vector. </p><dl class="section note"><dt>Note</dt><dd>If the length of the diagonal is needed, <code><a class="el" href="#ae9ec87df4ce83e41baecf7414c78761e">diagonal()</a></code>.norm() will provide it. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>The diagonal vector of the bounding box. </dd></dl>
+<p>Compute the diagonal vector of the box. </p><dl class="section return"><dt>Returns</dt><dd><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> from minimum to maximal corner. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For the length of the diagonal, use <code><a class="el" href="#ae9ec87df4ce83e41baecf7414c78761e">diagonal()</a></code>.norm() . </dd></dl>
 
 </div>
 </div>
@@ -1074,14 +1087,14 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Extend the current box such that it contains a given box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Extend this box to contain another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to extend the box to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to include. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A reference to the current box. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Merging with an empty box may result in a box bigger than <code>*this</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this box after extension. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Merging with an empty box may result in a box bigger than <code>*this</code> . </dd></dl>
 
 </div>
 </div>
@@ -1111,13 +1124,13 @@ template&lt;typename Derived&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Extend the current box such that it contains a given point. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Extend this box to contain a point. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a> to extend the box to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a> to include. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A reference to the current box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this box after extension. </dd></dl>
 
 </div>
 </div>
@@ -1147,7 +1160,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>exterior</em> (or <em>maximum</em>) distance between the current box a given box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the distance to. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1191,7 +1204,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>exterior</em> (or <em>maximum</em>) distance between the current box a given box, and return two points at the maximum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the maximum distance. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the maximum distance. </td></tr>
   </table>
@@ -1317,7 +1330,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>exterior</em> (or <em>maximum</em>) distance between the current box a given ray, and return two points at the maximum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the maximum distance (on the current box). </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the maximum distance (on the ray). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
@@ -1359,7 +1372,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>exterior</em> (or <em>maximum</em>) distance between the current box a given ray. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
   </table>
   </dd>
@@ -1395,7 +1408,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>interior</em> (or <em>minimum</em>) distance between the current box a given box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the distance to. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1439,7 +1452,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>interior</em> (or <em>minimum</em>) distance between the current box a given box, returning two points at the minimum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the minimum distance. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the minimum distance. </td></tr>
   </table>
@@ -1565,7 +1578,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>interior</em> (or <em>minimum</em>) distance between the current box a given ray, returning two points at the minimum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the minimum distance (on the current box). </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the minimum distance (on the ray). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
@@ -1607,7 +1620,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the <em>interior</em> (or <em>minimum</em>) distance between the current box a given ray. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
   </table>
   </dd>
@@ -1645,14 +1658,14 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the intersection of the current box and another box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Compute the intersection of this box with another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b_in</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to intersect with. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">b_out</td><td>Intersection of the current box and the given box. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b_in</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to intersect with. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">b_out</td><td>Resulting intersection box. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the current box intersects the given box, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if intersection exists, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -1696,7 +1709,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Check if the current box intersects a given ray. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to check. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">c</td><td>Closest intersection point. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">f</td><td>Farthest intersection point. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the intersection. </td></tr>
@@ -1731,13 +1744,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if the current box intersects a given box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Check if this box intersects with another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to check for intersection. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the current box intersects the given box, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if boxes intersect, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -1765,13 +1778,14 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if the point is intersects the box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Check if a point intersects the box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a> to check. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the point is intersects the box, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if point is inside or on boundary, false otherwise. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Equivalent to <code><a class="el" href="#a7f35349a4abeee59e639d6ca1a87ca66">contains()</a></code> for points. </dd></dl>
 
 </div>
 </div>
@@ -1805,7 +1819,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Check if the current box intersects a given ray. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to check. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the intersection. </td></tr>
   </table>
   </dd>
@@ -1842,13 +1856,14 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if the current box is approximately equal to another box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Check if this box is approximately equal to another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compare with. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the comparison. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compare with. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance for the comparison. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>True if boxes are approximately equal within tolerance. </dd></dl>
 
 </div>
 </div>
@@ -1938,7 +1953,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the longest axis of the box. </p><dl class="section return"><dt>Returns</dt><dd>The longest axis of the box. </dd></dl>
+<p>Find the longest axis of the box. </p><dl class="section return"><dt>Returns</dt><dd>Index of the dimension with the largest extent. </dd></dl>
 
 </div>
 </div>
@@ -1970,14 +1985,14 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the longest axis of the box, and compute the length and the mid-point of the axis. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Find the longest axis and compute its length and midpoint. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">max_length</td><td>Length of the longest axis. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">mid_point</td><td>Mid-point of the longest axis. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">mid_point</td><td>Midpoint of the longest axis. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The longest axis of the box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Index of the dimension with the largest extent. </dd></dl>
 
 </div>
 </div>
@@ -2061,13 +2076,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the union of the current box and another box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Compute the union of this box with another box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to merge with. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to merge with. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The union of the current box and the given box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The smallest box containing both boxes. </dd></dl>
 
 </div>
 </div>
@@ -2212,7 +2227,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the box to be degenerate. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Set the box to be degenerate (containing a single point). </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td><a class="el" href="#a57b10d25e414f5cdd7e475b24eeb6480">Point</a> to set the box to. </td></tr>
   </table>
@@ -2249,34 +2264,6 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a6dbb7fe7d6d1762465a8baba0e9fdb8b" name="a6dbb7fe7d6d1762465a8baba0e9fdb8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6dbb7fe7d6d1762465a8baba0e9fdb8b">&#9670;&#160;</a></span>sizes()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::sizes </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Compute the lengths of the bounding box's sides. </p><dl class="section return"><dt>Returns</dt><dd>The lengths of the bounding box's sides. </dd></dl>
-
-</div>
-</div>
 <a id="a72db6bb99930ac21bc29f7fd0ac28f1b" name="a72db6bb99930ac21bc29f7fd0ac28f1b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a72db6bb99930ac21bc29f7fd0ac28f1b">&#9670;&#160;</a></span>sort_axes_length()</h2>
 
@@ -2305,10 +2292,10 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the longest axis of the box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Sort axes by their lengths in descending order. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">sizes</td><td>Sizes of the box. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">ipos</td><td>Indices of the sizes. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">sizes</td><td><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> to store the sizes of each dimension. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ipos</td><td><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> to store the sorted dimension indices. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2341,7 +2328,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>exterior</em> (or <em>maximum</em>) distance between the current box a given box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the squared distance to. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2385,7 +2372,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>exterior</em> (or <em>maximum</em>) distance between the current box a given box, returning two points at the maximum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the squared distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the maximum distance. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the maximum distance. </td></tr>
   </table>
@@ -2510,7 +2497,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>exterior</em> (or <em>maximum</em>) distance between the current box a given ray, returning two points at the maximum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the squared distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the maximum distance (on the current box). </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the maximum distance (on the ray). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
@@ -2551,7 +2538,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>exterior</em> (or <em>maximum</em>) distance between the current box a given ray. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the squared distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
   </table>
   </dd>
@@ -2587,7 +2574,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>interior</em> (or <em>minimum</em>) distance between the current box a given box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the squared distance to. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2631,7 +2618,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>interior</em> (or <em>minimum</em>) distance between the current box a given box, returning two points at the minimum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="Class container for an axis-aligned box.">Box</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td><a class="el" href="class_a_a_b_btree_1_1_box.html" title="A class representing an axis-aligned bounding box (AABB) in N-dimensional space.">Box</a> to compute the squared distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the minimum distance. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the minimum distance. </td></tr>
   </table>
@@ -2757,7 +2744,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>interior</em> (or <em>minimum</em>) distance between the current box a given ray, returning two points at the minimum distance. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the squared distance to. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p1</td><td>First point at the minimum distance (on the current box). </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">p2</td><td>Second point at the minimum distance (on the ray). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
@@ -2799,7 +2786,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div><div class="memdoc">
 <p>Compute the squared <em>interior</em> (or <em>minimum</em>) distance between the current box a given ray. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="Class container for a ray.">Ray</a> to compute the squared distance to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td><a class="el" href="class_a_a_b_btree_1_1_ray.html" title="A mathematical ray in N-dimensional space.">Ray</a> to compute the squared distance to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the distance computation. </td></tr>
   </table>
   </dd>
@@ -2833,7 +2820,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the external surface area of the bounding box. </p><dl class="section return"><dt>Returns</dt><dd>The external surface area of the bounding box. </dd></dl>
+<p>Compute the surface area of the box. </p><dl class="section return"><dt>Returns</dt><dd>Sum of areas of all faces. </dd></dl>
 
 </div>
 </div>
@@ -2863,19 +2850,20 @@ template&lt;typename Transform&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Transform the current box by a given vector. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Transform this box in-place. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Transformation to apply to the box. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Transformation to apply. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A reference to the current box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this box after transformation. </dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Transform</td><td>Type of the transformation. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>The resulting box may be larger than the original due to axis-alignment. </dd></dl>
 
 </div>
 </div>
@@ -2905,19 +2893,20 @@ template&lt;typename Transform&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Transform the current box by a given vector. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Create a transformed copy of this box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Transformation to apply to the box. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Transformation to apply. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A copy of the current transformed box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>New transformed box. </dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Transform</td><td>Type of the transformation. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>The resulting box may be larger than the original due to axis-alignment. </dd></dl>
 
 </div>
 </div>
@@ -2945,13 +2934,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Translate the current box by a given vector. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Translate the box by a given vector. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> to translate the box by. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Translation vector. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A reference to the current box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this box after translation. </dd></dl>
 
 </div>
 </div>
@@ -2979,13 +2968,13 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Translate the current box by a given vector. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Create a translated copy of this box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td><a class="el" href="#a1e2d0e678e6f2a4bdf5479a73cfb4067">Vector</a> to translate the box by. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Translation vector. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A copy of the current translated box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>New translated box. </dd></dl>
 
 </div>
 </div>
@@ -3013,7 +3002,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Compute the volume of the bounding box. </p><dl class="section return"><dt>Returns</dt><dd>The volume of the bounding box. </dd></dl>
+<p>Compute the volume of the box. </p><dl class="section return"><dt>Returns</dt><dd>Product of sizes in all dimensions. </dd></dl>
 
 </div>
 </div>
@@ -3050,15 +3039,15 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Find whether a coordinate is on the left, inside, or on the right of the box. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Classify a coordinate relative to the box in a specific dimension. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>Coordinate to classify. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance to use for the classification. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dim</td><td>Dimension to classify. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tol</td><td>Tolerance for classification. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dim</td><td>Dimension to consider. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An enumeration: -1 if the point is on the left of the box, 0 if the point is inside the box, and +1 if the point is on the right of the box. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="#acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758">Side::LEFT</a> if max[dim] &lt; x+tol, <a class="el" href="#acd53c378a51bc5dc94b4eadde674d133a21507b40c80068eda19865706fdc2403">Side::RIGHT</a> if x-tol &lt; min[dim], <a class="el" href="#acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c">Side::INSIDE</a> otherwise. </dd></dl>
 
 </div>
 </div>
@@ -3084,9 +3073,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<blockquote class="doxtable">
-<p>Minimum value for the scalar type. </p>
-</blockquote>
+<p>Default tolerance for the scalar type </p>
 
 </div>
 </div>
@@ -3111,6 +3098,32 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Machine epsilon for the scalar type. </p>
+
+</div>
+</div>
+<a id="a0d01831740cbe5f65cf18568a77b4c66" name="a0d01831740cbe5f65cf18568a77b4c66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d01831740cbe5f65cf18568a77b4c66">&#9670;&#160;</a></span>INF</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::INF {std::numeric_limits&lt;Real&gt;::infinity()}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Infinity value for the scalar type. </p>
 
 </div>
 </div>
@@ -3135,7 +3148,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Maximal corner of the box. </p>
+<p>Maximal corner of the box (upper bounds in all dimensions). </p>
 
 </div>
 </div>
@@ -3160,61 +3173,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Minimal corner of the box. </p>
-
-</div>
-</div>
-<a id="ab413a1e7280d4f7166f53b01b8cf4b79" name="ab413a1e7280d4f7166f53b01b8cf4b79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab413a1e7280d4f7166f53b01b8cf4b79">&#9670;&#160;</a></span>MAX</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::MAX {static_cast&lt;Real&gt;(1.0)/<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<blockquote class="doxtable">
-<p>Machine epsilon for the scalar type. </p>
-</blockquote>
-
-</div>
-</div>
-<a id="aa43bddd74a1d3ef191d68589159bfae5" name="aa43bddd74a1d3ef191d68589159bfae5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa43bddd74a1d3ef191d68589159bfae5">&#9670;&#160;</a></span>MIN</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::MIN {-<a class="el" href="#ab413a1e7280d4f7166f53b01b8cf4b79">MAX</a>}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<blockquote class="doxtable">
-<p>Maximum value for the scalar type. </p>
-</blockquote>
+<p>Minimal corner of the box (lower bounds in all dimensions). </p>
 
 </div>
 </div>

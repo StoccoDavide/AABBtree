@@ -96,7 +96,7 @@ namespace BenchmarkUtilities {
      */
     Real elapsed_us() const {return this->m_elapsed_time.count();}
 
-  }; // class TicToc
+  }; // TicToc
 
   // Class segment (2D)
   template <typename Real>
@@ -107,15 +107,15 @@ namespace BenchmarkUtilities {
   public:
     ~Segment() = default;
     Segment() = default;
-    Segment( Segment const & ) = default;
-    Segment( Real t_x_1, Real t_y_1, Real t_x_2, Real t_y_2 ) : m_p_1(t_x_1, t_y_1), m_p_2(t_x_2, t_y_2) {}
-    Segment( Vector2 const & p_1, Vector2 const & p_2 ) : m_p_1(p_1), m_p_2(p_2) {}
+    Segment(Segment const &) = default;
+    Segment(Real t_x_1, Real t_y_1, Real t_x_2, Real t_y_2) : m_p_1(t_x_1, t_y_1), m_p_2(t_x_2, t_y_2) {}
+    Segment(Vector2 const & p_1, Vector2 const & p_2) : m_p_1(p_1), m_p_2(p_2) {}
 
-    Vector2 const & p_1() const { return this->m_p_1; }
-    Vector2 const & p_2() const { return this->m_p_2; }
-    Vector2       & p_1()       { return this->m_p_1; }
-    Vector2       & p_2()       { return this->m_p_2; }
-    
+    Vector2 const & p_1() const {return this->m_p_1;}
+    Vector2 const & p_2() const {return this->m_p_2;}
+    Vector2 & p_1() {return this->m_p_1;}
+    Vector2 & p_2() {return this->m_p_2;}
+
     Vector2 const &
     point(Integer i) const {
       if (i == 0) return this->m_p_1;
@@ -139,7 +139,7 @@ namespace BenchmarkUtilities {
     }
 
     bool
-    intersect( Segment const & segment, Vector2 & point ) const {
+    intersect( Segment const & segment, Vector2 & point) const {
 
       Real const & t_x_1{this->m_p_1[0]};   Real const & t_y_1{this->m_p_1[1]};
       Real const & t_x_2{this->m_p_2[0]};   Real const & t_y_2{this->m_p_2[1]};
@@ -147,7 +147,7 @@ namespace BenchmarkUtilities {
       Real const & s_x_2{segment.m_p_2[0]}; Real const & s_y_2{segment.m_p_2[1]};
       Real const d{(t_x_1 - t_x_2)*(s_y_1 - s_y_2) - (t_y_1 - t_y_2)*(s_x_1 - s_x_2)};
 
-      if ( std::abs(d) < std::numeric_limits<Real>::epsilon() ) return false;
+      if (std::abs(d) < std::numeric_limits<Real>::epsilon()) return false;
 
       Real const t{((t_x_1 - s_x_1)*(s_y_1 - s_y_2) - (t_y_1 - s_y_1)*(s_x_1 - s_x_2))/d};
       Real const u{-((t_x_1 - t_x_2)*(t_y_1 - s_y_1) - (t_y_1 - t_y_2)*(t_x_1 - s_x_1))/d};
@@ -162,7 +162,7 @@ namespace BenchmarkUtilities {
     }
   };
 
-  // Asteroids benchmark utilities
+  } // Asteroids benchmark utilities
 
   static const double GM{0.0002959122082855911}; // Gravitational parameter of the Sun in AU^3/day^2
 
@@ -187,14 +187,14 @@ namespace BenchmarkUtilities {
     std::vector<Keplerian<Real, Integer>> & data,
     Integer                         const & n,
     bool                                    reverse = false
-  ) {
+ ) {
     // Clear data
     data.clear();
     data.reserve(n);
 
     // Open file
     std::ifstream file(fname);
-    if (!file) { std::cerr << "Error opening file: " << fname << '\n'; return false; }
+    if (!file) { std::cerr << "Error opening file: " << fname << '\n'; return false;}
 
     std::vector<std::string> lines;
     std::string line;
@@ -207,12 +207,12 @@ namespace BenchmarkUtilities {
 
     // Parse data
     Integer count{0};
-    for ( const auto & i_line : lines ) {
-      if ( ++count > n ) break;
+    for (const auto & i_line : lines) {
+      if (++count > n) {break;}
       std::istringstream iss(i_line);
       Keplerian<Real, Integer> entry;
       iss >> entry.id >> entry.epoch >> entry.a >> entry.e >> entry.i >> entry.lan >> entry.argperi >> entry.m;
-      if ( !iss ) { std::cerr << "Error parsing line: " << i_line << '\n'; continue; }
+      if (!iss) { std::cerr << "Error parsing line: " << i_line << '\n'; continue;}
       entry.i       *= M_PI/180.0;
       entry.lan     *= M_PI/180.0;
       entry.argperi *= M_PI/180.0;
@@ -224,14 +224,13 @@ namespace BenchmarkUtilities {
 
   // Solve Kepler's equation to get eccentric anomaly
   template <typename Real, typename Integer>
-  Real
-  SolveKepler( Real M, Real e, Real tol = 1e-8, Integer max_iter = 100 ) {
+  Real SolveKepler(Real M, Real e, Real tol = 1e-8, Integer max_iter = 100) {
     Real E{M};
-    for ( Integer i{0}; i < max_iter; ++i ) {
-      Real delta{ E - e*std::sin(E) - M };
-      if ( std::abs(delta) < tol ) break;
+    for (Integer i{0}; i < max_iter; ++i) {
+      Real delta{E - e*std::sin(E) - M};
+      if (std::abs(delta) < tol) {break;}
       E -= delta/(1.0 - e*std::cos(E));
-      if ( i == max_iter - 1 ) std::cerr << "Failed to converge\n";
+      if (i == max_iter - 1) std::cerr << "Failed to converge\n";
     }
     return E;
   }
@@ -239,7 +238,7 @@ namespace BenchmarkUtilities {
   // Convert Keplerian elements to Cartesian coordinates
   template <typename Real, typename Integer>
   void
-  KeplerianToCartesian( Keplerian<Real, Integer> const & kepl, Real & x, Real & y, Real & z ) {
+  KeplerianToCartesian( Keplerian<Real, Integer> const & kepl, Real & x, Real & y, Real & z) {
     Real E{SolveKepler<Real, Integer>(kepl.m, kepl.e)};
     Real nu{2.0*std::atan2(std::sqrt(1.0 + kepl.e)*std::sin(E/2), std::sqrt(1.0 - kepl.e)*std::cos(E/2))};
     Real r{kepl.a*(1.0 - kepl.e*std::cos(E))};
@@ -256,13 +255,11 @@ namespace BenchmarkUtilities {
   // Propagate orbital elements over time
   template <typename Real>
   void
-  PropagateOrbit( Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0 ) {
-    if ( t_end == t_ini ) return;
+  PropagateOrbit( Keplerian<Real, int> & kepl, Real t_end, Real t_ini = 0.0) {
+    if (t_end == t_ini) return;
     Real n{std::sqrt(static_cast<Real>(GM)/(kepl.a*kepl.a*kepl.a))}; // Mean motion (rad/day)
     kepl.m = std::fmod(kepl.m + n*(t_end - t_ini), 2.0*M_PI);  // Keep within [0,2π]
     if (kepl.m < 0) kepl.m += 2.0*M_PI;
   }
-
-} // namespace BenchmarkUtilities
 
 #endif // INCLUDE_BENCHMARK_UTILITIES_HH

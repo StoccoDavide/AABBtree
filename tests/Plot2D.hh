@@ -8,7 +8,9 @@
  * e-mail: davide.stocco@unitn.it                             e-mail: enrico.bertolazzi@unitn.it *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#pragma once
+#ifndef BF7400A1_6BD1_445F_AD38_89EDF7AD4B38
+#define BF7400A1_6BD1_445F_AD38_89EDF7AD4B38
+
 
 #ifndef INCLUDE_PLOT2D_HH
 #define INCLUDE_PLOT2D_HH
@@ -16,9 +18,11 @@
 #include "AABBtree.hh"
 #include <matplot/matplot.h>
 
-namespace AABBtree {
+namespace TestUtilities {
 
-  typedef matplot::axes_handle                  plot_obj;
+  using namespace AABBtree;
+
+  typedef matplot::axes_handle plot_obj;
   typedef std::shared_ptr<matplot::figure_type> fig_obj;
 
   class Plot2D {
@@ -33,32 +37,28 @@ namespace AABBtree {
       m_ax  = m_fig->current_axes();
     }
 
-    void hold   ( bool const YN ) { m_ax->hold( YN ); }
-    void xlabel ( std::string const & s ) { m_ax->xlabel( s ); }
-    void ylabel ( std::string const & s ) { m_ax->ylabel( s ); }
-    void xlim   ( double const mi, double const ma ) { return m_ax->xlim( {mi,ma} ); }
-    void ylim   ( double const mi, double const ma ) { return m_ax->ylim( {mi,ma} ); }
-    void title  ( std::string const & s ) { m_ax->title( s ); }  
-    void show()  { m_fig->show(); }  
-    void clear() { m_ax->clear(); }
+    void hold(bool const YN) {m_ax->hold(YN);}
+    void xlabel(std::string const & s) {m_ax->xlabel(s);}
+    void ylabel(std::string const & s) {m_ax->ylabel(s);}
+    void xlim(double const mi, double const ma) {return m_ax->xlim({mi,ma});}
+    void ylim(double const mi, double const ma) {return m_ax->ylim({mi,ma});}
+    void title(std::string const & s) {m_ax->title(s);}
+    void show() {m_fig->show();}
+    void clear() {m_ax->clear();}
 
-    template <typename... Args> auto plot  ( Args... args ) { return m_ax->plot( args... ); }
-    template <typename... Args> auto grid  ( Args... args ) { return m_ax->grid( args... ); }
-    template <typename... Args> auto loglog( Args... args ) { return m_ax->loglog( args... ); }
-    template <typename... Args> auto legend( Args... args ) { return m_ax->legend( args... ); }
+    template <typename... Args> auto plot(Args... args) {return m_ax->plot(args...);}
+    template <typename... Args> auto grid(Args... args) {return m_ax->grid(args...);}
+    template <typename... Args> auto loglog(Args... args) {return m_ax->loglog(args...);}
+    template <typename... Args> auto legend(Args... args) {return m_ax->legend(args...);}
 
     // Plot a box
     template <typename Real, Integer N>
-    void
-    plot_box(
-      Box<Real, N> const & box,
-      std::string  const & color,
-      Real         const   line_width = 1
-    ) {
+    void plot_box(Box<Real, N> const & box, std::string const & color, Real const line_width = 1.0)
+    {
       static_assert(N == 2, "Plotting is only supported for 2D objects.");
       std::vector<Real> min(box.min().data(), box.min().data() + N);
       std::vector<Real> max(box.max().data(), box.max().data() + N);
-      if ( m_ax ) {
+      if (m_ax) {
         m_ax->plot(
           {min[0], max[0], max[0], min[0], min[0]},
           {min[1], min[1], max[1], max[1], min[1]}
@@ -68,27 +68,20 @@ namespace AABBtree {
 
     // Plot a tree
     template <typename Real, Integer N>
-    void
-    plot_tree(
-      Tree<Real, N> const & tree,
-      std::string   const & color,
-      Real          const   line_width = 1
-    ) {
+    void plot_tree(Tree<Real, N> const & tree, std::string const & color, Real const line_width = 1.0)
+    {
       static_assert(N == 2, "Plotting is only supported for 2D objects.");
       for (Integer i{0}; i < static_cast<Integer>(tree.size()); ++i) {
-        this->plot_box<Real, N>( tree.node(i).box,      color, line_width );
-        this->plot_box<Real, N>( tree.node(i).box_long, color, 2.0*line_width );
+        this->plot_box<Real, N>(tree.node(i).box,      color, line_width );
+        this->plot_box<Real, N>(tree.node(i).box_long, color, 2.0*line_width );
       }
     }
 
     // Plot a point
     template <typename Real, Integer N>
-    void
-    plot_point(
-      AABBtree::Vector<Real, N> const & point,
-      std::string               const & color,
-      Real                      const   marker_size = 0.5
-    ) {
+    void plot_point(AABBtree::Vector<Real, N> const & point, std::string const & color, Real const
+      marker_size = 0.5)
+    {
       static_assert(N == 2, "Plotting is only supported for 2D objects.");
       std::vector<Real> p(point.data(), point.data() + N);
       if (m_ax) {
@@ -101,13 +94,9 @@ namespace AABBtree {
 
     // Plot a segment
     template <typename Real, Integer N>
-    void
-    plot_segment(
-      AABBtree::Vector<Real, N> const & p_1,
-      AABBtree::Vector<Real, N> const & p_2,
-      std::string               const & color,
-      Real                      const   line_width = 1
-    ) {
+    void plot_segment(AABBtree::Vector<Real, N> const & p_1, AABBtree::Vector<Real, N> const & p_2,
+      std::string const & color, Real const line_width = 1.0)
+    {
       static_assert(N == 2, "Plotting is only supported for 2D objects.");
       std::vector<Real> v_1(p_1.data(), p_1.data() + N);
       std::vector<Real> v_2(p_2.data(), p_2.data() + N);
@@ -122,27 +111,19 @@ namespace AABBtree {
 
     // Plot a ray
     template <typename Real, Integer N>
-    void
-    plot_ray(
-      AABBtree::Ray<Real, N> const & ray,
-      std::string            const & color,
-      Real                   const   line_width = 1
-    ) {
+    void plot_ray(AABBtree::Ray<Real, N> const & ray, std::string const & color,
+      Real const line_width = 1.0)
+    {
       static_assert(N == 2, "Plotting is only supported for 2D objects.");
       Real t{1000.0};
-      this->plot_segment<Real, N>( ray.origin(), ray.origin() + t*ray.direction(), color, line_width );
+      this->plot_segment<Real, N>(ray.origin(), ray.origin() + t*ray.direction(), color, line_width);
     }
 
     // Plot a circle
     template <typename Real, Integer N>
-    void
-    plot_circle(
-      Vector<Real, 2> const & center,
-      Real            const   radius,
-      std::string     const & color,
-      Real            const   line_width = 1,
-      Integer         const n_points = 100
-    ) {
+    void plot_circle(Vector<Real, 2> const & center, Real const radius, std::string const & color,
+      Real const line_width = 1, Integer const n_points = 100)
+    {
       std::vector<Real> x, y;
       Real const d_theta{2.0*M_PI/n_points};
       for (Integer i{0}; i < n_points; ++i) {
@@ -154,7 +135,10 @@ namespace AABBtree {
         m_ax->plot(x, y)->line_width(line_width).color(color);
       }
     }
-  };
-}
+  }; // Plot2D
+} // TestUtilities
 
 #endif
+
+
+#endif /* BF7400A1_6BD1_445F_AD38_89EDF7AD4B38 */

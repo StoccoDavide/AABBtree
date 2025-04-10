@@ -57,7 +57,6 @@ var class_a_a_b_btree_1_1_box =
     [ "reorder", "class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5", null ],
     [ "set_degenerate", "class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2", null ],
     [ "set_empty", "class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3", null ],
-    [ "sizes", "class_a_a_b_btree_1_1_box.html#a6dbb7fe7d6d1762465a8baba0e9fdb8b", null ],
     [ "sort_axes_length", "class_a_a_b_btree_1_1_box.html#a72db6bb99930ac21bc29f7fd0ac28f1b", null ],
     [ "squared_exterior_distance", "class_a_a_b_btree_1_1_box.html#acfe143f5c9cc9f87ef105fd859081f37", null ],
     [ "squared_exterior_distance", "class_a_a_b_btree_1_1_box.html#a2d198000f94d2312a92c732f01f91f8f", null ],
@@ -80,8 +79,7 @@ var class_a_a_b_btree_1_1_box =
     [ "which_side", "class_a_a_b_btree_1_1_box.html#a55b38df4a999605c3c42698b68f68364", null ],
     [ "DUMMY_TOL", "class_a_a_b_btree_1_1_box.html#a4c829dc9c264319f837c63de1a314e58", null ],
     [ "EPS", "class_a_a_b_btree_1_1_box.html#a29a694000a76f0ff8399784d2026624a", null ],
+    [ "INF", "class_a_a_b_btree_1_1_box.html#a0d01831740cbe5f65cf18568a77b4c66", null ],
     [ "m_max", "class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9", null ],
-    [ "m_min", "class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d", null ],
-    [ "MAX", "class_a_a_b_btree_1_1_box.html#ab413a1e7280d4f7166f53b01b8cf4b79", null ],
-    [ "MIN", "class_a_a_b_btree_1_1_box.html#aa43bddd74a1d3ef191d68589159bfae5", null ]
+    [ "m_min", "class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d", null ]
 ];
