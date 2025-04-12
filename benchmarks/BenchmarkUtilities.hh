@@ -224,7 +224,7 @@ namespace BenchmarkUtilities {
 
   // Solve Kepler's equation to get eccentric anomaly
   template <typename Real, typename Integer>
-  Real SolveKepler(Real M, Real e, Real tol = 1e-8, Integer max_iter = 100) {
+  Real SolveKepler(Real M, Real e, Real tol = 1e-6, Integer max_iter = 100) {
     Real E{M};
     for (Integer i{0}; i < max_iter; ++i) {
       Real delta{E - e*std::sin(E) - M};

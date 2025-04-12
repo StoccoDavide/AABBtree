@@ -70,6 +70,9 @@ main() {
   boxes->reserve(n_asteroids);
   std::ofstream asteroids_trace("asteroids_clustering_traces.txt");
   for (Integer i{0}; i < n_asteroids; ++i) {
+    if (i % 1000 == 0) {
+      std::cout << "Asteroid " << i << " of " << n_asteroids << '\n';
+    }
     asteroids_trace << i;
     Vector x, y, z;
     Keplerian<Real, Integer> data_i = data[i];
@@ -104,29 +107,32 @@ main() {
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
+  auto distance_fun = [] (Box const & b1, Box const & b2) {
+    Vector const & b1_min{b1.min()}, b2_min{b2.min()};
+    Vector const & b1_max{b1.max()}, b2_max{b2.max()};
+    Real distance{0.0}, tmp, dx, dy, dz;
+    for (Integer i{0}; i < 3*t_steps; i += 3) {
+      tmp = std::numeric_limits<Real>::max();
+      for (Integer j{0}; j < 3*t_steps; j += 3) {
+        dx = std::max(0.0, std::max(b1_min(j+0) - b2_max(j+0), b2_min(j+0) - b1_max(j+0)));
+        dy = std::max(0.0, std::max(b1_min(j+1) - b2_max(j+1), b2_min(j+1) - b1_max(j+1)));
+        dz = std::max(0.0, std::max(b1_min(j+2) - b2_max(j+2), b2_min(j+2) - b1_max(j+2)));
+        tmp = std::min(tmp, dx*dx + dy*dy + dz*dz);
+      }
+      distance += std::sqrt(tmp);
+    }
+    return distance;
+  };
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {
-    if (i % 1000 == 0) {
+    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i], distance_fun);
+    if (i % 100 == 0) {
+      timer.toc();
       std::cout << "Cluster " << i << " of " << n_clusters << '\n';
+      Real estimated_time = timer.elapsed_s()/100 * (n_clusters - i) / 60;
+      std::cout << "Estimated time: " << std::setprecision(2) << std::fixed << estimated_time << " min\n";
+      timer.tic();
     }
-
-    // Clustering
-    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
-    [] (Box const & b1, Box const & b2) {
-      Vector v1(b1.baricenter()), v2(b2.baricenter());
-      Real distance{0.0}, tmp, dx, dy, dz;
-      for (Integer i{0}; i < 3*t_steps; i += 3) {
-        tmp = std::numeric_limits<Real>::max();
-        for (Integer j{0}; j < 3*t_steps; j += 3) {
-          dx = v1(i+0) - v2(j+0);
-          dy = v1(i+1) - v2(j+1);
-          dz = v1(i+2) - v2(j+2);
-          tmp = std::min(tmp, dx*dx + dy*dy + dz*dz);
-        }
-        distance += std::sqrt(tmp);
-      }
-      return distance;
-    });
   }
   timer.toc();
 

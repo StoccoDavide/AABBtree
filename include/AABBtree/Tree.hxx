@@ -648,7 +648,7 @@ namespace AABBtree {
       m_check_counter = 0;
 
       // Return a negative value if the tree is empty
-      if (this->is_empty() || this->is_empty()) {return -1.0;}
+      if (this->is_empty()) {return -1.0;}
 
       // Collect the original object boxes
       BoxUniquePtrList const & boxes{*m_boxes_ptr};
@@ -679,7 +679,6 @@ namespace AABBtree {
 
         // Compute the distance between the object and the long boxes on the node
         if (node.box_num > 0) {
-
           if (++m_check_counter; node.box_long.interior_distance(obj) <= distance) {
             Integer const id_ini{node.box_ptr};
             Integer const id_end{node.box_ptr + node.box_num};
@@ -871,7 +870,7 @@ namespace AABBtree {
       std::priority_queue<Pair, std::vector<Pair>, decltype(cmp)> queue(cmp);
 
       // Main loop that checks the intersection iteratively
-      Real max_distance{INF}; // Maximum distance in the queue
+      Real distance{INF}; // Maximum distance in the queue
       candidates.clear();
       while (!m_stack.empty())
       {
@@ -886,7 +885,7 @@ namespace AABBtree {
         Real tmp_distance{distance_function(obj, node.box)};
 
         // If the distance is greater than the maximum distance, skip the node
-        if (tmp_distance > max_distance) {continue;}
+        if (tmp_distance > distance) {continue;}
 
         // Compute the distance between the object and the long boxes on the node
         if (node.box_num > 0) {
@@ -896,13 +895,13 @@ namespace AABBtree {
             Integer const pos{m_tree_boxes_map[i]};
             ++m_check_counter;
             tmp_distance = distance_function(obj, *boxes[pos]);
-            if (tmp_distance < max_distance) {
+            if (tmp_distance < distance) {
               if (static_cast<Integer>(queue.size()) < n) {
                 queue.emplace(tmp_distance, pos);
               } else {
                 queue.pop(); queue.emplace(tmp_distance, pos);
               }
-              max_distance = queue.top().first;
+              distance = queue.top().first;
             }
           }
         }
@@ -913,7 +912,7 @@ namespace AABBtree {
       }
 
       // Extract indices into candidates
-      Real min_distance{queue.empty() ? max_distance : queue.top().first};
+      Real min_distance{queue.empty() ? distance : queue.top().first};
       while (!queue.empty()) {candidates.insert(queue.top().second); queue.pop();}
       return min_distance;
     }
@@ -970,8 +969,8 @@ namespace AABBtree {
           for (Integer i{id_ini}; i < id_end; ++i) {
             Integer const pos{m_tree_boxes_map[i]};
             ++m_check_counter;
-            Real tmp_distance{distance_function(obj, *boxes[pos])};
-            if (tmp_distance <= max_distance) {candidates.insert(pos);}
+            distance = distance_function(obj, *boxes[pos]);
+            if (distance <= max_distance) {candidates.insert(pos);}
           }
         }
 

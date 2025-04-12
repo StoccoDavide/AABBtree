@@ -14,6 +14,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <unordered_set>
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -27,7 +28,7 @@ using namespace BenchmarkUtilities;
 // Main function
 int main()
 {
-  using Real = double;
+  using Real = float;
   using Integer = AABBtree::Integer;
 
   constexpr Integer n_asteroids{60000};
@@ -35,8 +36,8 @@ int main()
   constexpr Integer n_clusters_to_plot{1};
   constexpr Real    t_ini{64328.0}; // January 1, 2035
   constexpr Integer n_neighbours{2};
-  constexpr Real    t_end{t_ini + 10.0*365.0};
-  constexpr Integer t_steps{10.0*365};
+  constexpr Real    t_end{t_ini + 15.0*365.0};
+  constexpr Integer t_steps{15.0*365};
   #ifdef AABBTREE_ENABLE_PLOTTING
   constexpr Integer l_trace{365};
   #endif
@@ -69,6 +70,9 @@ int main()
   boxes->reserve(n_asteroids);
   std::ofstream asteroids_trace("asteroids_phasing_traces.txt");
   for (Integer i{0}; i < n_asteroids; ++i) {
+    if (i % 1000 == 0) {
+      std::cout << "Asteroid " << i << " of " << n_asteroids << '\n';
+    }
     asteroids_trace << i;
     Vector x, y, z;
     Keplerian<Real, Integer> data_i = data[i];
@@ -103,24 +107,28 @@ int main()
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
+  auto distance_fun = [] (Box const & b1, Box const & b2) {
+    Vector const & v1_min{b1.min()}, v2_min{b2.min()};
+    Vector const & v1_max{b1.max()}, v2_max{b2.max()};
+    Real distance{std::numeric_limits<Real>::max()}, dx, dy, dz;
+    for (Integer j{0}; j < 3*t_steps; j += 3) {
+      dx = std::max(float{0.0}, std::max(v1_min[j+0] - v2_max[j+0], v2_min[j+0] - v1_max[j+0]));
+      dy = std::max(float{0.0}, std::max(v1_min[j+1] - v2_max[j+1], v2_min[j+1] - v1_max[j+1]));
+      dz = std::max(float{0.0}, std::max(v1_min[j+2] - v2_max[j+2], v2_min[j+2] - v1_max[j+2]));
+      distance = std::min(distance, dx*dx + dy*dy + dz*dz);
+    }
+    return std::sqrt(distance);
+  };
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {
-    if (i % 1000 == 0) {
+    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i], distance_fun);
+    if (i % 10 == 0) {
+      timer.toc();
       std::cout << "Cluster " << i << " of " << n_clusters << '\n';
+      Real estimated_time = timer.elapsed_s()/10 * (n_clusters - i) / 60;
+      std::cout << "Estimated time: " << std::setprecision(2) << std::fixed << estimated_time << " min\n";
+      timer.tic();
     }
-    // Phasing
-    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
-    [] (Box const & b1, Box const & b2) {
-      Vector v1(b1.baricenter()), v2(b2.baricenter());
-      Real distance{std::numeric_limits<Real>::max()}, dx, dy, dz;
-      for (Integer j{0}; j < 3*t_steps; j += 3) {
-        dx = v1(j+0) - v2(j+0);
-        dy = v1(j+1) - v2(j+1);
-        dz = v1(j+2) - v2(j+2);
-        distance = std::min(distance, dx*dx + dy*dy + dz*dz);
-      }
-      return std::sqrt(distance);
-    });
   }
   timer.toc();
 
@@ -131,7 +139,7 @@ int main()
   for (Integer i{0}; i < n_clusters; ++i) {
     phasing_points_1[i].setZero();
     phasing_points_2[i].setZero();
-    phasing_time[i] = 0.0;
+    phasing_time[i] = float{0.0};
     Real dx, dy, dz, tmp, distance{std::numeric_limits<Real>::max()};
     for (Integer j1 : clusters[i]) {
     Vector v1(tree.box(j1)->baricenter());
