@@ -13,8 +13,6 @@
 #ifndef INCLUDE_AABBTREE_TREE_HXX
 #define INCLUDE_AABBTREE_TREE_HXX
 
-#include <unordered_set>
-
 #include "AABBtree/Box.hxx"
 #include "AABBtree/Tree.hxx"
 
@@ -136,15 +134,15 @@ namespace AABBtree {
     };
 
     // Tree hierarchy
-    std::unique_ptr<BoxUniquePtrList> m_boxes_ptr{nullptr};
-    std::vector<Node>                 m_tree_structure;        /**< Tree structure. */
-    IndexList                         m_tree_boxes_map;        /**< Reordering between the vector of boxes and the tree internal structure. */
-    bool                              m_dumping_mode{true};    /**< Enable dumping while building the tree. */
+    std::unique_ptr<BoxUniquePtrList> m_boxes_ptr{nullptr}; /**< Vector of unique pointers to the bounding boxes. */
+    std::vector<Node>                 m_tree_structure;     /**< Tree structure. */
+    IndexList                         m_tree_boxes_map;     /**< Reordering between the vector of boxes and the tree internal structure. */
+    bool                              m_dumping_mode{true}; /**< Enable dumping while building the tree. */
 
     // Tree parameters
     Integer m_max_nodal_objects{10};            /**< Maximum number of objects per node. */
     Real    m_separation_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes separation. */
-    Real    m_balance_ratio_tolerance{0.1};     /**< Tolerance for bounding boxes balance. */
+    Real    m_balance_ratio_tolerance{0.3};     /**< Tolerance for bounding boxes balance. */
 
     // Statistics
     mutable Integer m_check_counter{0}; /**< Number of collision check. */
@@ -362,11 +360,15 @@ namespace AABBtree {
             std::copy_n(m_tree_boxes_map.data()+node.box_ptr, node.box_num, m_map.data()+node.box_ptr);
           }
 
-          // If the number of long boxes is too high, skip the next axis
+          // If the number of long boxes is too high, skip the next iterations
           if (n_long > m_max_nodal_objects) {continue;}
+
+          // If the dumping mode is not enabled, end the loop
+          if (!m_dumping_mode) {break;}
 
           // If the left and right children are yet not balanced, dump the splitting axis
           if (std::min(n_left, n_right) >= m_balance_ratio_tolerance * std::max(n_left, n_right)) {break;}
+          ++m_dump_counter;
         }
 
         // Use the best solution found
