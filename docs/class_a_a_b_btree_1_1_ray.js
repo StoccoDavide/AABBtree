@@ -1,7 +1,7 @@
 var class_a_a_b_btree_1_1_ray =
 [
-    [ "Point", "class_a_a_b_btree_1_1_ray.html#a7beb63b46e8460bc9ea3cfbf9af86e69", null ],
-    [ "Vector", "class_a_a_b_btree_1_1_ray.html#aac9ad3e9d7d57c8622cad2de01e25256", null ],
+    [ "Point", "class_a_a_b_btree_1_1_ray.html#a1fbca5a4531383bfd8e6d444ed48b221", null ],
+    [ "Vector", "class_a_a_b_btree_1_1_ray.html#a77a12561a68e2159ba3bfd86099e3c01", null ],
     [ "~Ray", "class_a_a_b_btree_1_1_ray.html#ad87fb0ada272f808c7c69d88c83ae1f8", null ],
     [ "Ray", "class_a_a_b_btree_1_1_ray.html#a86532c5496a5e5246ef7d3a432a9712d", null ],
     [ "Ray", "class_a_a_b_btree_1_1_ray.html#a2837ecf695695c104c7c15f8df82e6f9", null ],

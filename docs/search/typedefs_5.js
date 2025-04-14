@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vector_0',['Vector',['../class_a_a_b_btree_1_1_box.html#a1e2d0e678e6f2a4bdf5479a73cfb4067',1,'AABBtree::Box::Vector'],['../class_a_a_b_btree_1_1_ray.html#aac9ad3e9d7d57c8622cad2de01e25256',1,'AABBtree::Ray::Vector'],['../class_a_a_b_btree_1_1_tree.html#ac7a8f69109c4f90238d76a42fed77c3d',1,'AABBtree::Tree::Vector'],['../namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5',1,'AABBtree::Vector']]]
+  ['vector_0',['Vector',['../class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3',1,'AABBtree::Box::Vector'],['../class_a_a_b_btree_1_1_ray.html#a77a12561a68e2159ba3bfd86099e3c01',1,'AABBtree::Ray::Vector'],['../class_a_a_b_btree_1_1_tree.html#ae455d9f7b6f6caca4e7734797239686d',1,'AABBtree::Tree::Vector'],['../namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5',1,'AABBtree::Vector']]]
 ];

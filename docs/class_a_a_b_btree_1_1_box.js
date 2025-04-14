@@ -1,9 +1,9 @@
 var class_a_a_b_btree_1_1_box =
 [
-    [ "BoxUniquePtr", "class_a_a_b_btree_1_1_box.html#aec2bcdd0765da428f38e116d706ecadc", null ],
-    [ "BoxUniquePtrList", "class_a_a_b_btree_1_1_box.html#ac285461196de4d6a8f8ee901a4aa36a7", null ],
-    [ "Point", "class_a_a_b_btree_1_1_box.html#a57b10d25e414f5cdd7e475b24eeb6480", null ],
-    [ "Vector", "class_a_a_b_btree_1_1_box.html#a1e2d0e678e6f2a4bdf5479a73cfb4067", null ],
+    [ "BoxUniquePtr", "class_a_a_b_btree_1_1_box.html#aab02d8642ffdeb9841964ef8a7dd2e3a", null ],
+    [ "BoxUniquePtrList", "class_a_a_b_btree_1_1_box.html#a8ff722bc466a483458aafdb1a5a3f8e7", null ],
+    [ "Point", "class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1", null ],
+    [ "Vector", "class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3", null ],
     [ "Side", "class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133", [
       [ "LEFT", "class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758", null ],
       [ "INSIDE", "class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c", null ],
@@ -53,6 +53,7 @@ var class_a_a_b_btree_1_1_box =
     [ "merged", "class_a_a_b_btree_1_1_box.html#affb0818565339d76daeb751e0cf39142", null ],
     [ "min", "class_a_a_b_btree_1_1_box.html#ae47ee2a4b0d7bbbe598b4fbdc997dc7a", null ],
     [ "min", "class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c", null ],
+    [ "operator=", "class_a_a_b_btree_1_1_box.html#a77818e24d0375dc6bd8dfda6da234a6b", null ],
     [ "print", "class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9", null ],
     [ "reorder", "class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5", null ],
     [ "set_degenerate", "class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2", null ],
