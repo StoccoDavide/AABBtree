@@ -55,10 +55,10 @@ namespace AABBtree {
     constexpr static Real INF{std::numeric_limits<Real>::infinity()}; /**< Infinity value for the scalar type. */
     constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};    /**< Default tolerance for the scalar type */
 
-    using Point            = Point<Real, N>;
-    using Vector           = Vector<Real, N>;
-    using BoxUniquePtr     = BoxUniquePtr<Real, N>;
-    using BoxUniquePtrList = BoxUniquePtrList<Real, N>;
+    using Point            = AABBtree::Point<Real, N>;
+    using Vector           = AABBtree::Vector<Real, N>;
+    using BoxUniquePtr     = AABBtree::BoxUniquePtr<Real, N>;
+    using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, N>;
 
     Point m_min; /**< Minimal corner of the box (lower bounds in all dimensions). */
     Point m_max; /**< Maximal corner of the box (upper bounds in all dimensions). */
@@ -144,6 +144,13 @@ namespace AABBtree {
     template<typename OtherReal>
     explicit Box(Box<OtherReal, N> const & b)
     : m_min(b.m_min.template cast<Real>()), m_max(b.m_max.template cast<Real>()) {}
+
+    /**
+     * Assignment perator for a axis-aligned box given another box.
+     * \param[in] b Box to copy.
+     * \return A reference to the current box.
+     */
+    Box & operator=(Box const & b) = default;
 
     /**
      * Cast the current object to a new scalar type.

@@ -34,8 +34,6 @@ using namespace Catch::Matchers;
 using namespace TestUtilities;
 
 TEMPLATE_TEST_CASE( "Tree-Tree", "[template]", float, double ) {
-  Plot2D P;
-
   std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "w"};
 
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<TestType, 2>;
@@ -43,6 +41,7 @@ TEMPLATE_TEST_CASE( "Tree-Tree", "[template]", float, double ) {
   using Box = AABBtree::Box<TestType, 2>;
 
   #ifdef AABBTREE_ENABLE_PLOTTING
+  Plot2D P;
   P.xlim( -3.0, 3.0 ); P.xlabel("x");
   P.ylim( -3.0, 3.0 ); P.ylabel("y");
   P.grid(true);

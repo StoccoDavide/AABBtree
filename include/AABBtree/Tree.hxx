@@ -111,11 +111,11 @@ namespace AABBtree {
 
   private:
     // Basic types definitions
-    using Box              = Box<Real, N>;
-    using BoxUniquePtr     = BoxUniquePtr<Real, N>;
-    using BoxUniquePtrList = BoxUniquePtrList<Real, N>;
-    using Vector           = Vector<Real, N>;
-    using Point            = Point<Real, N>;
+    using Box              = AABBtree::Box<Real, N>;
+    using BoxUniquePtr     = AABBtree::BoxUniquePtr<Real, N>;
+    using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, N>;
+    using Vector           = AABBtree::Vector<Real, N>;
+    using Point            = AABBtree::Point<Real, N>;
     using QueueItem        = std::tuple<Integer, Integer, Real>;
     using PriorityQueue    = std::priority_queue<QueueItem, std::vector<QueueItem>, std::function<bool(QueueItem, QueueItem)>>;
 

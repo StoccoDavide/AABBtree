@@ -45,8 +45,8 @@ namespace AABBtree {
     constexpr static Real INF{std::numeric_limits<Real>::infinity()}; /**< Infinity value for the scalar type. */
     constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};    /**< Default tolerance for the scalar type */
 
-    using Point  = Point<Real, N>;
-    using Vector = Vector<Real, N>;
+    using Point  = AABBtree::Point<Real, N>;
+    using Vector = AABBtree::Vector<Real, N>;
 
     Point  m_origin;    /**< Origin point of the ray. */
     Vector m_direction; /**< Direction vector of the ray (not necessarily normalized). */
