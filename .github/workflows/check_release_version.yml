@@ -30,7 +30,7 @@ jobs:
 
       - name: Compare VERSION with latest tag
         run: |
-          if [ "v$VERSION" != "$LATEST_TAG" ]; then
+          if [ "$VERSION" != "$LATEST_TAG" ]; then
             echo "VERSION file does not match the latest Git tag ($LATEST_TAG)."
             exit 1
           else
