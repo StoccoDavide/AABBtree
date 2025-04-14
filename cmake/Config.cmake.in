@@ -2,7 +2,8 @@
 
 include(CMakeFindDependencyMacro)
 
-# Ensure dependencies are found (if any)
+# List dependencies
+find_dependency(Eigen3 REQUIRED)
 
 # Import targets
 include("${CMAKE_CURRENT_LIST_DIR}/AABBtreeTargets.cmake")
