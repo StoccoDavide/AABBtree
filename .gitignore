@@ -40,3 +40,4 @@ third_party/
 temporary
 Xcode/*
 .vscode/*
+.idea/*

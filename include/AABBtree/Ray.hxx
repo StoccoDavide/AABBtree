@@ -41,9 +41,9 @@ namespace AABBtree {
     static_assert(N > 0, "Ray dimension must be positive.");
 
     // Constants for numerical computations
-    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()};  /**< Machine epsilon for the scalar type. */
-    constexpr static Real INF{std::numeric_limits<Real>::infinity()}; /**< Infinity value for the scalar type. */
-    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};    /**< Default tolerance for the scalar type */
+    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()}; /**< Machine epsilon for the scalar type. */
+    constexpr static Real INF{1.0/EPS};                              /**< Infinity value for the scalar type. */
+    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};   /**< Default tolerance for the scalar type */
 
     using Point  = AABBtree::Point<Real, N>;
     using Vector = AABBtree::Vector<Real, N>;

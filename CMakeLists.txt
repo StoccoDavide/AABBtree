@@ -124,7 +124,7 @@ endif()
 if(MSVC)
   target_compile_options(AABBtree INTERFACE /W4 /WX)
 else()
-  target_compile_options(AABBtree INTERFACE -Wall -Wextra -pedantic -Werror -Wno-narrowing)
+  target_compile_options(AABBtree INTERFACE -Wall -Wextra -pedantic -Werror -Wno-narrowing -DNDEBUG -DEIGEN_NO_DEBUG -march=native -ffast-math -fno-finite-math-only -funroll-loops)
 endif()
 
 # Installation

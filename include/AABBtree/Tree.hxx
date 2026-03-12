@@ -37,9 +37,9 @@ namespace AABBtree {
     static_assert(N > 0, "Tree dimension must be positive.");
 
     // Constants for numerical computations
-    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()};  /**< Machine epsilon for the scalar type. */
-    constexpr static Real INF{std::numeric_limits<Real>::infinity()}; /**< Infinity value for the scalar type. */
-    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};    /**< Default tolerance for the scalar type */
+    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()}; /**< Machine epsilon for the scalar type. */
+    constexpr static Real INF{1.0/EPS};                              /**< Infinity value for the scalar type. */
+    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};   /**< Default tolerance for the scalar type */
 
     /**
      * Structure representing the statistics of the AABB tree.
@@ -64,7 +64,10 @@ namespace AABBtree {
       Real    depth_ratio{0.0};    /**< Ratio of left/right subtree depths (0=perfect balance). */
 
       // Query statistics
-      Integer check_counter{0}; /**< Total number of collision checks performed. */
+      Integer check_counter{0};      /**< Total number of collision checks performed. */
+      Integer node_check_counter{0}; /**< Total number of node checks performed. */
+      Integer long_check_counter{0}; /**< Total number of long box checks performed. */
+      Integer objs_check_counter{0}; /**< Total number of object checks performed. */
 
       /**
        * Reset all statistics to their initial zero state
@@ -140,16 +143,18 @@ namespace AABBtree {
     bool                              m_dumping_mode{true}; /**< Enable dumping while building the tree. */
 
     // Tree parameters
-    Integer m_max_nodal_objects{10};            /**< Maximum number of objects per node. */
-    Real    m_separation_ratio_tolerance{0.25}; /**< Tolerance for bounding boxes separation. */
-    Real    m_balance_ratio_tolerance{0.3};     /**< Tolerance for bounding boxes balance. */
+    Integer m_max_nodal_objects{50};            /**< Maximum number of objects per node. */
+    Real    m_separation_ratio_tolerance{0.01}; /**< Tolerance for bounding boxes separation. */
+    Real    m_balance_ratio_tolerance{0.99};    /**< Tolerance for bounding boxes balance. */
 
     // Statistics
-    mutable Integer m_check_counter{0}; /**< Number of collision check. */
-    mutable Integer m_dump_counter{0};  /**< Number of dumpings. */
+    mutable Integer m_node_check_counter{0}; /**< Number of nodes collision check. */
+    mutable Integer m_long_check_counter{0}; /**< Number of long boxes collision check. */
+    mutable Integer m_objs_check_counter{0}; /**< Number of objects collision check. */
+    mutable Integer m_dump_counter{0};       /**< Number of dumpings. */
 
     // Stack for non-recursive tree building and query
-    mutable IndexList m_stack; /**< Tree stack. */
+    mutable IndexList     m_stack; /**< Tree stack. */
     mutable PriorityQueue m_queue; /**< Queue for tree traversal. */
 
   public:
@@ -284,7 +289,7 @@ namespace AABBtree {
       root.box_tot_num = num_boxes;
 
       // Setup the boxes map and compute the root box
-      Integer depth{std::ceil(std::log2(num_boxes))};
+      Integer depth{static_cast<Integer>(std::ceil(std::log2(num_boxes)))};
       root.box.set_empty();
       m_tree_boxes_map.reserve(2*depth);
       for (BoxUniquePtr const & box : boxes) {
@@ -458,7 +463,9 @@ namespace AABBtree {
     template <typename Object>
     bool intersect(Object const & obj, IndexSet & candidates) const {
       // Reset statistics
-      m_check_counter = 0;
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
 
       // Return if the tree is empty
       if (this->is_empty()) {return false;}
@@ -482,17 +489,17 @@ namespace AABBtree {
         Node const & node{m_tree_structure[id]};
 
         // If the object do not intersects the box, skip the node
-        if (++m_check_counter; !node.box.intersects(obj)) {continue;}
+        if (++m_node_check_counter; !node.box.intersects(obj)) {continue;}
 
         // Intersect the object with the long boxes on the node.
         // If it is a leaf long boxes are also the nodes of the leaf.
         if (node.box_num > 0) {
-          if (++m_check_counter; node.box_long.intersects(obj)) {
+          if (++m_long_check_counter; node.box_long.intersects(obj)) {
             Integer const id_ini{node.box_ptr};
             Integer const id_end{node.box_ptr + node.box_num};
             for (Integer i{id_ini}; i < id_end; ++i) {
               Integer const pos{m_tree_boxes_map[i]};
-              if (++m_check_counter; boxes[pos]->intersects(obj)) candidates.insert(pos);
+              if (++m_objs_check_counter; boxes[pos]->intersects(obj)) candidates.insert(pos);
             }
           }
         }
@@ -514,7 +521,9 @@ namespace AABBtree {
      */
     bool intersect(Tree const & tree, IndexMap & candidates) const {
       // Reset statistics
-      m_check_counter = 0;
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
 
       // Return if the tree is empty
       if (this->is_empty() || tree.is_empty()) {return false;}
@@ -523,14 +532,147 @@ namespace AABBtree {
       BoxUniquePtrList const & boxes_1{*m_boxes_ptr};
       BoxUniquePtrList const & boxes_2{*tree.m_boxes_ptr};
 
+      //using Tuple = std::tuple<Integer, Integer, Integer>; // (box_num, id_s1, id_s2)
+      //auto cmp = [](const Tuple & a, const Tuple & b) {return std::get<0>(a) > std::get<0>(b);};
+      //std::priority_queue<Tuple, std::vector<Tuple>, decltype(cmp)> queue(cmp);
       // Setup the stack
       m_stack.clear();
       m_stack.reserve(this->size() + tree.size() + 2);
-      m_stack.emplace_back(0);
-      m_stack.emplace_back(0);
 
       // Negate the id of the node to distinguish the tree: if 0 --> -1, 1 --> -2, 2 --> -3
       auto negate = [] (Integer const id) {return -1-id;};
+
+      // Compute the priority of the nodes based on the number of boxes
+      auto stack_emplace_back = [this] (Integer const node_1, Integer const node_2) {
+        //Integer const id_1{node_1 < 0 ? negate(node_1) : node_1};
+        //Integer const id_2{node_2 < 0 ? negate(node_2) : node_2};
+        //queue.emplace(
+        //  std::abs(m_tree_structure[id_1].box_tot_num - tree.m_tree_structure[id_2].box_tot_num)*
+        //  std::min(m_tree_structure[id_1].box_num, tree.m_tree_structure[id_2].box_num),
+        //  node_1, node_2);
+        m_stack.emplace_back(node_1); m_stack.emplace_back(node_2);
+      };
+      stack_emplace_back(0, 0);
+
+      // Main loop that checks the intersection iteratively
+      candidates.clear();
+      while (!m_stack.empty()) {
+      //while (!queue.empty()) {
+
+        // Pop the node from stack (reversed order)
+        Integer const id_s2{m_stack.back()}; m_stack.pop_back();
+        Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
+        Integer const id_s1{m_stack.back()}; m_stack.pop_back();
+        Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
+        //Tuple top = queue.top(); queue.pop();
+        //Integer const id_s1{std::get<1>(top)};
+        //Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
+        //Integer const id_s2{std::get<2>(top)};
+        //Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
+
+        // Get the node
+        Node const & node_1{m_tree_structure[id_1]};
+        Node const & node_2{tree.m_tree_structure[id_2]};
+
+        // If the boxes are not intersecting, skip the nodes
+        if (++m_node_check_counter; !node_1.box.intersects(node_2.box)) {continue;}
+
+        // Intersect the long boxes on the nodes: if both are leaf then intersect the corresponding boxes
+        if (node_1.box_num > 0 && node_2.box_num > 0) {
+          if (++m_long_check_counter; node_1.box_long.intersects(node_2.box_long)) {
+            Integer const id_1_ini{node_1.box_ptr};
+            Integer const id_1_end{node_1.box_ptr + node_1.box_num};
+            Integer const id_2_ini{node_2.box_ptr};
+            Integer const id_2_end{node_2.box_ptr + node_2.box_num};
+            if (node_1.box_num < node_2.box_num) {
+              for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+                Integer const pos_1{m_tree_boxes_map[i]};
+                if (++m_objs_check_counter; !boxes_1[pos_1]->intersects(node_2.box_long)) {continue;}
+                for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+                  Integer const pos_2{tree.m_tree_boxes_map[j]};
+                  if (++m_objs_check_counter; boxes_1[pos_1]->intersects(*boxes_2[pos_2])) candidates[pos_1].insert(pos_2);
+                }
+              }
+            } else {
+              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+                Integer const pos_2{tree.m_tree_boxes_map[j]};
+                if (++m_objs_check_counter; !boxes_2[pos_2]->intersects(node_1.box_long)) {continue;}
+                for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+                  Integer const pos_1{m_tree_boxes_map[i]};
+                    if (++m_objs_check_counter; boxes_1[pos_1]->intersects(*boxes_2[pos_2])) candidates[pos_1].insert(pos_2);
+                }
+              }
+            }
+          }
+        }
+
+        // Check if the nodes are leafs
+        bool const leaf_1{node_1.child_l < 0};
+        bool const leaf_2{node_2.child_l < 0};
+        if (leaf_1 && leaf_2) {continue;} // We are done on this branch
+
+        if (leaf_1) {
+          stack_emplace_back(id_1, node_2.child_l);
+          stack_emplace_back(id_1, node_2.child_r);
+        } else if (leaf_2) {
+          stack_emplace_back(node_1.child_l, id_2);
+          stack_emplace_back(node_1.child_r, id_2);
+        } else {
+          if (node_1.box_tot_num > node_2.box_tot_num) { // split first larger tree
+            if (id_s1 >= 0) {
+              stack_emplace_back(node_1.child_l, id_s2);
+              stack_emplace_back(node_1.child_r, id_s2);
+              if (node_1.box_num > 0) stack_emplace_back(negate(id_1), id_2);
+            } else if (id_s2 >= 0) { // and id_s1 < 0
+              stack_emplace_back(id_s1, node_2.child_l);
+              stack_emplace_back(id_s1, node_2.child_r);
+            }
+          } else {
+            if (id_s2 >= 0) {
+              stack_emplace_back(id_s1, node_2.child_l);
+              stack_emplace_back(id_s1, node_2.child_r);
+              if (node_2.box_num > 0) stack_emplace_back(id_1, negate(id_2));
+            } else if (id_s1 >= 0) { // and id_s2 < 2
+              stack_emplace_back(node_1.child_l, id_s2);
+              stack_emplace_back(node_1.child_r, id_s2);
+            }
+          }
+        }
+      }
+
+      // Return true if the trees intersect
+      return !candidates.empty();
+    }
+
+    /**
+     * Intersect the tree with itself.
+     * \param[out] candidates Intersection result (boxes indexes).
+     * \return True if the point intersects the tree, false otherwise.
+     */
+    bool self_intersect(IndexMap & candidates) const {
+      // Reset statistics
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
+
+      // Return if the tree is empty
+      if (this->is_empty()) {return false;}
+
+      // Collect the original object boxes
+      BoxUniquePtrList const & boxes{*m_boxes_ptr};
+
+      //using Tuple = std::tuple<Integer, Integer, Integer>; // (box_num, id_s1, id_s2)
+      m_stack.clear();
+      m_stack.reserve(this->size() + this->size() + 2);
+
+      // Negate the id of the node to distinguish the tree: if 0 --> -1, 1 --> -2, 2 --> -3
+      auto negate = [] (Integer const id) {return -1-id;};
+
+      // Compute the priority of the nodes based on the number of boxes
+      auto stack_emplace_back = [this] (Integer const node_1, Integer const node_2) {
+        m_stack.emplace_back(node_1); m_stack.emplace_back(node_2);
+      };
+      stack_emplace_back(0, 0);
 
       // Main loop that checks the intersection iteratively
       candidates.clear();
@@ -544,14 +686,14 @@ namespace AABBtree {
 
         // Get the node
         Node const & node_1{m_tree_structure[id_1]};
-        Node const & node_2{tree.m_tree_structure[id_2]};
+        Node const & node_2{m_tree_structure[id_2]};
 
         // If the boxes are not intersecting, skip the nodes
-        if (++m_check_counter; !node_1.box.intersects(node_2.box)) {continue;}
+        if (++m_node_check_counter; !node_1.box.intersects(node_2.box)) {continue;}
 
         // Intersect the long boxes on the nodes: if both are leaf then intersect the corresponding boxes
         if (node_1.box_num > 0 && node_2.box_num > 0) {
-          if (++m_check_counter; node_1.box_long.intersects(node_2.box_long)) {
+          if (++m_long_check_counter; node_1.box_long.intersects(node_2.box_long)) {
             Integer const id_1_ini{node_1.box_ptr};
             Integer const id_1_end{node_1.box_ptr + node_1.box_num};
             Integer const id_2_ini{node_2.box_ptr};
@@ -559,19 +701,21 @@ namespace AABBtree {
             if (node_1.box_num < node_2.box_num) {
               for (Integer i{id_1_ini}; i < id_1_end; ++i) {
                 Integer const pos_1{m_tree_boxes_map[i]};
-                if (++m_check_counter; !boxes_1[pos_1]->intersects(node_2.box_long)) {continue;}
+                if (++m_objs_check_counter; !boxes[pos_1]->intersects(node_2.box_long)) {continue;}
                 for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-                  Integer const pos_2{tree.m_tree_boxes_map[j]};
-                  if (++m_check_counter; boxes_1[pos_1]->intersects(*boxes_2[pos_2])) candidates[pos_1].insert(pos_2);
+                  Integer const pos_2{m_tree_boxes_map[j]};
+                  if (pos_1 == pos_2) {continue;} // Do not intersect with itself
+                  if (++m_objs_check_counter; boxes[pos_1]->intersects(*boxes[pos_2])) candidates[pos_1].insert(pos_2);
                 }
               }
             } else {
               for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-                Integer const pos_2{tree.m_tree_boxes_map[j]};
-                if (++m_check_counter; !boxes_2[pos_2]->intersects(node_1.box_long)) {continue;}
+                Integer const pos_2{m_tree_boxes_map[j]};
+                if (++m_objs_check_counter; !boxes[pos_2]->intersects(node_1.box_long)) {continue;}
                 for (Integer i{id_1_ini}; i < id_1_end; ++i) {
                   Integer const pos_1{m_tree_boxes_map[i]};
-                    if (++m_check_counter; boxes_1[pos_1]->intersects(*boxes_2[pos_2])) candidates[pos_1].insert(pos_2);
+                  if (pos_1 == pos_2) {continue;} // Do not intersect with itself
+                  if (++m_objs_check_counter; boxes[pos_1]->intersects(*boxes[pos_2])) candidates[pos_1].insert(pos_2);
                 }
               }
             }
@@ -582,11 +726,6 @@ namespace AABBtree {
         bool const leaf_1{node_1.child_l < 0};
         bool const leaf_2{node_2.child_l < 0};
         if (leaf_1 && leaf_2) {continue;} // We are done on this branch
-
-        // Push children of both trees on the stack if they are not leafs
-        auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
-          m_stack.emplace_back(node_1); m_stack.emplace_back(node_2);
-        };
 
         if (leaf_1) {
           stack_emplace_back(id_1, node_2.child_l);
@@ -647,7 +786,9 @@ namespace AABBtree {
     template <typename Object>
     Real distance(Object const & obj, IndexSet & candidates) const {
       // Reset statistics
-      m_check_counter = 0;
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
 
       // Return a negative value if the tree is empty
       if (this->is_empty()) {return -1.0;}
@@ -673,7 +814,7 @@ namespace AABBtree {
         Node const & node {m_tree_structure[id]};
 
         // Compute the distance between the object and the bounding box
-        ++m_check_counter;
+        ++m_node_check_counter;
         Real tmp_distance{node.box.interior_distance(obj)};
 
         // If the distance is greater than the temporary minimum distance, skip the node
@@ -681,12 +822,12 @@ namespace AABBtree {
 
         // Compute the distance between the object and the long boxes on the node
         if (node.box_num > 0) {
-          if (++m_check_counter; node.box_long.interior_distance(obj) <= distance) {
+          if (++m_node_check_counter; node.box_long.interior_distance(obj) <= distance) {
             Integer const id_ini{node.box_ptr};
             Integer const id_end{node.box_ptr + node.box_num};
             for (Integer i{id_ini}; i < id_end; ++i) {
               Integer const pos{m_tree_boxes_map[i]};
-              ++m_check_counter;
+              ++m_node_check_counter;
               tmp_distance = boxes[pos]->interior_distance(obj);
               if (tmp_distance < distance) {
                 candidates.clear(); candidates.insert(pos); distance = tmp_distance;
@@ -714,7 +855,9 @@ namespace AABBtree {
      */
     Real distance(Tree const & tree, IndexMap & candidates) const {
       // Reset statistics
-      m_check_counter = 0;
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
 
       // Return if the tree is empty
       if (this->is_empty() || tree.is_empty()) {return -1.0;}
@@ -726,11 +869,15 @@ namespace AABBtree {
       // Setup the stack
       m_stack.clear();
       m_stack.reserve(this->size() + tree.size() + 2);
-      m_stack.emplace_back(0);
-      m_stack.emplace_back(0);
 
       // Negate the id of the node to distinguish the tree: if 0 --> -1, 1 --> -2, 2 --> -3
       auto negate = [] (Integer const id) {return -1-id;};
+
+      // Setup the stack emplace function
+      auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
+        m_stack.emplace_back(node_1); m_stack.emplace_back(node_2);
+      };
+      stack_emplace_back(0, 0);
 
       // Main loop that checks the intersection iteratively
       Real distance{INF};
@@ -748,7 +895,7 @@ namespace AABBtree {
         Node const & node_2{tree.m_tree_structure[id_2]};
 
         // Compute the distance between the bounding boxes
-        ++m_check_counter;
+        ++m_node_check_counter;
         Real tmp_distance{node_1.box.interior_distance(node_2.box)};
 
         // If the distance is greater than the temporary minimum distance, skip the nodes
@@ -756,7 +903,7 @@ namespace AABBtree {
 
         // Compute the distance between the long boxes on the nodes
         if (node_1.box_num > 0 && node_2.box_num > 0) {
-          if (++m_check_counter; node_1.box_long.interior_distance(node_2.box_long) <= distance) {
+          if (++m_node_check_counter; node_1.box_long.interior_distance(node_2.box_long) <= distance) {
             Integer const id_1_ini{node_1.box_ptr};
             Integer const id_1_end{node_1.box_ptr + node_1.box_num};
             Integer const id_2_ini{node_2.box_ptr};
@@ -764,11 +911,11 @@ namespace AABBtree {
             if (node_1.box_num < node_2.box_num) {
               for (Integer i{id_1_ini}; i < id_1_end; ++i) {
                 Integer const pos_1{m_tree_boxes_map[i]};
-                ++m_check_counter; tmp_distance = boxes_1[pos_1]->interior_distance(node_2.box_long);
+                ++m_node_check_counter; tmp_distance = boxes_1[pos_1]->interior_distance(node_2.box_long);
                 if (tmp_distance > distance) {continue;}
                 for (Integer j{id_2_ini}; j < id_2_end; ++j) {
                   Integer const pos_2{tree.m_tree_boxes_map[j]};
-                  ++m_check_counter; tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
+                  ++m_node_check_counter; tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
                   if (tmp_distance < distance) {
                     candidates.clear(); candidates[pos_1].insert(pos_2); distance = tmp_distance;
                   } else if (tmp_distance == distance) {
@@ -779,11 +926,11 @@ namespace AABBtree {
             } else {
               for (Integer j{id_2_ini}; j < id_2_end; ++j) {
                 Integer const pos_2{tree.m_tree_boxes_map[j]};
-                ++m_check_counter; tmp_distance = boxes_2[pos_2]->interior_distance(node_1.box_long);
+                ++m_node_check_counter; tmp_distance = boxes_2[pos_2]->interior_distance(node_1.box_long);
                 if (tmp_distance > distance) {continue;}
                 for (Integer i{id_1_ini}; i < id_1_end; ++i) {
                   Integer const pos_1{m_tree_boxes_map[i]};
-                  ++m_check_counter; tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
+                  ++m_node_check_counter; tmp_distance = boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
                   if (tmp_distance < distance) {
                     candidates.clear(); candidates[pos_1].insert(pos_2); distance = tmp_distance;
                   } else if (tmp_distance == distance) {
@@ -801,10 +948,6 @@ namespace AABBtree {
         if (leaf_1 && leaf_2) {continue;} // We are done on this branch
 
         // Push children of both trees on the stack if thay are not leafs
-        auto stack_emplace_back = [this](Integer const node_1, Integer const node_2) {
-          m_stack.emplace_back(node_1); m_stack.emplace_back(node_2);
-        };
-
         if (leaf_1) {
           stack_emplace_back(id_1, node_2.child_l);
           stack_emplace_back(id_1, node_2.child_r);
@@ -853,7 +996,9 @@ namespace AABBtree {
     Real closest(Object const & obj, Integer const n, IndexSet & candidates, Function distance_function = []
       (Object const & o, Box const & b) {return b.interior_distance(o);}) const {
       // Reset statistics
-      m_check_counter = 0;
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
 
       // Return if the tree is empty
       if (this->is_empty()) {return -1.0;}
@@ -883,7 +1028,7 @@ namespace AABBtree {
         Node const & node{m_tree_structure[id]};
 
         // Compute the distance between the object and the bounding box
-        ++m_check_counter;
+        ++m_node_check_counter;
         Real tmp_distance{distance_function(obj, node.box)};
 
         // If the distance is greater than the maximum distance, skip the node
@@ -895,7 +1040,7 @@ namespace AABBtree {
           Integer const id_end{node.box_ptr + node.box_num};
           for (Integer i{id_ini}; i < id_end; ++i) {
             Integer const pos{m_tree_boxes_map[i]};
-            ++m_check_counter;
+            ++m_node_check_counter;
             tmp_distance = distance_function(obj, *boxes[pos]);
             if (tmp_distance < distance) {
               if (static_cast<Integer>(queue.size()) < n) {
@@ -934,7 +1079,9 @@ namespace AABBtree {
       Function distance_function = [] (Object const & o, Box const & b) {return b.interior_distance(o);}
     ) const {
       // Reset statistics
-      m_check_counter = 0;
+      m_node_check_counter = 0;
+      m_long_check_counter = 0;
+      m_objs_check_counter = 0;
 
       // Return if the tree is empty
       if (this->is_empty()) {return false;}
@@ -958,7 +1105,7 @@ namespace AABBtree {
         Node const & node{m_tree_structure[id]};
 
         // Compute the distance between the object and the bounding box
-        ++m_check_counter;
+        ++m_node_check_counter;
         Real distance{distance_function(obj, node.box)};
 
         // If the distance is greater than the maximum distance, skip the node
@@ -970,7 +1117,7 @@ namespace AABBtree {
           Integer const id_end{node.box_ptr + node.box_num};
           for (Integer i{id_ini}; i < id_end; ++i) {
             Integer const pos{m_tree_boxes_map[i]};
-            ++m_check_counter;
+            ++m_node_check_counter;
             distance = distance_function(obj, *boxes[pos]);
             if (distance <= max_distance) {candidates.insert(pos);}
           }
@@ -1056,7 +1203,10 @@ namespace AABBtree {
       stats.depth_ratio   = static_cast<Real>(stats.left_depth)/static_cast<Real>(stats.right_depth);
 
       // Copy the check counter
-      stats.check_counter = m_check_counter;
+      stats.check_counter = m_node_check_counter + m_long_check_counter + m_objs_check_counter;
+      stats.node_check_counter = m_node_check_counter;
+      stats.long_check_counter = m_long_check_counter;
+      stats.objs_check_counter = m_objs_check_counter;
     }
 
     /**

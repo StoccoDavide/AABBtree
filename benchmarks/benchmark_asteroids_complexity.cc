@@ -15,6 +15,7 @@
 #include <tuple>
 #include <sstream>
 #include <iomanip>
+#include <chrono>
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -29,7 +30,7 @@ using Real = double;
 using AABBtree::Integer;
 
 // Main function
-std::tuple<Real, Real, Real, Real> ComputeChecks(int n_objects_t1, int n_objects_t2, int n_nodal_objs)
+std::tuple<Real, Real, Real, Real, Real, Real, Real, Real> ComputeChecks(int n_objects_t1, int n_objects_t2, int n_nodal_objs)
 {
 
   constexpr Real    t_ini{64328.0}; // January 1, 2035
@@ -115,58 +116,68 @@ std::tuple<Real, Real, Real, Real> ComputeChecks(int n_objects_t1, int n_objects
   tree_2.build(std::move(boxes_2));
 
   // Query tree-tree
+  TicToc<Real> timer;
   Statistics stats;
   IndexMap candidates_query_tt;
 
+  Integer checks_i_tt{0};
+  timer.tic();
   tree_1.intersect(tree_2, candidates_query_tt);
   tree_1.stats(stats);
-  Integer checks_query_it1t2{stats.check_counter};
+  checks_i_tt += stats.check_counter;
   tree_2.intersect(tree_1, candidates_query_tt);
   tree_2.stats(stats);
-  Integer checks_query_it2t1{stats.check_counter};
+  checks_i_tt += stats.check_counter;
+  timer.toc();
+  Real time_i_tt{timer.elapsed_s()};
 
+  Integer checks_d_tt{0};
+  timer.tic();
   tree_1.distance(tree_2, candidates_query_tt);
   tree_1.stats(stats);
-  Integer checks_query_dt1t2{stats.check_counter};
+  checks_d_tt += stats.check_counter;
   tree_2.distance(tree_1, candidates_query_tt);
   tree_2.stats(stats);
-  Integer checks_query_dt2t1{stats.check_counter};
+  checks_d_tt += stats.check_counter;
+  timer.toc();
+  Real time_d_tt{timer.elapsed_s()};
 
   // Query tree-boxes
   IndexSet candidates_query_bb;
-  Integer  checks_query_it1b2{0};
+  Integer  checks_i_tb{0};
+  timer.tic();
   for (Integer i{0}; i < n_objects_t2; ++i) {
     tree_1.intersect(*tree_2.box(i), candidates_query_bb);
     tree_1.stats(stats);
-    checks_query_it1b2 += stats.check_counter;
+    checks_i_tb += stats.check_counter;
   }
-  Integer checks_query_it2b1{0};
   for (Integer i{0}; i < n_objects_t1; ++i) {
     tree_2.intersect(*tree_1.box(i), candidates_query_bb);
     tree_2.stats(stats);
-    checks_query_it2b1 += stats.check_counter;
+    checks_i_tb += stats.check_counter;
   }
+  timer.toc();
+  Real time_i_tb{timer.elapsed_s()};
 
-  Integer checks_query_dt1b2{0};
+  Integer checks_d_tb{0};
+  timer.tic();
   for (Integer i{0}; i < n_objects_t2; ++i) {
     tree_1.distance(*tree_2.box(i), candidates_query_bb);
     tree_1.stats(stats);
-    checks_query_dt1b2 += stats.check_counter;
+    checks_d_tb += stats.check_counter;
   }
-  Integer checks_query_dt2b1{0};
   for (Integer i{0}; i < n_objects_t1; ++i) {
     tree_2.distance(*tree_1.box(i), candidates_query_bb);
     tree_2.stats(stats);
-    checks_query_dt2b1 += stats.check_counter;
+    checks_d_tb += stats.check_counter;
   }
+  timer.toc();
+  Real time_d_tb{timer.elapsed_s()};
 
   return std::make_tuple(
-    0.5*(checks_query_it1t2 + checks_query_it2t1),
-    0.5*(checks_query_it1b2 + checks_query_it2b1),
-    0.5*(checks_query_dt1t2 + checks_query_dt2t1),
-    0.5*(checks_query_dt1b2 + checks_query_dt2b1)
+    0.5*checks_i_tt, 0.5*checks_i_tb, 0.5*checks_d_tt, 0.5*checks_d_tb,
+    0.5*time_i_tt, 0.5*time_i_tb, 0.5*time_d_tt, 0.5*time_d_tb
   );
-
 }
 
 // Main function
@@ -174,87 +185,122 @@ int
 main() {
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  Plot2D DD;
-  DD.grid(true);
-  DD.hold(true);
-  DD.xlabel("Number of objects");
-  DD.ylabel("Number of checks");
-  DD.title("Distance");
-  Plot2D II;
-  II.grid(true);
-  II.hold(true);
-  II.xlabel("Number of objects");
-  II.ylabel("Number of checks");
-  II.title("Intersection");
-  Plot2D RR;
-  RR.grid(true);
-  RR.hold(true);
-  RR.xlabel("Number of objects");
-  RR.ylabel("Number of checks");
-  RR.title("Intersection");
+  Plot2D plot_checks_intersection;
+  plot_checks_intersection.grid(true);
+  plot_checks_intersection.hold(true);
+  plot_checks_intersection.xlabel("Number of objects");
+  plot_checks_intersection.ylabel("Number of checks");
+  plot_checks_intersection.title("Intersection");
+  Plot2D plot_checks_distance;
+  plot_checks_distance.grid(true);
+  plot_checks_distance.hold(true);
+  plot_checks_distance.xlabel("Number of objects");
+  plot_checks_distance.ylabel("Number of checks");
+  plot_checks_distance.title("Distance");
+  Plot2D plot_time_intersection;
+  plot_time_intersection.grid(true);
+  plot_time_intersection.hold(true);
+  plot_time_intersection.xlabel("Number of objects");
+  plot_time_intersection.ylabel("Time (s)");
+  plot_time_intersection.title("Intersection");
+  Plot2D plot_time_distance;
+  plot_time_distance.grid(true);
+  plot_time_distance.hold(true);
+  plot_time_distance.xlabel("Number of objects");
+  plot_time_distance.ylabel("Time (s)");
+  plot_time_distance.title("Distance");
   #endif
 
   // Set the number of asteroids for the two trees
-  std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k"};
-  std::vector<Integer>     n_objects = {50, 100, 200, 400, 800, 1875, 3750, 7500, 15000, 30000, 60000};
+  std::vector<std::string> colors = {"r", "g", "b", "c", "m", "y", "k", "r", "g", "b", "c", "m", "y", "k"};
+  Integer n_times{5};
+  std::vector<Integer>     n_objects = {100, 177, 316, 562, 1000, 1778, 3162, 5623, 10000, 17783, 31623, 56234, 60000};
   std::vector<Integer>     n_nodal_objs = {1, 5, 10, 20, 40};
   std::vector<std::string> L{"Tree-Tree", "Tree-Boxes"};
 
   // Open files to save the results
-  std::ofstream intersection("intersection.txt");
-  std::ofstream distance("distance.txt");
-  std::ofstream ratio("ratio.txt");
+  std::ofstream checks_intersection("checks_intersection_aabbtree.txt");
+  std::ofstream checks_distance("checks_distance_aabbtree.txt");
+  std::ofstream time_intersection("time_intersection_aabbtree.txt");
+  std::ofstream time_distance("time_distance_aabbtree.txt");
 
   std::cout << "----------------------------------------\n";
-  std::vector<Real> checks_i_tt(n_objects.size());
-  std::vector<Real> checks_i_tb(n_objects.size());
-  std::vector<Real> checks_d_tt(n_objects.size());
-  std::vector<Real> checks_d_tb(n_objects.size());
-  std::vector<Real> checks_r_i(n_objects.size());
-  std::vector<Real> checks_r_d(n_objects.size());
-  std::vector<Real> n_objects_tt(n_objects.size());
+  std::vector<Real> checks_i_tt(n_objects.size(), 0.0);
+  std::vector<Real> checks_i_tb(n_objects.size(), 0.0);
+  std::vector<Real> checks_d_tt(n_objects.size(), 0.0);
+  std::vector<Real> checks_d_tb(n_objects.size(), 0.0);
+  std::vector<Real> time_i_tt(n_objects.size(), 0.0);
+  std::vector<Real> time_i_tb(n_objects.size(), 0.0);
+  std::vector<Real> time_d_tt(n_objects.size(), 0.0);
+  std::vector<Real> time_d_tb(n_objects.size(), 0.0);
   for (Integer j{0}; j < static_cast<Integer>(n_nodal_objs.size()); ++j) {
     for (Integer i{0}; i < static_cast<Integer>(n_objects.size()); ++i) {
-      auto [i_tt, i_tb, d_tt, d_tb] = ComputeChecks(n_objects[i], n_objects[i], n_nodal_objs[j]);
-      checks_i_tt[i] = i_tt;
-      checks_i_tb[i] = i_tb;
-      checks_d_tt[i] = d_tt;
-      checks_d_tb[i] = d_tb;
-      checks_r_i[i] = i_tb/i_tt;
-      checks_r_d[i] = d_tb/d_tt;
-      std::cout << "Number of asteroids: " << n_objects[i] << '\n';
-      std::cout << "Number of objects:   " << n_nodal_objs[j] << '\n';
-      std::cout << "Checks i_tt: " << i_tt << '\n';
-      std::cout << "Checks i_tb: " << i_tb << '\n';
-      std::cout << "Checks r_i: " << checks_r_i[i] << '\n';
-      std::cout << "Checks d_tt: " << d_tt << '\n';
-      std::cout << "Checks d_tb: " << d_tb << '\n';
-      std::cout << "Checks r_d: " << checks_r_d[i] << '\n';
-      std::cout << "----------------------------------------\n";
-      intersection  << n_objects[i] << " " << n_nodal_objs[j] << " " << i_tt << " " << i_tb << '\n';
-      distance      << n_objects[i] << " " << n_nodal_objs[j] << " " << d_tt << " " << d_tb << '\n';
-      ratio         << n_objects[i] << " " << n_nodal_objs[j] << " " << i_tb/i_tt << " " << d_tb/d_tt << '\n';
+      for (Integer k{0}; k < n_times; ++k) {
+        auto [c_i_tt_tmp, c_i_tb_tmp, c_d_tt_tmp, c_d_tb_tmp, t_i_tt_tmp, t_i_tb_tmp, t_d_tt_tmp, t_d_tb_tmp] =
+          ComputeChecks(n_objects[i], n_objects[i], n_nodal_objs[j]);
+          checks_i_tt[i] += c_i_tt_tmp;
+          checks_i_tb[i] += c_i_tb_tmp;
+          checks_d_tt[i] += c_d_tt_tmp;
+          checks_d_tb[i] += c_d_tb_tmp;
+          time_i_tt[i]   += t_i_tt_tmp;
+          time_i_tb[i]   += t_i_tb_tmp;
+          time_d_tt[i]   += t_d_tt_tmp;
+          time_d_tb[i]   += t_d_tb_tmp;
+      }
+      checks_i_tt[i] /= n_times;
+      checks_i_tb[i] /= n_times;
+      checks_d_tt[i] /= n_times;
+      checks_d_tb[i] /= n_times;
+      time_i_tt[i]   /= n_times;
+      time_i_tb[i]   /= n_times;
+      time_d_tt[i]   /= n_times;
+      time_d_tb[i]   /= n_times;
+      std::cout
+        << "Number of asteroids: " << n_objects[i] << std::endl
+        << "Number of objects:   " << n_nodal_objs[j] << std::endl
+        << "Checks i_tt: " << checks_i_tt[i] << std::endl
+        << "Checks i_tb: " << checks_i_tb[i] << std::endl
+        << "Checks d_tt: " << checks_d_tt[i] << std::endl
+        << "Checks d_tb: " << checks_d_tb[i] << std::endl
+        << "Time   i_tt: " << time_i_tt[i] << std::endl
+        << "Time   i_tb: " << time_i_tb[i] << std::endl
+        << "Time   d_tt: " << time_d_tt[i] << std::endl
+        << "Time   d_tb: " << time_d_tb[i] << std::endl
+        << "----------------------------------------" << std::endl;
+      checks_intersection
+        << n_objects[i] << " " << n_nodal_objs[j] << " " << checks_i_tt[i] << " " << checks_i_tb[i] << std::endl;
+      checks_distance
+        << n_objects[i] << " " << n_nodal_objs[j] << " " << checks_d_tt[i] << " " << checks_d_tb[i] << std::endl;
+      time_intersection
+        << n_objects[i] << " " << n_nodal_objs[j] << " " << time_i_tt[i] << " " << time_i_tb[i] << std::endl;
+      time_distance
+        << n_objects[i] << " " << n_nodal_objs[j] << " " << time_d_tt[i] << " " << time_d_tb[i] << std::endl;
     }
     #ifdef AABBTREE_ENABLE_PLOTTING
-    II.loglog(n_objects, checks_i_tt)->line_width(1.5).color(colors[j]);
-    II.loglog(n_objects, checks_i_tb)->line_width(1.5).color(colors[j]).line_style("--");
-    II.legend(L);
-    DD.loglog(n_objects, checks_d_tt)->line_width(1.5).color(colors[j]);
-    DD.loglog(n_objects, checks_d_tb)->line_width(1.5).color(colors[j]).line_style("--");
-    DD.legend(L);
-    RR.loglog(n_objects, checks_r_i)->line_width(1.5).color(colors[j]);
-    RR.loglog(n_objects, checks_r_d)->line_width(1.5).color(colors[j]).line_style("--");
-    RR.legend(L);
+    plot_checks_intersection.loglog(n_objects, checks_i_tt)->line_width(1.5).color(colors[j]);
+    plot_checks_intersection.loglog(n_objects, checks_i_tb)->line_width(1.5).color(colors[j]).line_style("--");
+    plot_checks_intersection.legend(L);
+    plot_checks_distance.loglog(n_objects, checks_d_tt)->line_width(1.5).color(colors[j]);
+    plot_checks_distance.loglog(n_objects, checks_d_tb)->line_width(1.5).color(colors[j]).line_style("--");
+    plot_checks_distance.legend(L);
+    plot_time_intersection.loglog(n_objects, time_i_tt)->line_width(1.5).color(colors[j]);
+    plot_time_intersection.loglog(n_objects, time_i_tb)->line_width(1.5).color(colors[j]).line_style("--");
+    plot_time_intersection.legend(L);
+    plot_time_distance.loglog(n_objects, time_d_tt)->line_width(1.5).color(colors[j]);
+    plot_time_distance.loglog(n_objects, time_d_tb)->line_width(1.5).color(colors[j]).line_style("--");
+    plot_time_distance.legend(L);
     #endif
   }
-  intersection.close();
-  distance.close();
-  ratio.close();
+  checks_intersection.close();
+  checks_distance.close();
+  time_intersection.close();
+  time_distance.close();
 
   #ifdef AABBTREE_ENABLE_PLOTTING
-  II.show();
-  DD.show();
-  RR.show();
+  plot_checks_intersection.show();
+  plot_checks_distance.show();
+  plot_time_intersection.show();
+  plot_time_distance.show();
   #endif
 
   return 0;

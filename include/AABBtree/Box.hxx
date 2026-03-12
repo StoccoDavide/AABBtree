@@ -51,9 +51,9 @@ namespace AABBtree {
     static_assert(N > 0, "Box dimension must be positive.");
 
     // Constants for numerical computations
-    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()};  /**< Machine epsilon for the scalar type. */
-    constexpr static Real INF{std::numeric_limits<Real>::infinity()}; /**< Infinity value for the scalar type. */
-    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};    /**< Default tolerance for the scalar type */
+    constexpr static Real EPS{std::numeric_limits<Real>::epsilon()}; /**< Machine epsilon for the scalar type. */
+    constexpr static Real INF{1.0/EPS};                              /**< Infinity value for the scalar type. */
+    constexpr static Real DUMMY_TOL{EPS*static_cast<Real>(100.0)};   /**< Default tolerance for the scalar type */
 
     using Point            = AABBtree::Point<Real, N>;
     using Vector           = AABBtree::Vector<Real, N>;
@@ -328,7 +328,22 @@ namespace AABBtree {
      * \return True if boxes intersect, false otherwise.
      */
     bool intersects(Box const & b) const {
-      return (m_min.array() <= b.m_max.array()).all() && (b.m_min.array() <= m_max.array()).all();
+      // return (m_min.array() <= b.m_max.array()).all() && (b.m_min.array() <= m_max.array()).all();
+      for (int d = 0; d < m_min.size(); ++d)
+      if (m_min[d] > b.m_max[d] || b.m_min[d] > m_max[d])
+        return false;
+      return true;
+    }
+
+    /** Check if this box intersects with a box in the first \f$ d \f$-dimensions.
+     * \param[in] b Box to check for intersection.
+     * \tparam d Number of dimensions to consider (default is 2).
+     * \return True if boxes intersect, false otherwise.
+     */
+    template <Integer d = 2>
+    bool quasi_intersects(Box const & b) const {
+      return (m_min.template head<d>().array() <= b.m_max.template head<d>().array()).all() &&
+             (b.m_min.template head<d>().array() <= m_max.template head<d>().array()).all();
     }
 
     /**
@@ -426,18 +441,30 @@ namespace AABBtree {
      * \return True if point is inside or on boundary, false otherwise.
      */
     bool contains(Point const & p) const {
-      return (m_min.array() <= p.array()).all() &&
-             (p.array() <= m_max.array()).all();
+      return (m_min.array() <= p.array()).all() && (p.array() <= m_max.array()).all();
     }
 
     /**
-     * Check if a point intersects the box.
+     * Check if a point intersects the point.
      * \param[in] p Point to check.
      * \return True if point is inside or on boundary, false otherwise.
      * \note Equivalent to \c contains() for points.
      */
     bool intersects(Point const & p) const {
       return (m_min.array() <= p.array()).all() && (p.array() <= m_max.array()).all();
+    }
+
+    /**
+     * Check if this box intersects the point in the first \f$ d \f$-dimensions.
+     * \param[in] p Point to check.
+     * \return True if point is inside or on boundary, false otherwise.
+     * \tparam d Number of dimensions to consider (default is 2).
+     * \note Equivalent to \c contains() for points.
+     */
+    template <Integer d = 2>
+    bool quasi_intersects(Point const & p) const {
+      return (m_min.template head<d>().array() <= p.template head<d>().array()) &&
+             (p.template head<d>().array() <= m_max.template head<d>().array());
     }
 
     /**
