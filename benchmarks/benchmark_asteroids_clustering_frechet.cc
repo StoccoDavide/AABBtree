@@ -109,92 +109,18 @@ main() {
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
-//   auto frechet_distance_fun = [&](Box const& b1, Box const& b2) {
-
-//   const Vector &b1_min = b1.min();
-//   const Vector &b1_max = b1.max();
-//   const Vector &b2_min = b2.min();
-//   const Vector &b2_max = b2.max();
-
-//   auto aabb_dist = [&](Integer i, Integer j) -> Real {
-//     Eigen::Vector3d dx =
-//         (b1_min.segment<3>(3*i) - b2_max.segment<3>(3*j)).cwiseMax(
-//          b2_min.segment<3>(3*j) - b1_max.segment<3>(3*i));
-//     dx = dx.cwiseMax(0.0);
-//     return dx.norm();
-//   };
-
-//   Integer m = t_steps;
-//   Integer n = t_steps;
-
-//   std::vector<Real> prev(n), curr(n);
-
-//   prev[0] = aabb_dist(0,0);
-
-//   for (Integer j=1; j<n; ++j)
-//     prev[j] = std::max(prev[j-1], aabb_dist(0,j));
-
-//   for (Integer i=1; i<m; ++i) {
-
-//     curr[0] = std::max(prev[0], aabb_dist(i,0));
-
-//     for (Integer j=1; j<n; ++j) {
-
-//       Real d = aabb_dist(i,j);
-
-//       Real mprev = std::min({ prev[j], prev[j-1], curr[j-1] });
-
-//       curr[j] = std::max(mprev, d);
-//     }
-
-//     std::swap(prev,curr);
-//   }
-
-//   return prev[n-1];
-// };
-auto frechet_distance_fun = [&](Box const& b1, Box const& b2) {
-
-  const Vector &b1_min = b1.min();
-  const Vector &b1_max = b1.max();
-  const Vector &b2_min = b2.min();
-  const Vector &b2_max = b2.max();
-
-  auto aabb_dist = [&](Integer i, Integer j) -> Real {
-    Eigen::Vector3d dx =
-        (b1_min.segment<3>(3*i) - b2_max.segment<3>(3*j)).cwiseMax(
-         b2_min.segment<3>(3*j) - b1_max.segment<3>(3*i));
-    dx = dx.cwiseMax(0.0);
-    return dx.norm();
-  };
-
-  Integer m = t_steps;
-  Integer n = t_steps;
-
-  std::vector<Real> prev(n), curr(n);
-
-  prev[0] = aabb_dist(0,0);
-
-  for (Integer j=1; j<n; ++j)
-    prev[j] = std::max(prev[j-1], aabb_dist(0,j));
-
-  for (Integer i=1; i<m; ++i) {
-
-    curr[0] = std::max(prev[0], aabb_dist(i,0));
-
-    for (Integer j=1; j<n; ++j) {
-
-      Real d = aabb_dist(i,j);
-
-      Real mprev = std::min({ prev[j], prev[j-1], curr[j-1] });
-
-      curr[j] = std::max(mprev, d);
+  auto frechet_distance_fun = [](Box const& b1, Box const& b2) {
+    Vector const & b1_min{b1.min()}, b2_min{b2.min()};
+    Vector const & b1_max{b1.max()}, b2_max{b2.max()};
+    Real distance{0.0}, dx, dy, dz;
+    for (Integer i{0}; i < 3*t_steps; i += 3) {
+      dx = std::max(0.0, std::max(b1_min(i+0) - b2_max(i+0), b2_min(i+0) - b1_max(i+0)));
+      dy = std::max(0.0, std::max(b1_min(i+1) - b2_max(i+1), b2_min(i+1) - b1_max(i+1)));
+      dz = std::max(0.0, std::max(b1_min(i+2) - b2_max(i+2), b2_min(i+2) - b1_max(i+2)));
+      distance = std::max(distance, dx*dx + dy*dy + dz*dz);
     }
-
-    std::swap(prev,curr);
-  }
-
-  return prev[n-1];
-};
+    return std::sqrt(distance);
+  };
 
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {

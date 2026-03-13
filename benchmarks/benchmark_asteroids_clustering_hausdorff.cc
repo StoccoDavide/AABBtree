@@ -109,90 +109,35 @@ main() {
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
-  // Hausdorff distance
-  // auto hausdorff_distance_fun = [] (Box const & b1, Box const & b2) {
-  //   Vector const & b1_min{b1.min()}, b2_min{b2.min()};
-  //   Vector const & b1_max{b1.max()}, b2_max{b2.max()};
-
-  //   auto aabb_dist = [&](Integer i, Integer j) -> Real {
-  //     // Extract the 3D boxes at timestep i and j
-  //     Eigen::Vector3d b1_box = b1_min.segment<3>(i).cwiseMax(b1_max.segment<3>(i));
-  //     Eigen::Vector3d b2_box = b2_min.segment<3>(j).cwiseMax(b2_max.segment<3>(j));
-  //     // Compute distance along each axis using AABB formula
-  //     Eigen::Vector3d dx = (b1_min.segment<3>(i) - b2_max.segment<3>(j)).cwiseMax(
-  //                           b2_min.segment<3>(j) - b1_max.segment<3>(i));
-  //     dx = dx.cwiseMax(0.0); // clamp negatives to zero
-  //     return dx.norm();      // Euclidean distance
-  //   };
-
-  //   // Directed: b1 -> b2
-  //   Real max_d1{0.0}, max_d2{0.0}, tmp;
-  //   for (Integer i = 0; i < 3*t_steps; i += 3) {
-  //       tmp = std::numeric_limits<Real>::max();
-  //       for (Integer j = 0; j < 3*t_steps; j += 3) {
-  //           tmp = std::min(tmp, aabb_dist(i,j));
-  //       }
-  //       max_d1 = std::max(max_d1, tmp);
-  //   }
-
-  //   // Directed: b2 -> b1
-  //   for (Integer j = 0; j < 3*t_steps; j += 3) {
-  //       tmp = std::numeric_limits<Real>::max();
-  //       for (Integer i = 0; i < 3*t_steps; i += 3) {
-  //           tmp = std::min(tmp, aabb_dist(i,j));
-  //       }
-  //       max_d2 = std::max(max_d2, tmp);
-  //   }
-
-  //   return std::max(max_d1, max_d2); // symmetric Hausdorff distance
-  // };
-  auto hausdorff_distance_fun = [&](Box const& b1, Box const& b2) {
-
-  const Vector &b1_min = b1.min();
-  const Vector &b1_max = b1.max();
-  const Vector &b2_min = b2.min();
-  const Vector &b2_max = b2.max();
-
-  auto aabb_dist2 = [&](Integer i, Integer j) -> Real {
-
-    Eigen::Vector3d dx =
-        (b1_min.segment<3>(3*i) - b2_max.segment<3>(3*j)).cwiseMax(
-         b2_min.segment<3>(3*j) - b1_max.segment<3>(3*i));
-
-    dx = dx.cwiseMax(0.0);
-    return dx.squaredNorm();   // NO sqrt
+  auto hausdorff_distance_fun = [](Box const& b1, Box const& b2) {
+    Vector const& b1_min{b1.min()}, b2_min{b2.min()};
+    Vector const& b1_max{b1.max()}, b2_max{b2.max()};
+    Real distance_b1_b2{0.0}, distance_b2_b1{0.0};
+    Real dx, dy, dz, tmp;
+    // B1 -> B2
+    for (Integer i{0}; i < 3*t_steps; i += 3) {
+      tmp = std::numeric_limits<Real>::max();
+      for (Integer j{0}; j < 3*t_steps; j += 3) {
+        dx = std::max(0.0, std::max(b1_min(i+0) - b2_max(j+0), b2_min(j+0) - b1_max(i+0)));
+        dy = std::max(0.0, std::max(b1_min(i+1) - b2_max(j+1), b2_min(j+1) - b1_max(i+1)));
+        dz = std::max(0.0, std::max(b1_min(i+2) - b2_max(j+2), b2_min(j+2) - b1_max(i+2)));
+        tmp = std::min(tmp, dx*dx + dy*dy + dz*dz);
+      }
+      distance_b1_b2 = std::max(distance_b1_b2, tmp);
+    }
+    // B2 -> B1
+    for (Integer j{0}; j < 3*t_steps; j += 3) {
+      tmp = std::numeric_limits<Real>::max();
+      for (Integer i{0}; i < 3*t_steps; i += 3) {
+        dx = std::max(0.0, std::max(b2_min(j+0) - b1_max(i+0), b1_min(i+0) - b2_max(j+0)));
+        dy = std::max(0.0, std::max(b2_min(j+1) - b1_max(i+1), b1_min(i+1) - b2_max(j+1)));
+        dz = std::max(0.0, std::max(b2_min(j+2) - b1_max(i+2), b1_min(i+2) - b2_max(j+2)));
+        tmp = std::min(tmp, dx*dx + dy*dy + dz*dz);
+      }
+      distance_b2_b1 = std::max(distance_b2_b1, tmp);
+    }
+    return std::sqrt(std::max(distance_b1_b2, distance_b2_b1));
   };
-
-  Integer m = t_steps;
-  Integer n = t_steps;
-
-  Real max_d1 = 0.0;
-  Real max_d2 = 0.0;
-
-  // directed: b1 -> b2
-  for (Integer i = 0; i < m; ++i) {
-
-    Real min_d = std::numeric_limits<Real>::max();
-
-    for (Integer j = 0; j < n; ++j)
-      min_d = std::min(min_d, aabb_dist2(i,j));
-
-    max_d1 = std::max(max_d1, min_d);
-  }
-
-  // directed: b2 -> b1
-  for (Integer j = 0; j < n; ++j) {
-
-    Real min_d = std::numeric_limits<Real>::max();
-
-    for (Integer i = 0; i < m; ++i)
-      min_d = std::min(min_d, aabb_dist2(i,j));
-
-    max_d2 = std::max(max_d2, min_d);
-  }
-
-  return std::sqrt(std::max(max_d1, max_d2));
-};
 
   timer.tic();
   for (Integer i{0}; i < n_clusters; ++i) {
