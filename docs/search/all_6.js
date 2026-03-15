@@ -8,5 +8,6 @@ var searchData=
   ['left_5fnodes_5',['left_nodes',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#aa4cd202ae85b784d5c2f32a62a437fbe',1,'AABBtree::Tree::Statistics']]],
   ['license_6',['License',['../index.html#autotoc_md5',1,'']]],
   ['long_5fboxes_7',['long_boxes',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a72d1b7d1ed67625b22470f34ab542aed',1,'AABBtree::Tree::Statistics']]],
-  ['longest_5faxis_8',['longest_axis',['../class_a_a_b_btree_1_1_box.html#ab2cfd36b0b72269a19d501836eb2cda4',1,'AABBtree::Box::longest_axis() const'],['../class_a_a_b_btree_1_1_box.html#ada2b96790c11ba4934a72c8e60c6e90f',1,'AABBtree::Box::longest_axis(Real &amp;max_length, Real &amp;mid_point) const']]]
+  ['long_5fcheck_5fcounter_8',['long_check_counter',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a707b117c266856cd281bfa04e040de1d',1,'AABBtree::Tree::Statistics']]],
+  ['longest_5faxis_9',['longest_axis',['../class_a_a_b_btree_1_1_box.html#ab2cfd36b0b72269a19d501836eb2cda4',1,'AABBtree::Box::longest_axis() const'],['../class_a_a_b_btree_1_1_box.html#ada2b96790c11ba4934a72c8e60c6e90f',1,'AABBtree::Box::longest_axis(Real &amp;max_length, Real &amp;mid_point) const']]]
 ];

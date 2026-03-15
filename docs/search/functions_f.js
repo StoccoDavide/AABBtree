@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['_7ebox_0',['~Box',['../class_a_a_b_btree_1_1_box.html#a964eb75aa54e1e49314965b06dc557f3',1,'AABBtree::Box']]],
-  ['_7eray_1',['~Ray',['../class_a_a_b_btree_1_1_ray.html#ad87fb0ada272f808c7c69d88c83ae1f8',1,'AABBtree::Ray']]],
-  ['_7etree_2',['~Tree',['../class_a_a_b_btree_1_1_tree.html#aa5f0a19da9c6cb05f69d6dc1719d806a',1,'AABBtree::Tree']]]
+  ['which_5fside_0',['which_side',['../class_a_a_b_btree_1_1_box.html#a55b38df4a999605c3c42698b68f68364',1,'AABBtree::Box']]],
+  ['within_5fdistance_1',['within_distance',['../class_a_a_b_btree_1_1_tree.html#acf0ef77d253164f506e79c9217b8a6ae',1,'AABBtree::Tree']]]
 ];

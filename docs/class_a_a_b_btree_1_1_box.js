@@ -55,6 +55,8 @@ var class_a_a_b_btree_1_1_box =
     [ "min", "class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c", null ],
     [ "operator=", "class_a_a_b_btree_1_1_box.html#a77818e24d0375dc6bd8dfda6da234a6b", null ],
     [ "print", "class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9", null ],
+    [ "quasi_intersects", "class_a_a_b_btree_1_1_box.html#aa4f2bec5f0a3abe0c8a8babfc1a88b5a", null ],
+    [ "quasi_intersects", "class_a_a_b_btree_1_1_box.html#a1a4622e018649340aa30a861ca99a498", null ],
     [ "reorder", "class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5", null ],
     [ "set_degenerate", "class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2", null ],
     [ "set_empty", "class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3", null ],
