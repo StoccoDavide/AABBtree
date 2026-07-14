@@ -1,20 +1,20 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
- * Copyright (c) 2025, Davide Stocco and Enrico Bertolazzi.                                      *
- *                                                                                               *
- * The AABBtree project is distributed under the BSD 2-Clause License.                           *
- *                                                                                               *
- * Davide Stocco                                                               Enrico Bertolazzi *
- * University of Trento                                                     University of Trento *
- * e-mail: davide.stocco@unitn.it                             e-mail: enrico.bertolazzi@unitn.it *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+ * Copyright (c) 2026, Davide Stocco and Enrico Bertolazzi.                  *
+ *                                                                           *
+ * The AABBtree project is distributed under the BSD 2-Clause License.       *
+ *                                                                           *
+ * Davide Stocco Enrico Bertolazzi                                           *
+ * University of Trento University of Trento                                 *
+ * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // C++17 standard libraries
-#include <iostream>
 #include <fstream>
-#include <vector>
-#include <sstream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <unordered_set>
+#include <vector>
 
 // Matplot++ library
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -26,33 +26,32 @@
 using namespace BenchmarkUtilities;
 
 // Main function
-int main()
-{
+int main() {
   using Real = float;
   using Integer = AABBtree::Integer;
 
   constexpr Integer n_asteroids{60000};
-  constexpr Integer n_clusters{60000};
+  constexpr Integer n_clusters{6000};
   constexpr Integer n_clusters_to_plot{1};
-  constexpr Real    t_ini{64328.0}; // January 1, 2035
+  constexpr Real t_ini{64328.0}; // January 1, 2035
   constexpr Integer n_neighbours{2};
-  constexpr Real    t_end{t_ini + 15.0*365.0};
-  constexpr Integer t_steps{15.0*365};
-  #ifdef AABBTREE_ENABLE_PLOTTING
+  constexpr Real t_end{t_ini + 15.0 * 365.0};
+  constexpr Integer t_steps{15.0 * 365};
+#ifdef AABBTREE_ENABLE_PLOTTING
   constexpr Integer l_trace{365};
-  #endif
+#endif
 
-  using Vector           = AABBtree::Vector<Real, 3*t_steps>;
-  using Box              = AABBtree::Box<Real, 3*t_steps>;
-  using Tree             = AABBtree::Tree<Real, 3*t_steps>;
-  using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 3*t_steps>;
-  using TicToc           = BenchmarkUtilities::TicToc<Real>;
+  using Vector = AABBtree::Vector<Real, 3 * (t_steps - 1)>;
+  using Box = AABBtree::Box<Real, 3 * (t_steps - 1)>;
+  using Tree = AABBtree::Tree<Real, 3 * (t_steps - 1)>;
+  using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, 3 * (t_steps - 1)>;
+  using TicToc = BenchmarkUtilities::TicToc<Real>;
 
   // Initialize the timer
   TicToc timer;
 
   // Parse asteroids data
-  std::string fname{ "./../benchmarks/asteroids.txt" }; // from build directory
+  std::string fname{"./../benchmarks/asteroids.txt"}; // from build directory
   std::vector<Keplerian<Real, Integer>> data;
   timer.tic();
   if (!Parse<Real, Integer>(fname, data, n_asteroids)) {
@@ -63,11 +62,11 @@ int main()
   std::cout << "Data parsed in " << timer.elapsed_us() << " us\n";
 
   // Set the initial and final times
-  Real dt{(t_end - t_ini)/t_steps};
+  Real dt{(t_end - t_ini) / t_steps};
 
   // Write on a new file
-  std::unique_ptr<BoxUniquePtrList> boxes{ std::make_unique<BoxUniquePtrList>() };
-  boxes->reserve(n_asteroids);
+  std::unique_ptr<BoxUniquePtrList> boxes{std::make_unique<BoxUniquePtrList>()};
+  boxes->reserve(n_asteroids - 1);
   std::ofstream asteroids_trace("asteroids_phasing_traces.txt");
   for (Integer i{0}; i < n_asteroids; ++i) {
     if (i % 1000 == 0) {
@@ -77,20 +76,21 @@ int main()
     Vector x, y, z;
     Keplerian<Real, Integer> data_i = data[i];
     for (Integer j{0}; j < t_steps; ++j) {
-      PropagateOrbit(data_i, t_ini + j*dt, (j == 0) ? t_ini : t_ini + (j-1)*dt);
+      PropagateOrbit(data_i, t_ini + j * dt,
+                     (j == 0) ? t_ini : t_ini + (j - 1) * dt);
       KeplerianToCartesian(data_i, x(j), y(j), z(j));
       asteroids_trace << " " << x(j) << " " << y(j) << " " << z(j);
     }
     asteroids_trace << '\n';
     Vector box_min, box_max;
     constexpr Real tol_trace{1.0e-6};
-    for (Integer j{0}; j < t_steps; ++j) {
-      box_min(3*j+0) = x(j) - tol_trace;
-      box_min(3*j+1) = y(j) - tol_trace;
-      box_min(3*j+2) = z(j) - tol_trace;
-      box_max(3*j+0) = x(j) + tol_trace;
-      box_max(3*j+1) = y(j) + tol_trace;
-      box_max(3*j+2) = z(j) + tol_trace;
+    for (Integer j{0}; j < t_steps - 1; ++j) {
+      box_min(3 * j + 0) = std::min(x(j), x(j + 1)) - tol_trace;
+      box_min(3 * j + 1) = std::min(y(j), y(j + 1)) - tol_trace;
+      box_min(3 * j + 2) = std::min(z(j), z(j + 1)) - tol_trace;
+      box_max(3 * j + 0) = std::max(x(j), x(j + 1)) + tol_trace;
+      box_max(3 * j + 1) = std::max(y(j), y(j + 1)) + tol_trace;
+      box_max(3 * j + 2) = std::max(z(j), z(j + 1)) + tol_trace;
     }
     boxes->push_back(std::make_unique<Box>(box_min, box_max));
     boxes->back()->reorder(); // Always wear a helmet
@@ -100,33 +100,50 @@ int main()
 
   // Build the tree
   Tree tree;
-  timer.tic(); tree.build(std::move(boxes)); timer.toc();
+  timer.tic();
+  tree.build(std::move(boxes));
+  timer.toc();
   std::cout << "Tree built in " << timer.elapsed_us() << " us\n";
   tree.print(std::cout);
 
   // Find the closest clusters
   std::vector<IndexSet> clusters(n_clusters);
   std::vector<Real> clusters_distance(n_clusters);
-  auto distance_fun = [] (Box const & b1, Box const & b2) {
-    Vector const & v1_min{b1.min()}, v2_min{b2.min()};
-    Vector const & v1_max{b1.max()}, v2_max{b2.max()};
+  auto distance_fun = [](Box const &b1, Box const &b2) {
+    // return b1.interior_distance(b2);
+    Vector const &v1_min{b1.min()}, v2_min{b2.min()};
+    Vector const &v1_max{b1.max()}, v2_max{b2.max()};
     Real distance{std::numeric_limits<Real>::max()}, dx, dy, dz;
-    for (Integer j{0}; j < 3*t_steps; j += 3) {
-      dx = std::max(float{0.0}, std::max(v1_min[j+0] - v2_max[j+0], v2_min[j+0] - v1_max[j+0]));
-      dy = std::max(float{0.0}, std::max(v1_min[j+1] - v2_max[j+1], v2_min[j+1] - v1_max[j+1]));
-      dz = std::max(float{0.0}, std::max(v1_min[j+2] - v2_max[j+2], v2_min[j+2] - v1_max[j+2]));
-      distance = std::min(distance, dx*dx + dy*dy + dz*dz);
+    for (Integer j{0}; j < 3 * (t_steps - 1); j += 3) {
+      dx = std::max(float{0.0}, std::max(v1_min[j + 0] - v2_max[j + 0],
+                                         v2_min[j + 0] - v1_max[j + 0]));
+      dy = std::max(float{0.0}, std::max(v1_min[j + 1] - v2_max[j + 1],
+                                         v2_min[j + 1] - v1_max[j + 1]));
+      dz = std::max(float{0.0}, std::max(v1_min[j + 2] - v2_max[j + 2],
+                                         v2_min[j + 2] - v1_max[j + 2]));
+      distance = std::min(distance, dx * dx + dy * dy + dz * dz);
     }
     return std::sqrt(distance);
   };
   timer.tic();
+  Integer zero_dist{0};
   for (Integer i{0}; i < n_clusters; ++i) {
-    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i], distance_fun);
+    clusters_distance[i] =
+        tree.closest(*tree.box(i), n_neighbours, clusters[i], distance_fun);
+    if (clusters_distance[i] == 0.0) {
+      ++zero_dist;
+      std::cout << "Cluster " << i
+                << " has zero distance: " << clusters_distance[i] << '\n';
+    }
+    if (zero_dist > 10) {
+      break;
+    }
     if (i % 10 == 0) {
       timer.toc();
       std::cout << "Cluster " << i << " of " << n_clusters << '\n';
-      Real estimated_time = timer.elapsed_s()/10 * (n_clusters - i) / 60;
-      std::cout << "Estimated time: " << std::setprecision(2) << std::fixed << estimated_time << " min\n";
+      Real estimated_time = timer.elapsed_s() / 10 * (n_clusters - i) / 60;
+      std::cout << "Estimated time: " << std::setprecision(2) << std::fixed
+                << estimated_time << " min\n";
       timer.tic();
     }
   }
@@ -142,20 +159,21 @@ int main()
     phasing_time[i] = float{0.0};
     Real dx, dy, dz, tmp, distance{std::numeric_limits<Real>::max()};
     for (Integer j1 : clusters[i]) {
-    Vector v1(tree.box(j1)->baricenter());
+      Vector v1(tree.box(j1)->baricenter());
       for (Integer j2 : clusters[i]) {
-        if (j1 == j2) continue;
+        if (j1 == j2)
+          continue;
         Vector v2(tree.box(j2)->baricenter());
-        for (Integer k{0}; k < 3*t_steps; k += 3) {
-          dx = v1(k+0) - v2(k+0);
-          dy = v1(k+1) - v2(k+1);
-          dz = v1(k+2) - v2(k+2);
-          tmp = dx*dx + dy*dy + dz*dz;
+        for (Integer k{0}; k < 3 * t_steps; k += 3) {
+          dx = v1(k + 0) - v2(k + 0);
+          dy = v1(k + 1) - v2(k + 1);
+          dz = v1(k + 2) - v2(k + 2);
+          tmp = dx * dx + dy * dy + dz * dz;
           if (tmp < distance) {
             distance = tmp;
-            phasing_points_1[i] << v1(k+0), v1(k+1), v1(k+2);
-            phasing_points_2[i] << v2(k+0), v2(k+1), v2(k+2);
-            phasing_time[i] = t_ini + (k/3)*dt;
+            phasing_points_1[i] << v1(k + 0), v1(k + 1), v1(k + 2);
+            phasing_points_2[i] << v2(k + 0), v2(k + 1), v2(k + 2);
+            phasing_time[i] = t_ini + (k / 3) * dt;
           }
         }
       }
@@ -165,22 +183,26 @@ int main()
   // Save the phasing points and time
   std::ofstream asteroids_phasing("asteroids_phasing_points.txt");
   for (Integer i{0}; i < n_clusters; ++i) {
-    asteroids_phasing << i << " " << phasing_time[i] << " " << phasing_points_1[i].transpose() <<
-    " " << phasing_points_2[i].transpose() << '\n';
+    asteroids_phasing << i << " " << phasing_time[i] << " "
+                      << phasing_points_1[i].transpose() << " "
+                      << phasing_points_2[i].transpose() << '\n';
   }
   asteroids_phasing.close();
 
   // Find the best clusters (minimum distance)
   std::vector<Integer> sorting(n_clusters);
   std::iota(sorting.begin(), sorting.end(), 0);
-  std::sort(sorting.begin(), sorting.end(), [&clusters_distance, &clusters](Integer i, Integer j) {
-    return clusters_distance[i] < clusters_distance[j] && clusters[i].size() == n_neighbours;
-  });
+  std::sort(sorting.begin(), sorting.end(),
+            [&clusters_distance, &clusters](Integer i, Integer j) {
+              return clusters_distance[i] < clusters_distance[j] &&
+                     clusters[i].size() == n_neighbours;
+            });
 
   // Save the clusters
   std::ofstream asteroids_cluster("asteroids_phasing_clusters.txt");
   for (Integer i{0}; i < n_clusters; ++i) {
-    asteroids_cluster << i << " " << sorting[i] << " " << clusters_distance[sorting[i]];
+    asteroids_cluster << i << " " << sorting[i] << " "
+                      << clusters_distance[sorting[i]];
     for (Integer j : clusters[sorting[i]]) {
       asteroids_cluster << " " << j;
     }
@@ -188,13 +210,13 @@ int main()
   }
   asteroids_cluster.close();
 
-  // Plot all the asteroids
-  #ifdef AABBTREE_ENABLE_PLOTTING
+// Plot all the asteroids
+#ifdef AABBTREE_ENABLE_PLOTTING
   Plot2D XY, XZ;
   {
     XY.grid(true);
     XZ.grid(true);
-      std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
+    std::vector<Real> x(n_asteroids), y(n_asteroids), z(n_asteroids);
     Real max_xy{0.0};
     Real max_xz{0.0};
     for (Integer i{0}; i < n_asteroids; ++i) {
@@ -205,32 +227,42 @@ int main()
     XY.hold(true);
     XZ.hold(true);
     XY.plot(x, y, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
-    XY.xlim(-max_xy, max_xy); XY.xlabel("x (AU)");
-    XY.ylim(-max_xy, max_xy); XY.ylabel("y (AU)");
+    XY.xlim(-max_xy, max_xy);
+    XY.xlabel("x (AU)");
+    XY.ylim(-max_xy, max_xy);
+    XY.ylabel("y (AU)");
     XZ.plot(x, z, ".")->marker_size(0.8).marker_color({0.5, 0.5, 0.5});
-    XZ.xlim(-max_xy, max_xy); XZ.xlabel("x (AU)");
-    XZ.ylim(-max_xz, max_xz); XZ.ylabel("z (AU)");
+    XZ.xlim(-max_xy, max_xy);
+    XZ.xlabel("x (AU)");
+    XZ.ylim(-max_xz, max_xz);
+    XZ.ylabel("z (AU)");
   }
-  #endif
+#endif
 
-  // Plot the clusters
-  #ifdef AABBTREE_ENABLE_PLOTTING
+// Plot the clusters
+#ifdef AABBTREE_ENABLE_PLOTTING
   {
     XY.grid(true);
     XZ.grid(true);
     std::vector<Real> x, y, z;
     for (Integer i{0}; i < std::min(n_clusters, n_clusters_to_plot); ++i) {
-      x.clear(); y.clear(); z.clear();
-      x.resize(n_neighbours); y.resize(n_neighbours); z.resize(n_neighbours);
+      x.clear();
+      y.clear();
+      z.clear();
+      x.resize(n_neighbours);
+      y.resize(n_neighbours);
+      z.resize(n_neighbours);
       Integer j{0};
       for (Integer k : clusters[sorting[i]]) {
-        KeplerianToCartesian(data[k], x.at(j), y.at(j), z.at(j)); ++j;
+        KeplerianToCartesian(data[k], x.at(j), y.at(j), z.at(j));
+        ++j;
         std::vector<Real> x_trace(l_trace), y_trace(l_trace), z_trace(l_trace);
-        Real dt_trace{(t_end - t_ini)/l_trace};
+        Real dt_trace{(t_end - t_ini) / l_trace};
         Keplerian<Real, Integer> data_k = data[k];
         for (Integer l{0}; l < l_trace; ++l) {
           // Backward propagation
-          PropagateOrbit(data_k, t_ini + l*dt_trace, (l == 0) ? t_ini : t_ini + (l-1)*dt_trace);
+          PropagateOrbit(data_k, t_ini + l * dt_trace,
+                         (l == 0) ? t_ini : t_ini + (l - 1) * dt_trace);
           KeplerianToCartesian(data_k, x_trace[l], y_trace[l], z_trace[l]);
         }
         XY.plot(x_trace, y_trace, "k")->line_width(0.5);
@@ -240,23 +272,27 @@ int main()
       XZ.plot(x, z, ".")->marker_size(2.5);
 
       // Plot the phasing points
-      std::vector<Real> X{phasing_points_1[sorting[i]].x(), phasing_points_2[sorting[i]].x()};
-      std::vector<Real> Y{phasing_points_1[sorting[i]].y(), phasing_points_2[sorting[i]].y()};
-      std::vector<Real> Z{phasing_points_1[sorting[i]].z(), phasing_points_2[sorting[i]].z()};
+      std::vector<Real> X{phasing_points_1[sorting[i]].x(),
+                          phasing_points_2[sorting[i]].x()};
+      std::vector<Real> Y{phasing_points_1[sorting[i]].y(),
+                          phasing_points_2[sorting[i]].y()};
+      std::vector<Real> Z{phasing_points_1[sorting[i]].z(),
+                          phasing_points_2[sorting[i]].z()};
       XY.plot(X, Y, "r-")->line_width(1.0);
       XZ.plot(X, Z, "r-")->line_width(1.0);
     }
   }
   XY.show();
   XZ.show();
-  #endif
+#endif
 
   for (Integer i{0}; i < n_clusters_to_plot; ++i) {
-    std::cout << "Cluster " << i << " distance: " << std::scientific <<
-    clusters_distance[sorting[i]] << '\n';
+    std::cout << "Cluster " << i << " distance: " << std::scientific
+              << clusters_distance[sorting[i]] << '\n';
   }
   std::cout << "Clusters found in " << timer.elapsed_us() << " us\n";
-  std::cout << "Average time per cluster: " << timer.elapsed_us()/n_clusters << " us\n";
+  std::cout << "Average time per cluster: " << timer.elapsed_us() / n_clusters
+            << " us\n";
 
   return 0;
 }

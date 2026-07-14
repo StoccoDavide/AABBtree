@@ -171,8 +171,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae73f76a2e70d558c718f2c04348c919f" id="r_ae73f76a2e70d558c718f2c04348c919f"><td class="memItemLeft"><a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ae73f76a2e70d558c718f2c04348c919f">max</a> ()</td></tr>
 <tr class="memitem:a353b258da7f59f229b6cbb0f7a9e0af5" id="r_a353b258da7f59f229b6cbb0f7a9e0af5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a353b258da7f59f229b6cbb0f7a9e0af5">reorder</a> ()</td></tr>
 <tr class="memitem:a14020411b85f83053bca13c2e177861b" id="r_a14020411b85f83053bca13c2e177861b"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a14020411b85f83053bca13c2e177861b">is_empty</a> () const</td></tr>
-<tr class="memitem:ad8e46143a4403bbff67c20bcbab96439" id="r_ad8e46143a4403bbff67c20bcbab96439"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ad8e46143a4403bbff67c20bcbab96439">is_approx</a> (<a class="el" href="#a06568741d1468838bb35db785e578791">Box</a> const &amp;b, Real const tol) const</td></tr>
-<tr class="memitem:a912feae23cedc113d8aed88f16db8ed9" id="r_a912feae23cedc113d8aed88f16db8ed9"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a912feae23cedc113d8aed88f16db8ed9">is_degenerate</a> (Real const tol) const</td></tr>
+<tr class="memitem:a1ab47e5b75897380957bb3c21cf1972f" id="r_a1ab47e5b75897380957bb3c21cf1972f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a1ab47e5b75897380957bb3c21cf1972f">is_approx</a> (<a class="el" href="#a06568741d1468838bb35db785e578791">Box</a> const &amp;b, Real const tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a39272fe17a5e25d25fe34280cecb3691" id="r_a39272fe17a5e25d25fe34280cecb3691"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a39272fe17a5e25d25fe34280cecb3691">is_degenerate</a> (Real const tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
 <tr class="memitem:ab2cfd36b0b72269a19d501836eb2cda4" id="r_ab2cfd36b0b72269a19d501836eb2cda4"><td class="memItemLeft"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight"><a class="el" href="#ab2cfd36b0b72269a19d501836eb2cda4">longest_axis</a> () const</td></tr>
 <tr class="memitem:ada2b96790c11ba4934a72c8e60c6e90f" id="r_ada2b96790c11ba4934a72c8e60c6e90f"><td class="memItemLeft"><a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>&#160;</td><td class="memItemRight"><a class="el" href="#ada2b96790c11ba4934a72c8e60c6e90f">longest_axis</a> (Real &amp;max_length, Real &amp;mid_point) const</td></tr>
 <tr class="memitem:a72db6bb99930ac21bc29f7fd0ac28f1b" id="r_a72db6bb99930ac21bc29f7fd0ac28f1b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a72db6bb99930ac21bc29f7fd0ac28f1b">sort_axes_length</a> (<a class="el" href="#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> &amp;sizes, Eigen::Vector&lt; <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a>, N &gt; &amp;ipos) const</td></tr>
@@ -219,16 +219,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2d198000f94d2312a92c732f01f91f8f" id="r_a2d198000f94d2312a92c732f01f91f8f"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a2d198000f94d2312a92c732f01f91f8f">squared_exterior_distance</a> (<a class="el" href="#a06568741d1468838bb35db785e578791">Box</a> const &amp;b, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2) const</td></tr>
 <tr class="memitem:a49df733ca32f9cb29c92340add0b8552" id="r_a49df733ca32f9cb29c92340add0b8552"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a49df733ca32f9cb29c92340add0b8552">exterior_distance</a> (<a class="el" href="#a06568741d1468838bb35db785e578791">Box</a> const &amp;b) const</td></tr>
 <tr class="memitem:af2c59eff9a15e1f86b6a8807172c151b" id="r_af2c59eff9a15e1f86b6a8807172c151b"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#af2c59eff9a15e1f86b6a8807172c151b">exterior_distance</a> (<a class="el" href="#a06568741d1468838bb35db785e578791">Box</a> const &amp;b, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2) const</td></tr>
-<tr class="memitem:a863c97386d0b402763fe96d076febebc" id="r_a863c97386d0b402763fe96d076febebc"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a863c97386d0b402763fe96d076febebc">intersects</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:a2e9ee80d1b266966ad116c12184c013f" id="r_a2e9ee80d1b266966ad116c12184c013f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a2e9ee80d1b266966ad116c12184c013f">intersect</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;c, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;f, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:ad94294722453fe56427d13b3c700800a" id="r_ad94294722453fe56427d13b3c700800a"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#ad94294722453fe56427d13b3c700800a">squared_interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:ac4a742af267d451162ed4591dedf04c0" id="r_ac4a742af267d451162ed4591dedf04c0"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#ac4a742af267d451162ed4591dedf04c0">squared_interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:af1e2558cdbf34d5232e35b7824d5ef04" id="r_af1e2558cdbf34d5232e35b7824d5ef04"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#af1e2558cdbf34d5232e35b7824d5ef04">interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:aa1e299aa9e5d771cedec0e032bc037c8" id="r_aa1e299aa9e5d771cedec0e032bc037c8"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#aa1e299aa9e5d771cedec0e032bc037c8">interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:a40aa5a547c307de6e23b97def5789a65" id="r_a40aa5a547c307de6e23b97def5789a65"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a40aa5a547c307de6e23b97def5789a65">squared_exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:a185c04aa94c2a5e94f65b12e87c27b2a" id="r_a185c04aa94c2a5e94f65b12e87c27b2a"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a185c04aa94c2a5e94f65b12e87c27b2a">squared_exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:ab17906f35674ac87427d558b110f18d2" id="r_ab17906f35674ac87427d558b110f18d2"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#ab17906f35674ac87427d558b110f18d2">exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
-<tr class="memitem:a550688d624a5c2311b158587426eee4f" id="r_a550688d624a5c2311b158587426eee4f"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a550688d624a5c2311b158587426eee4f">exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=<a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a>) const</td></tr>
+<tr class="memitem:a694fb50d6903698f5d5f9d13987f53ab" id="r_a694fb50d6903698f5d5f9d13987f53ab"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a694fb50d6903698f5d5f9d13987f53ab">intersects</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:ab630ca8a607097f944f9f5e2fc1fd15c" id="r_ab630ca8a607097f944f9f5e2fc1fd15c"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ab630ca8a607097f944f9f5e2fc1fd15c">intersect</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;c, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;f, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a7849f201791853d4ab809eb1b0cb38b2" id="r_a7849f201791853d4ab809eb1b0cb38b2"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a7849f201791853d4ab809eb1b0cb38b2">squared_interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a1e2f77f0b2d374d25b17c70dbfd78fca" id="r_a1e2f77f0b2d374d25b17c70dbfd78fca"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a1e2f77f0b2d374d25b17c70dbfd78fca">squared_interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a306abba988105093bd1cc2296aa85237" id="r_a306abba988105093bd1cc2296aa85237"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a306abba988105093bd1cc2296aa85237">interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:aafbe492da59e218d067c084589abe137" id="r_aafbe492da59e218d067c084589abe137"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#aafbe492da59e218d067c084589abe137">interior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a142bd0fd8745d6284d0d84528eb43a16" id="r_a142bd0fd8745d6284d0d84528eb43a16"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a142bd0fd8745d6284d0d84528eb43a16">squared_exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a272677adae2b85d99e51704216382cf9" id="r_a272677adae2b85d99e51704216382cf9"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a272677adae2b85d99e51704216382cf9">squared_exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:ae84ef7949424dcff6185aac6215ef6fb" id="r_ae84ef7949424dcff6185aac6215ef6fb"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#ae84ef7949424dcff6185aac6215ef6fb">exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
+<tr class="memitem:a27a6b1f2b611b5aedf60cf815613adde" id="r_a27a6b1f2b611b5aedf60cf815613adde"><td class="memItemLeft">Real&#160;</td><td class="memItemRight"><a class="el" href="#a27a6b1f2b611b5aedf60cf815613adde">exterior_distance</a> (<a class="el" href="class_a_a_b_btree_1_1_ray.html">Ray</a>&lt; Real, N &gt; const &amp;r, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</td></tr>
 <tr class="memitem:aee189b04acb1fc71a2b58ad26f459ce9" id="r_aee189b04acb1fc71a2b58ad26f459ce9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aee189b04acb1fc71a2b58ad26f459ce9">print</a> (std::ostream &amp;os) const</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-types" class="groupheader"><a id="pri-types" name="pri-types"></a>
@@ -242,12 +242,6 @@ Private Types</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ad91f3a7823384249a73e2d35b3f6865d" id="r_ad91f3a7823384249a73e2d35b3f6865d"><td class="memItemLeft"><a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="#ad91f3a7823384249a73e2d35b3f6865d">m_min</a></td></tr>
 <tr class="memitem:a0cd1c3186ed4cf1daefdaca118e935e9" id="r_a0cd1c3186ed4cf1daefdaca118e935e9"><td class="memItemLeft"><a class="el" href="#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a></td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-pri-static-attribs" class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
-Static Private Attributes</h2></td></tr>
-<tr class="memitem:a29a694000a76f0ff8399784d2026624a" id="r_a29a694000a76f0ff8399784d2026624a"><td class="memItemLeft">static constexpr Real&#160;</td><td class="memItemRight"><a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a> {std::numeric_limits&lt;Real&gt;::epsilon()}</td></tr>
-<tr class="memitem:a0d01831740cbe5f65cf18568a77b4c66" id="r_a0d01831740cbe5f65cf18568a77b4c66"><td class="memItemLeft">static constexpr Real&#160;</td><td class="memItemRight"><a class="el" href="#a0d01831740cbe5f65cf18568a77b4c66">INF</a> {1.0/<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>}</td></tr>
-<tr class="memitem:a4c829dc9c264319f837c63de1a314e58" id="r_a4c829dc9c264319f837c63de1a314e58"><td class="memItemLeft">static constexpr Real&#160;</td><td class="memItemRight"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a> {<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>*static_cast&lt;Real&gt;(100.0)}</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt;<br />
@@ -1202,8 +1196,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a550688d624a5c2311b158587426eee4f" name="a550688d624a5c2311b158587426eee4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a550688d624a5c2311b158587426eee4f">&#9670;&#160;</a></span>exterior_distance() <span class="overload">[5/6]</span></h2>
+<a id="a27a6b1f2b611b5aedf60cf815613adde" name="a27a6b1f2b611b5aedf60cf815613adde"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27a6b1f2b611b5aedf60cf815613adde">&#9670;&#160;</a></span>exterior_distance() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1231,7 +1225,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1254,8 +1248,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="ab17906f35674ac87427d558b110f18d2" name="ab17906f35674ac87427d558b110f18d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab17906f35674ac87427d558b110f18d2">&#9670;&#160;</a></span>exterior_distance() <span class="overload">[6/6]</span></h2>
+<a id="ae84ef7949424dcff6185aac6215ef6fb" name="ae84ef7949424dcff6185aac6215ef6fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae84ef7949424dcff6185aac6215ef6fb">&#9670;&#160;</a></span>exterior_distance() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1273,7 +1267,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1450,8 +1444,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="aa1e299aa9e5d771cedec0e032bc037c8" name="aa1e299aa9e5d771cedec0e032bc037c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1e299aa9e5d771cedec0e032bc037c8">&#9670;&#160;</a></span>interior_distance() <span class="overload">[5/6]</span></h2>
+<a id="aafbe492da59e218d067c084589abe137" name="aafbe492da59e218d067c084589abe137"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafbe492da59e218d067c084589abe137">&#9670;&#160;</a></span>interior_distance() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1479,7 +1473,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1502,8 +1496,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="af1e2558cdbf34d5232e35b7824d5ef04" name="af1e2558cdbf34d5232e35b7824d5ef04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1e2558cdbf34d5232e35b7824d5ef04">&#9670;&#160;</a></span>interior_distance() <span class="overload">[6/6]</span></h2>
+<a id="a306abba988105093bd1cc2296aa85237" name="a306abba988105093bd1cc2296aa85237"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a306abba988105093bd1cc2296aa85237">&#9670;&#160;</a></span>interior_distance() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1521,7 +1515,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1581,8 +1575,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a2e9ee80d1b266966ad116c12184c013f" name="a2e9ee80d1b266966ad116c12184c013f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e9ee80d1b266966ad116c12184c013f">&#9670;&#160;</a></span>intersect() <span class="overload">[2/2]</span></h2>
+<a id="ab630ca8a607097f944f9f5e2fc1fd15c" name="ab630ca8a607097f944f9f5e2fc1fd15c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab630ca8a607097f944f9f5e2fc1fd15c">&#9670;&#160;</a></span>intersect() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1610,7 +1604,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1701,8 +1695,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a863c97386d0b402763fe96d076febebc" name="a863c97386d0b402763fe96d076febebc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a863c97386d0b402763fe96d076febebc">&#9670;&#160;</a></span>intersects() <span class="overload">[3/3]</span></h2>
+<a id="a694fb50d6903698f5d5f9d13987f53ab" name="a694fb50d6903698f5d5f9d13987f53ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a694fb50d6903698f5d5f9d13987f53ab">&#9670;&#160;</a></span>intersects() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1720,7 +1714,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1740,8 +1734,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="ad8e46143a4403bbff67c20bcbab96439" name="ad8e46143a4403bbff67c20bcbab96439"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8e46143a4403bbff67c20bcbab96439">&#9670;&#160;</a></span>is_approx()</h2>
+<a id="a1ab47e5b75897380957bb3c21cf1972f" name="a1ab47e5b75897380957bb3c21cf1972f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ab47e5b75897380957bb3c21cf1972f">&#9670;&#160;</a></span>is_approx()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1759,7 +1753,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real const</td>          <td class="paramname"><span class="paramname"><em>tol</em></span>&#160;) const</td>
+          <td class="paramtype">Real const</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -1779,8 +1773,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a912feae23cedc113d8aed88f16db8ed9" name="a912feae23cedc113d8aed88f16db8ed9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a912feae23cedc113d8aed88f16db8ed9">&#9670;&#160;</a></span>is_degenerate()</h2>
+<a id="a39272fe17a5e25d25fe34280cecb3691" name="a39272fe17a5e25d25fe34280cecb3691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39272fe17a5e25d25fe34280cecb3691">&#9670;&#160;</a></span>is_degenerate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1793,7 +1787,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="memname">bool <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::is_degenerate </td>
           <td>(</td>
-          <td class="paramtype">Real const</td>          <td class="paramname"><span class="paramname"><em>tol</em></span></td><td>)</td>
+          <td class="paramtype">Real const</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -2488,8 +2482,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a185c04aa94c2a5e94f65b12e87c27b2a" name="a185c04aa94c2a5e94f65b12e87c27b2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a185c04aa94c2a5e94f65b12e87c27b2a">&#9670;&#160;</a></span>squared_exterior_distance() <span class="overload">[5/6]</span></h2>
+<a id="a272677adae2b85d99e51704216382cf9" name="a272677adae2b85d99e51704216382cf9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a272677adae2b85d99e51704216382cf9">&#9670;&#160;</a></span>squared_exterior_distance() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2517,7 +2511,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -2539,8 +2533,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="a40aa5a547c307de6e23b97def5789a65" name="a40aa5a547c307de6e23b97def5789a65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40aa5a547c307de6e23b97def5789a65">&#9670;&#160;</a></span>squared_exterior_distance() <span class="overload">[6/6]</span></h2>
+<a id="a142bd0fd8745d6284d0d84528eb43a16" name="a142bd0fd8745d6284d0d84528eb43a16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a142bd0fd8745d6284d0d84528eb43a16">&#9670;&#160;</a></span>squared_exterior_distance() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2558,7 +2552,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -2735,8 +2729,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="ac4a742af267d451162ed4591dedf04c0" name="ac4a742af267d451162ed4591dedf04c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4a742af267d451162ed4591dedf04c0">&#9670;&#160;</a></span>squared_interior_distance() <span class="overload">[5/6]</span></h2>
+<a id="a1e2f77f0b2d374d25b17c70dbfd78fca" name="a1e2f77f0b2d374d25b17c70dbfd78fca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e2f77f0b2d374d25b17c70dbfd78fca">&#9670;&#160;</a></span>squared_interior_distance() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2764,7 +2758,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -2787,8 +2781,8 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 
 </div>
 </div>
-<a id="ad94294722453fe56427d13b3c700800a" name="ad94294722453fe56427d13b3c700800a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad94294722453fe56427d13b3c700800a">&#9670;&#160;</a></span>squared_interior_distance() <span class="overload">[6/6]</span></h2>
+<a id="a7849f201791853d4ab809eb1b0cb38b2" name="a7849f201791853d4ab809eb1b0cb38b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7849f201791853d4ab809eb1b0cb38b2">&#9670;&#160;</a></span>squared_interior_distance() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2806,7 +2800,7 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a4c829dc9c264319f837c63de1a314e58">DUMMY_TOL</a></span>&#160;) const</td>
+          <td class="paramtype">Real</td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::NumTraits&lt;Real&gt;::dummy_precision()</span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -3083,81 +3077,6 @@ template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed
 </div>
 </div>
 <a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
-<a id="a4c829dc9c264319f837c63de1a314e58" name="a4c829dc9c264319f837c63de1a314e58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c829dc9c264319f837c63de1a314e58">&#9670;&#160;</a></span>DUMMY_TOL</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::DUMMY_TOL {<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>*static_cast&lt;Real&gt;(100.0)}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Default tolerance for the scalar type </p>
-
-</div>
-</div>
-<a id="a29a694000a76f0ff8399784d2026624a" name="a29a694000a76f0ff8399784d2026624a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29a694000a76f0ff8399784d2026624a">&#9670;&#160;</a></span>EPS</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::EPS {std::numeric_limits&lt;Real&gt;::epsilon()}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Machine epsilon for the scalar type. </p>
-
-</div>
-</div>
-<a id="a0d01831740cbe5f65cf18568a77b4c66" name="a0d01831740cbe5f65cf18568a77b4c66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d01831740cbe5f65cf18568a77b4c66">&#9670;&#160;</a></span>INF</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Real, <a class="el" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> N&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Real <a class="el" href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a>&lt; Real, N &gt;::INF {1.0/<a class="el" href="#a29a694000a76f0ff8399784d2026624a">EPS</a>}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Infinity value for the scalar type. </p>
-
-</div>
-</div>
 <a id="a0cd1c3186ed4cf1daefdaca118e935e9" name="a0cd1c3186ed4cf1daefdaca118e935e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0cd1c3186ed4cf1daefdaca118e935e9">&#9670;&#160;</a></span>m_max</h2>
 

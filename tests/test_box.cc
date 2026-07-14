@@ -1,16 +1,16 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
- * Copyright (c) 2025, Davide Stocco and Enrico Bertolazzi.                                      *
- *                                                                                               *
- * The AABBtree project is distributed under the BSD 2-Clause License.                           *
- *                                                                                               *
- * Davide Stocco                                                               Enrico Bertolazzi *
- * University of Trento                                                     University of Trento *
- * e-mail: davide.stocco@unitn.it                             e-mail: enrico.bertolazzi@unitn.it *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+ * Copyright (c) 2026, Davide Stocco and Enrico Bertolazzi.                  *
+ *                                                                           *
+ * The AABBtree project is distributed under the BSD 2-Clause License.       *
+ *                                                                           *
+ * Davide Stocco Enrico Bertolazzi                                           *
+ * University of Trento University of Trento                                 *
+ * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // C++17 standard libraries
-#include <vector>
 #include <iostream>
+#include <vector>
 
 // AABBtree library
 #include "AABBtree.hh"
@@ -23,12 +23,11 @@
 using namespace AABBtree;
 
 // Catch2 library
+#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators_range.hpp>
-#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 using namespace Catch::Matchers;
-
 
 // Test utilities
 #include "TestUtilities.hh"
@@ -45,20 +44,23 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
   SECTION("Intersection") {
     Box box_1(-1.0, -1.0, 2.0, 2.0);
     Box box_2(-2.0, -2.0, 1.0, 1.0);
-    Box box_3; box_1.intersect(box_2, box_3);
-    #ifdef AABBTREE_ENABLE_PLOTTING
+    Box box_3;
+    box_1.intersect(box_2, box_3);
+#ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim(-3.0, 3.0); P.xlabel("x");
-    P.ylim(-3.0, 3.0); P.ylabel("y");
+    P.xlim(-3.0, 3.0);
+    P.xlabel("x");
+    P.ylim(-3.0, 3.0);
+    P.ylabel("y");
     P.grid(true);
-    P.title( "Intersection" );
-    P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
+    P.title("Intersection");
+    P.plot_box<TestType, 2>(box_1, colors[0], 1.0);
     P.hold(true);
-    P.plot_box<TestType, 2>( box_2, colors[1], 1.0);
-    P.plot_box<TestType, 2>( box_3, colors[2], 2.0);
+    P.plot_box<TestType, 2>(box_2, colors[1], 1.0);
+    P.plot_box<TestType, 2>(box_3, colors[2], 2.0);
     P.hold(false);
     P.show();
-    #endif
+#endif
     REQUIRE(box_3.min().isApprox(Vector(-1.0, -1.0)));
     REQUIRE(box_3.max().isApprox(Vector(1.0, 1.0)));
     REQUIRE(box_1.intersects(box_2));
@@ -73,18 +75,21 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Vector c, f;
     TestType d_int{box.interior_distance(pnt, c)};
     TestType d_ext{box.exterior_distance(pnt, f)};
-    #ifdef AABBTREE_ENABLE_PLOTTING
+#ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim(-3.0, 3.0); P.xlabel("x");
-    P.ylim(-3.0, 3.0); P.ylabel("y");
+    P.xlim(-3.0, 3.0);
+    P.xlabel("x");
+    P.ylim(-3.0, 3.0);
+    P.ylabel("y");
     P.grid(true);
-    P.title( "Point distance" );
-    P.plot_box<TestType, 2>( box, colors[0], 1.0); P.hold(true);
-    P.plot_segment<TestType, 2>( pnt, c, colors[1], 2.0);
-    P.plot_segment<TestType, 2>( pnt, f, colors[2], 2.0);
+    P.title("Point distance");
+    P.plot_box<TestType, 2>(box, colors[0], 1.0);
+    P.hold(true);
+    P.plot_segment<TestType, 2>(pnt, c, colors[1], 2.0);
+    P.plot_segment<TestType, 2>(pnt, f, colors[2], 2.0);
     P.hold(false);
     P.show();
-    #endif
+#endif
     REQUIRE_THAT(d_int, WithinAbs(box.interior_distance(pnt), tol));
     REQUIRE_THAT(d_ext, WithinAbs(box.exterior_distance(pnt), tol));
   }
@@ -94,19 +99,21 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_2(-2.5, 0.5, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.interior_distance(box_2, p_1, p_2)};
-    #ifdef AABBTREE_ENABLE_PLOTTING
+#ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim(-3.0, 3.0); P.xlabel("x");
-    P.ylim(-3.0, 3.0); P.ylabel("y");
+    P.xlim(-3.0, 3.0);
+    P.xlabel("x");
+    P.ylim(-3.0, 3.0);
+    P.ylabel("y");
     P.grid(true);
-    P.title( "Interior distance" );
-    P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
+    P.title("Interior distance");
+    P.plot_box<TestType, 2>(box_1, colors[0], 1.0);
     P.hold(true);
-    P.plot_box<TestType, 2>( box_2, colors[1], 1.0);
-    P.plot_segment<TestType, 2>( p_1, p_2, colors[2], 2.0);
+    P.plot_box<TestType, 2>(box_2, colors[1], 1.0);
+    P.plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0);
     P.hold(false);
     P.show();
-    #endif
+#endif
     REQUIRE_THAT(d, WithinAbs(box_1.interior_distance(box_2), tol));
   }
 
@@ -115,19 +122,21 @@ TEMPLATE_TEST_CASE("Box", "[template]", float, double) {
     Box box_2(0.0, 0.0, 2.0, 2.0);
     Vector p_1, p_2;
     TestType d{box_1.exterior_distance(box_2, p_1, p_2)};
-    #ifdef AABBTREE_ENABLE_PLOTTING
+#ifdef AABBTREE_ENABLE_PLOTTING
     Plot2D P;
-    P.xlim(-3.0, 3.0); P.xlabel("x");
-    P.ylim(-3.0, 3.0); P.ylabel("y");
+    P.xlim(-3.0, 3.0);
+    P.xlabel("x");
+    P.ylim(-3.0, 3.0);
+    P.ylabel("y");
     P.grid(true);
-    P.title( "Exterior distance" );
-    P.plot_box<TestType, 2>( box_1, colors[0], 1.0);
+    P.title("Exterior distance");
+    P.plot_box<TestType, 2>(box_1, colors[0], 1.0);
     P.hold(true);
-    P.plot_box<TestType, 2>( box_2, colors[1], 1.0);
-    P.plot_segment<TestType, 2>( p_1, p_2, colors[2], 2.0);
+    P.plot_box<TestType, 2>(box_2, colors[1], 1.0);
+    P.plot_segment<TestType, 2>(p_1, p_2, colors[2], 2.0);
     P.hold(false);
     P.show();
-    #endif
+#endif
     REQUIRE_THAT(d, WithinAbs(box_1.exterior_distance(box_2), tol));
     REQUIRE(p_1.isApprox(Vector(-2.0, -2.0)));
     REQUIRE(p_2.isApprox(Vector(2.0, 2.0)));

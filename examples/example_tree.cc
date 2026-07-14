@@ -1,18 +1,22 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
- * Copyright (c) 2025, Davide Stocco and Enrico Bertolazzi.                                      *
- *                                                                                               *
- * The AABBtree project is distributed under the BSD 2-Clause License.                           *
- *                                                                                               *
- * Davide Stocco                                                               Enrico Bertolazzi *
- * University of Trento                                                     University of Trento *
- * e-mail: davide.stocco@unitn.it                             e-mail: enrico.bertolazzi@unitn.it *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * * * * * * *\
+ * Copyright (c) 2025, Davide Stocco and Enrico Bertolazzi. *
+ * *
+ * The AABBtree project is distributed under the BSD 2-Clause License. *
+ * *
+ * Davide Stocco Enrico Bertolazzi *
+ * University of Trento University of Trento *
+ * e-mail: davide.stocco@unitn.it                             e-mail:
+enrico.bertolazzi@unitn.it *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * * * * * * */
 
-// A simple example of how to use the AABBtree library's Tree class: for more details, see the documentation.
+// A simple example of how to use the AABBtree library's Tree class: for more
+// details, see the documentation.
 
-#include <vector>
-#include <iostream>
 #include "AABBtree.hh"
+#include <iostream>
+#include <vector>
 using namespace AABBtree;
 
 int main() {
@@ -41,7 +45,7 @@ int main() {
 
   // Create a list of boxes to build the tree
   std::unique_ptr<AABBtree::BoxUniquePtrList<Real, 2>> boxes =
-    std::make_unique<AABBtree::BoxUniquePtrList<Real, 2>>();
+      std::make_unique<AABBtree::BoxUniquePtrList<Real, 2>>();
 
   boxes->push_back(std::make_unique<Box>(box1));
   boxes->push_back(std::make_unique<Box>(box2));
@@ -56,7 +60,7 @@ int main() {
   IndexSet candidates;
   if (tree.intersect(ray, candidates)) {
     std::cout << "Ray intersects with the following boxes:\n";
-    for (const auto& idx : candidates) {
+    for (const auto &idx : candidates) {
       std::cout << "Box " << idx << '\n';
     }
   } else {
@@ -67,7 +71,7 @@ int main() {
   candidates.clear();
   if (tree.self_intersect(candidates)) {
     std::cout << "Self-intersection detected between the following boxes:\n";
-    for (const auto& idx : candidates) {
+    for (const auto &idx : candidates) {
       std::cout << "Box " << idx << '\n';
     }
   } else {
@@ -78,12 +82,13 @@ int main() {
   Point point(2.0, 1.0);
   IndexSet candidates_distance;
   Real min_distance{tree.distance(point, candidates_distance)};
-  std::cout << "Minimum distance between the tree and the point: " << min_distance << '\n';
+  std::cout << "Minimum distance between the tree and the point: "
+            << min_distance << '\n';
 
   // Let us build a tree with a single box
   Box box4(Point(0.0, 0.0), Point(1.0, 1.0));
   std::unique_ptr<AABBtree::BoxUniquePtrList<Real, 2>> boxes_single =
-    std::make_unique<AABBtree::BoxUniquePtrList<Real, 2>>();
+      std::make_unique<AABBtree::BoxUniquePtrList<Real, 2>>();
   boxes_single->push_back(std::make_unique<Box>(box4));
   AABBtree::Tree<Real, 2> tree_single;
   tree_single.build(std::move(boxes_single));
@@ -93,8 +98,8 @@ int main() {
   IndexMap candidates_map;
   if (tree.intersect(tree_single, candidates_map)) {
     std::cout << "Intersection detected between the following boxes:\n";
-    for (const auto& [key, values] : candidates_map) {
-      for (const auto& val : values) {
+    for (const auto &[key, values] : candidates_map) {
+      for (const auto &val : values) {
         std::cout << "Box " << key << " and Box " << val << '\n';
       }
     }
