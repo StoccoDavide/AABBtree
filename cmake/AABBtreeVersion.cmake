@@ -54,7 +54,7 @@ function(get_version_from_git)
   endif()
 
   # Final fallback: Use a default version
-  set(AABBTREE_VERSION "0.0.0" CACHE INTERNAL "")
+  set(AABBTREE_VERSION "0.0.1" CACHE INTERNAL "")
   set(AABBTREE_VERSION_PRERELEASE "" CACHE INTERNAL "")
 endfunction()
 

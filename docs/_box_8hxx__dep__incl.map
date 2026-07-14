@@ -1,13 +1,13 @@
 <map id="include/AABBtree/Box.hxx" name="include/AABBtree/Box.hxx">
 <area shape="rect" id="Node000001" title=" " alt="" coords="22,5,198,31"/>
 <area shape="rect" id="Node000002" href="$_a_a_b_btree_8hh.html" title=" " alt="" coords="39,153,181,178"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="59,40,32,57,12,80,8,91,9,101,24,121,48,137,76,150,73,155,45,142,20,125,5,103,3,91,8,78,29,53,56,36"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="56,40,32,57,12,80,8,91,9,101,24,121,48,137,77,151,72,153,45,142,20,125,5,103,3,91,8,78,29,53,59,36"/>
 <area shape="rect" id="Node000003" href="$_ray_8hxx.html" title=" " alt="" coords="22,79,197,105"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="104,46,106,78,100,79,98,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="102,44,105,79,100,78,100,48"/>
 <area shape="rect" id="Node000004" href="$_tree_8hxx.html" title=" " alt="" coords="221,79,401,105"/>
-<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="159,34,278,76,276,81,157,39"/>
-<area shape="poly" id="edge4_Node000003_Node000001" title=" " alt="" coords="116,64,114,31,119,31,121,63"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="112,120,112,152,107,152,107,120"/>
-<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="264,113,145,155,143,150,262,108"/>
-<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="386,75,414,79,424,84,427,92,422,101,409,106,371,108,371,103,408,101,419,97,422,92,420,88,413,84,385,81"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="159,34,279,77,275,80,158,39"/>
+<area shape="poly" id="edge4_Node000003_Node000001" title=" " alt="" coords="116,63,116,34,118,29,121,64"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="112,118,112,153,107,151,108,122"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="265,111,145,155,143,150,260,110"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="386,75,414,79,424,84,427,92,422,101,409,106,371,108,370,103,408,101,419,97,422,92,420,88,413,84,386,81"/>
 </map>
