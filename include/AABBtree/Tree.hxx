@@ -14,9 +14,43 @@
 #define INCLUDE_AABBTREE_TREE_HXX
 
 #include "AABBtree/Box.hxx"
-#include "AABBtree/Tree.hxx"
 
 namespace AABBtree {
+
+namespace detail {
+
+/**
+ * Access an object stored either by value or through a (smart) pointer.
+ */
+template <typename T> T const &as_ref(T const &x) { return x; }
+template <typename T> T const &as_ref(T const *x) { return *x; }
+template <typename T> T const &as_ref(T *x) { return *x; }
+template <typename T> T const &as_ref(std::unique_ptr<T> const &x) {
+  return *x;
+}
+template <typename T> T const &as_ref(std::shared_ptr<T> const &x) {
+  return *x;
+}
+
+/**
+ * Integer counter that can be safely written by concurrent readers of a const
+ * tree. Relaxed atomics: the value is the one written by the last query.
+ */
+class RelaxedCounter {
+  std::atomic<Integer> m_value{0};
+
+public:
+  RelaxedCounter() = default;
+  RelaxedCounter(RelaxedCounter const &other) : m_value(other.load()) {}
+  RelaxedCounter &operator=(RelaxedCounter const &other) {
+    this->store(other.load());
+    return *this;
+  }
+  Integer load() const { return m_value.load(std::memory_order_relaxed); }
+  void store(Integer const v) { m_value.store(v, std::memory_order_relaxed); }
+};
+
+} // namespace detail
 
 /**
  * \brief A class representing a \em non-recursive axis-aligned bounding box
@@ -29,6 +63,17 @@ namespace AABBtree {
  * Tree class is templated on the type of the real numbers and the dimensions of
  * the bounding boxes and is based, as the name suggests, on a novel
  * non-recursive algorithm.
+ *
+ * \note Thread safety: once the tree is built, all the \c const methods can be
+ * called concurrently from multiple threads. The query statistics returned by
+ * \c stats() refer to the last completed query (or batch of queries).
+ * \note With OpenMP support (\c _OPENMP defined) the \c *_batch methods and
+ * the tree-tree queries (\c intersect(Tree), \c self_intersect and
+ * \c distance(Tree)) run in parallel. The number of threads is set with
+ * \c num_threads (1 disables parallelism). Tree-tree queries run serially
+ * when called from inside a parallel region or when the trees have fewer than
+ * \c AABBTREE_PARALLEL_MIN_NODES nodes in total. Results do not depend on the
+ * number of threads.
  * \tparam Real Type of the scalar coefficients
  * \tparam N Dimension of the ambient space.
  */
@@ -36,8 +81,9 @@ template <typename Real, Integer N> class Tree {
 public:
   static_assert(std::is_floating_point<Real>::value,
                 "Tree Real type must be a floating-point type.");
-  static_assert(std::is_integral<Integer>::value,
-                "Tree dimension type must be an integer type.");
+  static_assert(std::is_integral<Integer>::value &&
+                    std::is_signed<Integer>::value,
+                "Tree integer type must be a signed integer type.");
   static_assert(N > 0, "Tree dimension must be positive.");
 
   /**
@@ -47,8 +93,8 @@ public:
     // Build statistics
     Integer objects{0};    /**< Number of objects in the tree. */
     Integer nodes{0};      /**< Total number of nodes in the tree. */
-    Integer leafs{0};      /**< Number of leaf nodes (nodes with objects). */
-    Integer long_boxes{0}; /**< Number of long boxes. */
+    Integer leafs{0};      /**< Number of leaf nodes. */
+    Integer long_boxes{0}; /**< Number of long boxes (in non-leaf nodes). */
     Integer depth{0};      /**< Maximum depth of the tree. */
     Integer left_nodes{0}; /**< Number of nodes in left subtree. */
     Integer left_leafs{0}; /**< Number of leafs in left subtree. */
@@ -58,7 +104,7 @@ public:
     Integer right_leafs{0};      /**< Number of leafs in right subtree. */
     Integer right_long_boxes{0}; /**< Number of long boxes in right subtree. */
     Integer right_depth{0};      /**< Depth of right subtree. */
-    Integer dump_counter{0};     /**< Number of tree rebuilds (dumps). */
+    Integer dump_counter{0};     /**< Number of dumpings in the last build. */
     Real balance_ratio{0.0};     /**< Size ratio of left/right subtrees. */
     Real depth_ratio{0.0};       /**< Depth ratio of left/right subtree. */
 
@@ -115,10 +161,7 @@ private:
   using BoxUniquePtrList = AABBtree::BoxUniquePtrList<Real, N>;
   using Vector = AABBtree::Vector<Real, N>;
   using Point = AABBtree::Point<Real, N>;
-  using QueueItem = std::tuple<Integer, Integer, Real>;
-  using PriorityQueue =
-      std::priority_queue<QueueItem, std::vector<QueueItem>,
-                          std::function<bool(QueueItem, QueueItem)>>;
+  using HeapItem = std::pair<Real, Integer>;
 
   /**
    * Structure representing a node of the AABB tree.
@@ -134,6 +177,45 @@ private:
     Integer child_r;     /**< Right child of the subtree. */
   };
 
+  /**
+   * Counters collected during a single query (or a batch of queries).
+   */
+  struct QueryCounters {
+    Integer node{0}; /**< Node checks. */
+    Integer lng{0};  /**< Long boxes checks. */
+    Integer objs{0}; /**< Object checks. */
+    QueryCounters &operator+=(QueryCounters const &o) {
+      node += o.node;
+      lng += o.lng;
+      objs += o.objs;
+      return *this;
+    }
+  };
+
+  /**
+   * Per-thread scratch memory used by the queries.
+   */
+  struct Workspace {
+    IndexList stack;              /**< Traversal stack. */
+    std::vector<HeapItem> bstack; /**< Traversal stack (lower bound, node). */
+    std::vector<HeapItem> heap;   /**< Heap for the closest-n queries. */
+    QueryCounters counters;       /**< Query counters. */
+    Workspace() {
+      stack.reserve(128);
+      bstack.reserve(128);
+    }
+  };
+
+  /**
+   * Default distance function: interior distance between an object and a box.
+   */
+  struct InteriorDistance {
+    template <typename Object>
+    Real operator()(Object const &o, Box const &b) const {
+      return b.interior_distance(o);
+    }
+  };
+
   // Tree hierarchy
   std::unique_ptr<BoxUniquePtrList> m_boxes_ptr{
       nullptr}; /**< Vector of unique pointers to the bounding boxes. */
@@ -145,16 +227,50 @@ private:
   Integer m_max_dumpings{N};       /**< Maximum number of dimension dumpings. */
   Integer m_max_nodal_objects{50}; /**< Maximum number of objects per node. */
   Real m_separation_ratio_tolerance{0.1}; /**< Bounding boxes separation. */
+  Integer m_num_threads{0}; /**< Threads for batch queries (0 = default). */
 
   // Statistics
-  mutable Integer m_node_check_counter{0}; /**< Nodes collision checks. */
-  mutable Integer m_long_check_counter{0}; /**< Long boxes collision checks. */
-  mutable Integer m_objs_check_counter{0}; /**< Objects collision checks. */
-  mutable Integer m_dump_counter{0};       /**< Number of dumpings. */
+  mutable detail::RelaxedCounter m_node_check_counter; /**< Nodes checks. */
+  mutable detail::RelaxedCounter m_long_check_counter; /**< Long box checks. */
+  mutable detail::RelaxedCounter m_objs_check_counter; /**< Object checks. */
+  Integer m_dump_counter{0}; /**< Number of dumpings in the last build. */
 
-  // Stack for non-recursive tree building and query
-  mutable IndexList m_stack;     /**< Tree stack. */
-  mutable PriorityQueue m_queue; /**< Queue for tree traversal. */
+  /**
+   * Encode a node id to mark that only its long boxes must be considered.
+   * The encoding is an involution: 0 --> -1, 1 --> -2, -1 --> 0, ...
+   */
+  static constexpr Integer negate(Integer const id) { return -1 - id; }
+
+  /**
+   * Push the children of a node on a (lower bound, node) stack so that the
+   * nearest child is visited first. Children farther than the bound are not
+   * pushed at all.
+   */
+  template <typename Dist>
+  void push_children_nearest_first(std::vector<HeapItem> &stack,
+                                   Node const &node, Real const bound,
+                                   QueryCounters &c, Dist &&dist) const {
+    c.node += 2;
+    Real const d_l{dist(m_tree_structure[node.child_l].box)};
+    Real const d_r{dist(m_tree_structure[node.child_r].box)};
+    // The last pushed child is popped (visited) first
+    if (d_l <= d_r) {
+      if (d_r <= bound) stack.emplace_back(d_r, node.child_r);
+      if (d_l <= bound) stack.emplace_back(d_l, node.child_l);
+    } else {
+      if (d_l <= bound) stack.emplace_back(d_l, node.child_l);
+      if (d_r <= bound) stack.emplace_back(d_r, node.child_r);
+    }
+  }
+
+  /**
+   * Store the counters of the last query.
+   */
+  void store_counters(QueryCounters const &c) const {
+    m_node_check_counter.store(c.node);
+    m_long_check_counter.store(c.lng);
+    m_objs_check_counter.store(c.objs);
+  }
 
 public:
   /**
@@ -223,7 +339,7 @@ public:
   void separation_ratio_tolerance(Real const ratio) {
     constexpr char CMD[]{"AABBtree::Tree::separation_ratio_tolerance(...): "};
     AABBTREE_ASSERT(ratio > 0.0 && ratio < 1.0,
-                    CMD << "input must be in the range [0, 1].");
+                    CMD << "input must be in the open range (0, 1).");
     m_separation_ratio_tolerance = ratio;
   }
 
@@ -234,6 +350,24 @@ public:
   Real separation_ratio_tolerance() const {
     return m_separation_ratio_tolerance;
   }
+
+  /**
+   * Set the number of threads used by the \c *_batch queries.
+   * \param[in] num_threads Number of threads (0 means the OpenMP default).
+   * \note Without OpenMP support the batch queries always run serially.
+   */
+  void num_threads(Integer const num_threads) {
+    constexpr char CMD[]{"AABBtree::Tree::num_threads(...): "};
+    AABBTREE_ASSERT(num_threads >= 0,
+                    CMD << "input must be a non-negative integer.");
+    m_num_threads = num_threads;
+  }
+
+  /**
+   * Get the number of threads used by the \c *_batch queries.
+   * \return The number of threads (0 means the OpenMP default).
+   */
+  Integer num_threads() const { return m_num_threads; }
 
   /**
    * Get the tree structure.
@@ -266,7 +400,6 @@ public:
   void clear() {
     m_tree_structure.clear();
     m_tree_boxes_map.clear();
-    m_stack.clear();
   }
 
   /**
@@ -280,8 +413,9 @@ public:
   }
 
   /**
-   * Build the tree given the bounding boxes.
-   * \warning This method requires the
+   * Build the tree from the bounding boxes already owned by the tree.
+   * \warning This method requires the bounding boxes to be already set (see
+   * \c build(std::unique_ptr<BoxUniquePtrList>)).
    */
   void build() {
 
@@ -294,8 +428,15 @@ public:
     BoxUniquePtrList &boxes{*m_boxes_ptr};
 
     // Clear tree structure
-    Integer num_boxes{static_cast<Integer>(boxes.size())};
+    Integer const num_boxes{static_cast<Integer>(boxes.size())};
     m_tree_structure.clear();
+    m_tree_boxes_map.clear();
+    m_dump_counter = 0;
+
+    // An empty set of boxes produces an empty tree
+    if (num_boxes == 0) {
+      return;
+    }
     m_tree_structure.reserve(2 * num_boxes + 1);
 
     // Setup the root node
@@ -308,27 +449,28 @@ public:
     root.box_tot_num = num_boxes;
 
     // Setup the boxes map and compute the root box
-    Integer depth{static_cast<Integer>(std::ceil(std::log2(num_boxes)))};
     root.box.set_empty();
-    m_tree_boxes_map.reserve(2 * depth);
+    m_tree_boxes_map.reserve(num_boxes);
     for (BoxUniquePtr const &box : boxes) {
       root.box.extend(*box);
       m_tree_boxes_map.emplace_back(root.box_num++);
     }
+    // The root is a leaf until it is split: all its boxes are "long" boxes
+    root.box_long = root.box;
     m_tree_structure.emplace_back(root);
 
     // Setup the stack
-    m_stack.clear();
-    m_stack.reserve(2 * num_boxes + 1);
-    m_stack.emplace_back(0);
+    IndexList stack;
+    stack.reserve(128);
+    stack.emplace_back(0);
 
     // Main loop that divide the nodes iteratively until all constraints
     // satisfied
-    IndexList m_map(m_tree_boxes_map.size());
-    while (!m_stack.empty()) {
+    IndexList best_map(m_tree_boxes_map.size());
+    while (!stack.empty()) {
       // Pop the node from stack
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
+      Integer const id{stack.back()};
+      stack.pop_back();
 
       // Get the node
       Node &node{m_tree_structure[id]};
@@ -359,12 +501,10 @@ public:
         separation_line = node.box.baricenter(axis);
         separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
 
-        // Separate short and long boxes and compute short boxes baricenter
+        // Separate short and long boxes
         n_long = n_left = n_right = 0;
         id_ini = node.box_ptr;
         id_end = node.box_ptr + node.box_num;
-
-        Real baricenter{0.0};
         while (id_ini < id_end) {
           Box const &box_id{*boxes[m_tree_boxes_map[id_ini]]};
           typename Box::Side const side{
@@ -384,9 +524,7 @@ public:
             ++n_long;
             ++id_ini;
           }
-          baricenter += box_id.max()[axis] + box_id.min()[axis];
         }
-        baricenter /= 2.0 * node.box_num;
 
         // Save the first and the best solution found so far
         Integer n_diff{std::abs(n_left - n_right)};
@@ -397,7 +535,7 @@ public:
           n_diff_saved = n_diff;
           axis_saved = axis;
           std::copy_n(m_tree_boxes_map.data() + node.box_ptr, node.box_num,
-                      m_map.data() + node.box_ptr);
+                      best_map.data() + node.box_ptr);
           valid_axis_found = true;
         }
 
@@ -416,7 +554,7 @@ public:
       }
 
       // Use the best solution found
-      std::copy_n(m_map.data() + node.box_ptr, node.box_num,
+      std::copy_n(best_map.data() + node.box_ptr, node.box_num,
                   m_tree_boxes_map.data() + node.box_ptr);
       n_long = n_long_saved;
       axis = axis_saved;
@@ -432,14 +570,13 @@ public:
         typename Box::Side const side{
             box_id.which_side(separation_line, separation_tolerance, axis)};
         switch (side) {
-        case Box::Side::LEFT: // Left boxes are moved to the end
+        case Box::Side::LEFT: // Left boxes stay in place
           ++id_ini;
-          ++n_left; // In right position do nothing
+          ++n_left;
           break;
-        case Box::Side::RIGHT: // Right boxes are moved to the end
+        case Box::Side::RIGHT: // Right boxes are swapped with the last one
           --id_end;
-          ++n_right; // In right position swap the current box with the last
-                     // one
+          ++n_right;
           std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
           break;
         default:
@@ -490,15 +627,24 @@ public:
       }
       node_r.box_long = node_r.box;
 
+      // Push children on stack (before emplacing, as emplacing may invalidate
+      // the reference to the current node)
+      Integer const child_l{node.child_l};
+      Integer const child_r{node.child_r};
+
       // Push nodes on tree structure
       m_tree_structure.emplace_back(node_l);
       m_tree_structure.emplace_back(node_r);
 
       // Push children on stack
-      m_stack.emplace_back(node.child_l);
-      m_stack.emplace_back(node.child_r);
+      stack.emplace_back(child_l);
+      stack.emplace_back(child_r);
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // Single queries
+  // ---------------------------------------------------------------------------
 
   /**
    * Intersect the tree with an object.
@@ -511,64 +657,9 @@ public:
    */
   template <typename Object>
   bool intersect(Object const &obj, IndexSet &candidates) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return if the tree is empty
-    if (this->is_empty()) {
-      return false;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes{*m_boxes_ptr};
-
-    // Setup the stack
-    m_stack.clear();
-    m_stack.reserve(2 * this->size() + 1);
-    m_stack.emplace_back(0);
-
-    // Main loop that checks the intersection iteratively
-    candidates.clear();
-    while (!m_stack.empty()) {
-
-      // Pop the node from stack
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
-
-      // Get the node
-      Node const &node{m_tree_structure[id]};
-
-      // If the object do not intersects the box, skip the node
-      if (++m_node_check_counter; !node.box.intersects(obj)) {
-        continue;
-      }
-
-      // Intersect the object with the long boxes on the node.
-      // If it is a leaf long boxes are also the nodes of the leaf.
-      if (node.box_num > 0) {
-        if (++m_long_check_counter; node.box_long.intersects(obj)) {
-          Integer const id_ini{node.box_ptr};
-          Integer const id_end{node.box_ptr + node.box_num};
-          for (Integer i{id_ini}; i < id_end; ++i) {
-            Integer const pos{m_tree_boxes_map[i]};
-            if (++m_objs_check_counter; boxes[pos]->intersects(obj))
-              candidates.insert(pos);
-          }
-        }
-      }
-
-      // Push children on the stack if they are not leafs
-      if (node.child_l > 0) {
-        m_stack.emplace_back(node.child_l);
-      }
-      if (node.child_r > 0) {
-        m_stack.emplace_back(node.child_r);
-      }
-    }
-
-    // Return true if the object intersects the tree
+    Workspace ws;
+    this->intersect_impl(obj, candidates, ws);
+    this->store_counters(ws.counters);
     return !candidates.empty();
   }
 
@@ -576,323 +667,42 @@ public:
    * Intersect the tree with another tree.
    * \param[in] tree Tree to intersect with.
    * \param[out] candidates Intersection result (boxes indexes).
-   * \return True if the point intersects the tree, false otherwise.
+   * \return True if the trees intersect, false otherwise.
    */
   bool intersect(Tree const &tree, IndexMap &candidates) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return if the tree is empty
-    if (this->is_empty() || tree.is_empty()) {
-      return false;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes_1{*m_boxes_ptr};
-    BoxUniquePtrList const &boxes_2{*tree.m_boxes_ptr};
-
-    // using Tuple = std::tuple<Integer, Integer, Integer>; // (box_num,
-    // id_s1, id_s2) auto cmp = [](const Tuple & a, const Tuple & b) {return
-    // std::get<0>(a) > std::get<0>(b);}; std::priority_queue<Tuple,
-    // std::vector<Tuple>, decltype(cmp)> queue(cmp);
-    //  Setup the stack
-    m_stack.clear();
-    m_stack.reserve(this->size() + tree.size() + 2);
-
-    // Negate the id of the node to distinguish the tree: if 0 --> -1, 1 -->
-    // -2, 2 --> -3
-    auto negate = [](Integer const id) { return -1 - id; };
-
-    // Compute the priority of the nodes based on the number of boxes
-    auto stack_emplace_back = [this](Integer const node_1,
-                                     Integer const node_2) {
-      // Integer const id_1{node_1 < 0 ? negate(node_1) : node_1};
-      // Integer const id_2{node_2 < 0 ? negate(node_2) : node_2};
-      // queue.emplace(
-      //   std::abs(m_tree_structure[id_1].box_tot_num -
-      //   tree.m_tree_structure[id_2].box_tot_num)*
-      //   std::min(m_tree_structure[id_1].box_num,
-      //   tree.m_tree_structure[id_2].box_num), node_1, node_2);
-      m_stack.emplace_back(node_1);
-      m_stack.emplace_back(node_2);
-    };
-    stack_emplace_back(0, 0);
-
-    // Main loop that checks the intersection iteratively
-    candidates.clear();
-    while (!m_stack.empty()) {
-      // while (!queue.empty()) {
-
-      // Pop the node from stack (reversed order)
-      Integer const id_s2{m_stack.back()};
-      m_stack.pop_back();
-      Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
-      Integer const id_s1{m_stack.back()};
-      m_stack.pop_back();
-      Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
-      // Tuple top = queue.top(); queue.pop();
-      // Integer const id_s1{std::get<1>(top)};
-      // Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
-      // Integer const id_s2{std::get<2>(top)};
-      // Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
-
-      // Get the node
-      Node const &node_1{m_tree_structure[id_1]};
-      Node const &node_2{tree.m_tree_structure[id_2]};
-
-      // If the boxes are not intersecting, skip the nodes
-      if (++m_node_check_counter; !node_1.box.intersects(node_2.box)) {
-        continue;
-      }
-
-      // Intersect the long boxes on the nodes: if both are leaf then
-      // intersect the corresponding boxes
-      if (node_1.box_num > 0 && node_2.box_num > 0) {
-        if (++m_long_check_counter;
-            node_1.box_long.intersects(node_2.box_long)) {
-          Integer const id_1_ini{node_1.box_ptr};
-          Integer const id_1_end{node_1.box_ptr + node_1.box_num};
-          Integer const id_2_ini{node_2.box_ptr};
-          Integer const id_2_end{node_2.box_ptr + node_2.box_num};
-          if (node_1.box_num < node_2.box_num) {
-            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-              Integer const pos_1{m_tree_boxes_map[i]};
-              if (++m_objs_check_counter;
-                  !boxes_1[pos_1]->intersects(node_2.box_long)) {
-                continue;
-              }
-              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-                Integer const pos_2{tree.m_tree_boxes_map[j]};
-                if (++m_objs_check_counter;
-                    boxes_1[pos_1]->intersects(*boxes_2[pos_2]))
-                  candidates[pos_1].insert(pos_2);
-              }
-            }
-          } else {
-            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-              Integer const pos_2{tree.m_tree_boxes_map[j]};
-              if (++m_objs_check_counter;
-                  !boxes_2[pos_2]->intersects(node_1.box_long)) {
-                continue;
-              }
-              for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-                Integer const pos_1{m_tree_boxes_map[i]};
-                if (++m_objs_check_counter;
-                    boxes_1[pos_1]->intersects(*boxes_2[pos_2]))
-                  candidates[pos_1].insert(pos_2);
-              }
-            }
-          }
-        }
-      }
-
-      // Check if the nodes are leafs
-      bool const leaf_1{node_1.child_l < 0};
-      bool const leaf_2{node_2.child_l < 0};
-      if (leaf_1 && leaf_2) {
-        continue;
-      } // We are done on this branch
-
-      if (leaf_1) {
-        stack_emplace_back(id_1, node_2.child_l);
-        stack_emplace_back(id_1, node_2.child_r);
-      } else if (leaf_2) {
-        stack_emplace_back(node_1.child_l, id_2);
-        stack_emplace_back(node_1.child_r, id_2);
-      } else {
-        if (node_1.box_tot_num >
-            node_2.box_tot_num) { // split first larger tree
-          if (id_s1 >= 0) {
-            stack_emplace_back(node_1.child_l, id_s2);
-            stack_emplace_back(node_1.child_r, id_s2);
-            if (node_1.box_num > 0)
-              stack_emplace_back(negate(id_1), id_2);
-          } else if (id_s2 >= 0) { // and id_s1 < 0
-            stack_emplace_back(id_s1, node_2.child_l);
-            stack_emplace_back(id_s1, node_2.child_r);
-          }
-        } else {
-          if (id_s2 >= 0) {
-            stack_emplace_back(id_s1, node_2.child_l);
-            stack_emplace_back(id_s1, node_2.child_r);
-            if (node_2.box_num > 0)
-              stack_emplace_back(id_1, negate(id_2));
-          } else if (id_s1 >= 0) { // and id_s2 < 2
-            stack_emplace_back(node_1.child_l, id_s2);
-            stack_emplace_back(node_1.child_r, id_s2);
-          }
-        }
-      }
-    }
-
-    // Return true if the trees intersect
+    Workspace ws;
+    this->intersect_tree_impl(tree, candidates, ws, false);
+    this->store_counters(ws.counters);
     return !candidates.empty();
   }
 
   /**
    * Intersect the tree with itself.
-   * \param[out] candidates Intersection result (boxes indexes).
-   * \return True if the point intersects the tree, false otherwise.
+   * \param[out] candidates Intersection result: for each box, the set of the
+   * other boxes it intersects (a box is never reported with itself).
+   * \return True if at least two boxes intersect, false otherwise.
    */
   bool self_intersect(IndexMap &candidates) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return if the tree is empty
-    if (this->is_empty()) {
-      return false;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes{*m_boxes_ptr};
-
-    // using Tuple = std::tuple<Integer, Integer, Integer>; // (box_num,
-    // id_s1, id_s2)
-    m_stack.clear();
-    m_stack.reserve(this->size() + this->size() + 2);
-
-    // Negate the id of the node to distinguish the tree: if 0 --> -1, 1 -->
-    // -2, 2 --> -3
-    auto negate = [](Integer const id) { return -1 - id; };
-
-    // Compute the priority of the nodes based on the number of boxes
-    auto stack_emplace_back = [this](Integer const node_1,
-                                     Integer const node_2) {
-      m_stack.emplace_back(node_1);
-      m_stack.emplace_back(node_2);
-    };
-    stack_emplace_back(0, 0);
-
-    // Main loop that checks the intersection iteratively
-    candidates.clear();
-    while (!m_stack.empty()) {
-
-      // Pop the node from stack (reversed order)
-      Integer const id_s2{m_stack.back()};
-      m_stack.pop_back();
-      Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
-      Integer const id_s1{m_stack.back()};
-      m_stack.pop_back();
-      Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
-
-      // Get the node
-      Node const &node_1{m_tree_structure[id_1]};
-      Node const &node_2{m_tree_structure[id_2]};
-
-      // If the boxes are not intersecting, skip the nodes
-      if (++m_node_check_counter; !node_1.box.intersects(node_2.box)) {
-        continue;
-      }
-
-      // Intersect the long boxes on the nodes: if both are leaf then
-      // intersect the corresponding boxes
-      if (node_1.box_num > 0 && node_2.box_num > 0) {
-        if (++m_long_check_counter;
-            node_1.box_long.intersects(node_2.box_long)) {
-          Integer const id_1_ini{node_1.box_ptr};
-          Integer const id_1_end{node_1.box_ptr + node_1.box_num};
-          Integer const id_2_ini{node_2.box_ptr};
-          Integer const id_2_end{node_2.box_ptr + node_2.box_num};
-          if (node_1.box_num < node_2.box_num) {
-            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-              Integer const pos_1{m_tree_boxes_map[i]};
-              if (++m_objs_check_counter;
-                  !boxes[pos_1]->intersects(node_2.box_long)) {
-                continue;
-              }
-              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-                Integer const pos_2{m_tree_boxes_map[j]};
-                if (pos_1 == pos_2) {
-                  continue;
-                } // Do not intersect with itself
-                if (++m_objs_check_counter;
-                    boxes[pos_1]->intersects(*boxes[pos_2]))
-                  candidates[pos_1].insert(pos_2);
-              }
-            }
-          } else {
-            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-              Integer const pos_2{m_tree_boxes_map[j]};
-              if (++m_objs_check_counter;
-                  !boxes[pos_2]->intersects(node_1.box_long)) {
-                continue;
-              }
-              for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-                Integer const pos_1{m_tree_boxes_map[i]};
-                if (pos_1 == pos_2) {
-                  continue;
-                } // Do not intersect with itself
-                if (++m_objs_check_counter;
-                    boxes[pos_1]->intersects(*boxes[pos_2]))
-                  candidates[pos_1].insert(pos_2);
-              }
-            }
-          }
-        }
-      }
-
-      // Check if the nodes are leafs
-      bool const leaf_1{node_1.child_l < 0};
-      bool const leaf_2{node_2.child_l < 0};
-      if (leaf_1 && leaf_2) {
-        continue;
-      } // We are done on this branch
-
-      if (leaf_1) {
-        stack_emplace_back(id_1, node_2.child_l);
-        stack_emplace_back(id_1, node_2.child_r);
-      } else if (leaf_2) {
-        stack_emplace_back(node_1.child_l, id_2);
-        stack_emplace_back(node_1.child_r, id_2);
-      } else {
-        if (node_1.box_tot_num >
-            node_2.box_tot_num) { // split first larger tree
-          if (id_s1 >= 0) {
-            stack_emplace_back(node_1.child_l, id_s2);
-            stack_emplace_back(node_1.child_r, id_s2);
-            if (node_1.box_num > 0)
-              stack_emplace_back(negate(id_1), id_2);
-          } else if (id_s2 >= 0) { // and id_s1 < 0
-            stack_emplace_back(id_s1, node_2.child_l);
-            stack_emplace_back(id_s1, node_2.child_r);
-          }
-        } else {
-          if (id_s2 >= 0) {
-            stack_emplace_back(id_s1, node_2.child_l);
-            stack_emplace_back(id_s1, node_2.child_r);
-            if (node_2.box_num > 0)
-              stack_emplace_back(id_1, negate(id_2));
-          } else if (id_s1 >= 0) { // and id_s2 < 2
-            stack_emplace_back(node_1.child_l, id_s2);
-            stack_emplace_back(node_1.child_r, id_s2);
-          }
-        }
-      }
-    }
-
-    // Return true if the trees intersect
+    Workspace ws;
+    this->intersect_tree_impl(*this, candidates, ws, true);
+    this->store_counters(ws.counters);
     return !candidates.empty();
   }
 
   /**
    * Self-intersect the tree (i.e., intersect the tree with itself to find all
    * the intersecting boxes).
-   * \param[out] candidates Intersection result (boxes indexes).
-   * \return True if the tree intersects itself, false otherwise.
+   * \param[out] candidates Intersection result: all the boxes that intersect at
+   * least another box.
+   * \return True if at least two boxes intersect, false otherwise.
    */
   bool self_intersect(IndexSet &candidates) const {
     IndexMap candidates_map;
-    bool intersects{this->intersect(*this, candidates_map)};
+    bool const intersects{this->self_intersect(candidates_map)};
     candidates.clear();
-    for (const auto &[key, values] : candidates_map) {
-      for (int value : values) {
-        candidates.emplace(key);
-        candidates.emplace(value);
-      }
+    for (auto const &[key, values] : candidates_map) {
+      candidates.emplace(key);
+      candidates.insert(values.begin(), values.end());
     }
     return intersects;
   }
@@ -901,249 +711,32 @@ public:
    * Compute the minimum distance between an object and the tree.
    * \param[in] obj Object to compute the distance to.
    * \param[out] candidates Minimum distance candidates.
-   * \return The minimum distance between the object and the tree.
+   * \return The minimum distance between the object and the tree, negative if
+   * the tree is empty.
    * \tparam Object Type of the object to compute the distance to.
    * \note Object must have a method \c interior_distance that computes the
    * distance to a box.
    */
   template <typename Object>
   Real distance(Object const &obj, IndexSet &candidates) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return a negative value if the tree is empty
-    if (this->is_empty()) {
-      return -1.0;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes{*m_boxes_ptr};
-
-    // Setup the stack
-    m_stack.clear();
-    m_stack.reserve(2 * this->size() + 1);
-    m_stack.emplace_back(0);
-    m_stack.emplace_back(0);
-
-    // Main loop that checks the intersection iteratively
-    Real distance{std::numeric_limits<Real>::infinity()};
-    candidates.clear();
-    while (!m_stack.empty()) {
-      // Pop the node from stack
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
-
-      // Get the node
-      Node const &node{m_tree_structure[id]};
-
-      // Compute the distance between the object and the bounding box
-      ++m_node_check_counter;
-      Real tmp_distance{node.box.interior_distance(obj)};
-
-      // If the distance is greater than the temporary minimum distance, skip
-      // the node
-      if (tmp_distance > distance) {
-        continue;
-      }
-
-      // Compute the distance between the object and the long boxes on the
-      // node
-      if (node.box_num > 0) {
-        if (++m_node_check_counter;
-            node.box_long.interior_distance(obj) <= distance) {
-          Integer const id_ini{node.box_ptr};
-          Integer const id_end{node.box_ptr + node.box_num};
-          for (Integer i{id_ini}; i < id_end; ++i) {
-            Integer const pos{m_tree_boxes_map[i]};
-            ++m_node_check_counter;
-            tmp_distance = boxes[pos]->interior_distance(obj);
-            if (tmp_distance < distance) {
-              candidates.clear();
-              candidates.insert(pos);
-              distance = tmp_distance;
-            } else if (tmp_distance == distance) {
-              candidates.insert(pos);
-            }
-          }
-        }
-      }
-
-      // Push children on the stack if thay are not leafs
-      if (node.child_l > 0) {
-        m_stack.emplace_back(node.child_l);
-      }
-      if (node.child_r > 0) {
-        m_stack.emplace_back(node.child_r);
-      }
-    }
-
-    // Return the distance between the point and the tree
-    return distance;
+    Workspace ws;
+    Real const d{this->distance_impl(obj, candidates, ws)};
+    this->store_counters(ws.counters);
+    return d;
   }
 
   /**
    * Compute the minimum distance between the current tree and another tree.
    * \param[in] tree Tree to compute the distance to.
    * \param[out] candidates Minimum distance candidates.
-   * \return The minimum distance between the trees.
+   * \return The minimum distance between the trees, negative if one of the
+   * trees is empty.
    */
   Real distance(Tree const &tree, IndexMap &candidates) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return if the tree is empty
-    if (this->is_empty() || tree.is_empty()) {
-      return -1.0;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes_1{*m_boxes_ptr};
-    BoxUniquePtrList const &boxes_2{*tree.m_boxes_ptr};
-
-    // Setup the stack
-    m_stack.clear();
-    m_stack.reserve(this->size() + tree.size() + 2);
-
-    // Negate the id of the node to distinguish the tree: if 0 --> -1, 1 -->
-    // -2, 2 --> -3
-    auto negate = [](Integer const id) { return -1 - id; };
-
-    // Setup the stack emplace function
-    auto stack_emplace_back = [this](Integer const node_1,
-                                     Integer const node_2) {
-      m_stack.emplace_back(node_1);
-      m_stack.emplace_back(node_2);
-    };
-    stack_emplace_back(0, 0);
-
-    // Main loop that checks the intersection iteratively
-    Real distance{std::numeric_limits<Real>::infinity()};
-    candidates.clear();
-    while (!m_stack.empty()) {
-      // Pop the node from stack (reversed order)
-      Integer const id_s2{m_stack.back()};
-      m_stack.pop_back();
-      Integer const id_2{id_s2 >= 0 ? id_s2 : negate(id_s2)};
-      Integer const id_s1{m_stack.back()};
-      m_stack.pop_back();
-      Integer const id_1{id_s1 >= 0 ? id_s1 : negate(id_s1)};
-
-      // Get the node
-      Node const &node_1{m_tree_structure[id_1]};
-      Node const &node_2{tree.m_tree_structure[id_2]};
-
-      // Compute the distance between the bounding boxes
-      ++m_node_check_counter;
-      Real tmp_distance{node_1.box.interior_distance(node_2.box)};
-
-      // If the distance is greater than the temporary minimum distance, skip
-      // the nodes
-      if (tmp_distance > distance) {
-        continue;
-      }
-
-      // Compute the distance between the long boxes on the nodes
-      if (node_1.box_num > 0 && node_2.box_num > 0) {
-        if (++m_node_check_counter;
-            node_1.box_long.interior_distance(node_2.box_long) <= distance) {
-          Integer const id_1_ini{node_1.box_ptr};
-          Integer const id_1_end{node_1.box_ptr + node_1.box_num};
-          Integer const id_2_ini{node_2.box_ptr};
-          Integer const id_2_end{node_2.box_ptr + node_2.box_num};
-          if (node_1.box_num < node_2.box_num) {
-            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-              Integer const pos_1{m_tree_boxes_map[i]};
-              ++m_node_check_counter;
-              tmp_distance = boxes_1[pos_1]->interior_distance(node_2.box_long);
-              if (tmp_distance > distance) {
-                continue;
-              }
-              for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-                Integer const pos_2{tree.m_tree_boxes_map[j]};
-                ++m_node_check_counter;
-                tmp_distance =
-                    boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
-                if (tmp_distance < distance) {
-                  candidates.clear();
-                  candidates[pos_1].insert(pos_2);
-                  distance = tmp_distance;
-                } else if (tmp_distance == distance) {
-                  candidates[pos_1].insert(pos_2);
-                }
-              }
-            }
-          } else {
-            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
-              Integer const pos_2{tree.m_tree_boxes_map[j]};
-              ++m_node_check_counter;
-              tmp_distance = boxes_2[pos_2]->interior_distance(node_1.box_long);
-              if (tmp_distance > distance) {
-                continue;
-              }
-              for (Integer i{id_1_ini}; i < id_1_end; ++i) {
-                Integer const pos_1{m_tree_boxes_map[i]};
-                ++m_node_check_counter;
-                tmp_distance =
-                    boxes_1[pos_1]->interior_distance(*boxes_2[pos_2]);
-                if (tmp_distance < distance) {
-                  candidates.clear();
-                  candidates[pos_1].insert(pos_2);
-                  distance = tmp_distance;
-                } else if (tmp_distance == distance) {
-                  candidates[pos_1].insert(pos_2);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Check if the nodes are leafs
-      bool const leaf_1{node_1.child_l < 0};
-      bool const leaf_2{node_2.child_l < 0};
-      if (leaf_1 && leaf_2) {
-        continue;
-      } // We are done on this branch
-
-      // Push children of both trees on the stack if thay are not leafs
-      if (leaf_1) {
-        stack_emplace_back(id_1, node_2.child_l);
-        stack_emplace_back(id_1, node_2.child_r);
-      } else if (leaf_2) {
-        stack_emplace_back(node_1.child_l, id_2);
-        stack_emplace_back(node_1.child_r, id_2);
-      } else {
-        if (node_1.box_tot_num >
-            node_2.box_tot_num) { // split first larger tree
-          if (id_s1 >= 0) {
-            stack_emplace_back(node_1.child_l, id_s2);
-            stack_emplace_back(node_1.child_r, id_s2);
-            if (node_1.box_num > 0)
-              stack_emplace_back(negate(id_1), id_2);
-          } else if (id_s2 >= 0) { // and id_s1 < 0
-            stack_emplace_back(id_s1, node_2.child_l);
-            stack_emplace_back(id_s1, node_2.child_r);
-          }
-        } else {
-          if (id_s2 >= 0) {
-            stack_emplace_back(id_s1, node_2.child_l);
-            stack_emplace_back(id_s1, node_2.child_r);
-            if (node_2.box_num > 0)
-              stack_emplace_back(id_1, negate(id_2));
-          } else if (id_s1 >= 0) { // and id_s2 < 2
-            stack_emplace_back(node_1.child_l, id_s2);
-            stack_emplace_back(node_1.child_r, id_s2);
-          }
-        }
-      }
-    }
-
-    // Return the distance between the trees
-    return distance;
+    Workspace ws;
+    Real const d{this->distance_tree_impl(tree, candidates, ws)};
+    this->store_counters(ws.counters);
+    return d;
   }
 
   /**
@@ -1154,99 +747,22 @@ public:
    * \param[out] candidates First \f$ n \f$ candidates.
    * \param[in] distance_function Custom distance function (default is the
    * interior distance).
-   * \return The maximum distance between the candidates and the point. The
+   * \return The maximum distance between the candidates and the object. The
    * return value is negative if no candidates are found.
    * \tparam Object Type of the object to compute the distance to.
    * \tparam Function Type of the custom distance function.
+   * \note The distance function must be a lower bound with respect to box
+   * inclusion, i.e. if box \f$ A \f$ contains box \f$ B \f$ then
+   * \f$ d(o, A) \leq d(o, B) \f$. This is used to prune the tree.
    */
-  template <typename Object, typename Function = std::function<
-                                 Real(Object const &, Box const &)>>
-  Real closest(
-      Object const &obj, Integer const n, IndexSet &candidates,
-      Function distance_function = [](Object const &o, Box const &b) {
-        return b.interior_distance(o);
-      }) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return if the tree is empty
-    if (this->is_empty()) {
-      return -1.0;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes{*m_boxes_ptr};
-
-    // Setup the stack
-    m_stack.clear();
-    m_stack.reserve(2 * this->size() + 1);
-    m_stack.emplace_back(0);
-
-    // Candidate vector distance and index
-    using Pair = std::pair<Real, Integer>;
-    auto cmp = [](const Pair &a, const Pair &b) { return a.first < b.first; };
-    std::priority_queue<Pair, std::vector<Pair>, decltype(cmp)> queue(cmp);
-
-    // Main loop that checks the intersection iteratively
-    Real distance{
-        std::numeric_limits<Real>::infinity()}; // Maximum distance in the queue
-    candidates.clear();
-    while (!m_stack.empty()) {
-      // Pop the node from stack
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
-
-      // Get the node
-      Node const &node{m_tree_structure[id]};
-
-      // Compute the distance between the object and the bounding box
-      ++m_node_check_counter;
-      Real tmp_distance{distance_function(obj, node.box)};
-
-      // If the distance is greater than the maximum distance, skip the node
-      if (tmp_distance > distance) {
-        continue;
-      }
-
-      // Compute the distance between the object and the long boxes on the
-      // node
-      if (node.box_num > 0) {
-        Integer const id_ini{node.box_ptr};
-        Integer const id_end{node.box_ptr + node.box_num};
-        for (Integer i{id_ini}; i < id_end; ++i) {
-          Integer const pos{m_tree_boxes_map[i]};
-          ++m_node_check_counter;
-          tmp_distance = distance_function(obj, *boxes[pos]);
-          if (tmp_distance < distance) {
-            if (static_cast<Integer>(queue.size()) < n) {
-              queue.emplace(tmp_distance, pos);
-            } else {
-              queue.pop();
-              queue.emplace(tmp_distance, pos);
-            }
-            distance = queue.top().first;
-          }
-        }
-      }
-
-      // Push children on the stack if thay are not leafs
-      if (node.child_l > 0) {
-        m_stack.emplace_back(node.child_l);
-      }
-      if (node.child_r > 0) {
-        m_stack.emplace_back(node.child_r);
-      }
-    }
-
-    // Extract indices into candidates
-    Real min_distance{queue.empty() ? distance : queue.top().first};
-    while (!queue.empty()) {
-      candidates.insert(queue.top().second);
-      queue.pop();
-    }
-    return min_distance;
+  template <typename Object, typename Function = InteriorDistance>
+  Real closest(Object const &obj, Integer const n, IndexSet &candidates,
+               Function distance_function = Function{}) const {
+    Workspace ws;
+    Real const d{
+        this->closest_impl(obj, n, candidates, distance_function, ws)};
+    this->store_counters(ws.counters);
+    return d;
   }
 
   /**
@@ -1261,78 +777,114 @@ public:
    * otherwise.
    * \tparam Object Type of the object to compute the distance to.
    * \tparam Function Type of the custom distance function.
+   * \note The distance function must be a lower bound with respect to box
+   * inclusion (see \c closest).
    */
-  template <typename Object, typename Function = std::function<
-                                 Real(Object const &, Box const &)>>
-  bool within_distance(
-      Object const &obj, Real const max_distance, IndexSet &candidates,
-      Function distance_function = [](Object const &o, Box const &b) {
-        return b.interior_distance(o);
-      }) const {
-    // Reset statistics
-    m_node_check_counter = 0;
-    m_long_check_counter = 0;
-    m_objs_check_counter = 0;
-
-    // Return if the tree is empty
-    if (this->is_empty()) {
-      return false;
-    }
-
-    // Collect the original object boxes
-    BoxUniquePtrList const &boxes{*m_boxes_ptr};
-
-    // Setup the stack
-    m_stack.clear();
-    m_stack.reserve(2 * this->size() + 1);
-    m_stack.emplace_back(0);
-
-    // Main loop that checks the intersection iteratively
-    candidates.clear();
-    while (!m_stack.empty()) {
-      // Pop the node from stack
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
-
-      // Get the node
-      Node const &node{m_tree_structure[id]};
-
-      // Compute the distance between the object and the bounding box
-      ++m_node_check_counter;
-      Real distance{distance_function(obj, node.box)};
-
-      // If the distance is greater than the maximum distance, skip the node
-      if (distance > max_distance) {
-        continue;
-      }
-
-      // Compute the distance between the object and the long boxes on the
-      // node
-      if (node.box_num > 0) {
-        Integer const id_ini{node.box_ptr};
-        Integer const id_end{node.box_ptr + node.box_num};
-        for (Integer i{id_ini}; i < id_end; ++i) {
-          Integer const pos{m_tree_boxes_map[i]};
-          ++m_node_check_counter;
-          distance = distance_function(obj, *boxes[pos]);
-          if (distance <= max_distance) {
-            candidates.insert(pos);
-          }
-        }
-      }
-
-      // Push children on the stack if thay are not leafs
-      if (node.child_l > 0) {
-        m_stack.emplace_back(node.child_l);
-      }
-      if (node.child_r > 0) {
-        m_stack.emplace_back(node.child_r);
-      }
-    }
-
-    // Return true if at least one candidate is within the given distance
+  template <typename Object, typename Function = InteriorDistance>
+  bool within_distance(Object const &obj, Real const max_distance,
+                       IndexSet &candidates,
+                       Function distance_function = Function{}) const {
+    Workspace ws;
+    this->within_distance_impl(obj, max_distance, candidates,
+                               distance_function, ws);
+    this->store_counters(ws.counters);
     return !candidates.empty();
   }
+
+  // ---------------------------------------------------------------------------
+  // Batch queries (parallel with OpenMP)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Intersect the tree with a batch of objects.
+   * \param[in] objs Random-access container of objects (stored by value or by
+   * pointer/smart pointer).
+   * \param[out] candidates For each object, the intersection result.
+   * \return True if at least one object intersects the tree.
+   * \tparam Container Type of the container of objects.
+   */
+  template <typename Container>
+  bool intersect_batch(Container const &objs,
+                       std::vector<IndexSet> &candidates) const {
+    Integer const n{static_cast<Integer>(objs.size())};
+    candidates.resize(n);
+    this->store_counters(this->parallel_for(n, [&](Integer i, Workspace &ws) {
+      this->intersect_impl(detail::as_ref(objs[i]), candidates[i], ws);
+    }));
+    return std::any_of(candidates.begin(), candidates.end(),
+                       [](IndexSet const &c) { return !c.empty(); });
+  }
+
+  /**
+   * Compute the minimum distance between the tree and a batch of objects.
+   * \param[in] objs Random-access container of objects.
+   * \param[out] distances For each object, the minimum distance.
+   * \param[out] candidates For each object, the minimum distance candidates.
+   * \tparam Container Type of the container of objects.
+   */
+  template <typename Container>
+  void distance_batch(Container const &objs, std::vector<Real> &distances,
+                      std::vector<IndexSet> &candidates) const {
+    Integer const n{static_cast<Integer>(objs.size())};
+    distances.resize(n);
+    candidates.resize(n);
+    this->store_counters(this->parallel_for(n, [&](Integer i, Workspace &ws) {
+      distances[i] =
+          this->distance_impl(detail::as_ref(objs[i]), candidates[i], ws);
+    }));
+  }
+
+  /**
+   * Find the first \f$ n \f$ candidates for a batch of objects.
+   * \param[in] objs Random-access container of objects.
+   * \param[in] n Number of candidates to find for each object.
+   * \param[out] distances For each object, the maximum candidate distance.
+   * \param[out] candidates For each object, the first \f$ n \f$ candidates.
+   * \param[in] distance_function Custom distance function (see \c closest).
+   * \tparam Container Type of the container of objects.
+   * \tparam Function Type of the custom distance function.
+   */
+  template <typename Container, typename Function = InteriorDistance>
+  void closest_batch(Container const &objs, Integer const n,
+                     std::vector<Real> &distances,
+                     std::vector<IndexSet> &candidates,
+                     Function distance_function = Function{}) const {
+    Integer const m{static_cast<Integer>(objs.size())};
+    distances.resize(m);
+    candidates.resize(m);
+    this->store_counters(this->parallel_for(m, [&](Integer i, Workspace &ws) {
+      distances[i] = this->closest_impl(detail::as_ref(objs[i]), n,
+                                        candidates[i], distance_function, ws);
+    }));
+  }
+
+  /**
+   * Find the candidates within a given distance for a batch of objects.
+   * \param[in] objs Random-access container of objects.
+   * \param[in] max_distance Maximum distance to consider.
+   * \param[out] candidates For each object, the candidates within distance.
+   * \param[in] distance_function Custom distance function (see \c closest).
+   * \return True if at least one candidate is found for at least one object.
+   * \tparam Container Type of the container of objects.
+   * \tparam Function Type of the custom distance function.
+   */
+  template <typename Container, typename Function = InteriorDistance>
+  bool within_distance_batch(Container const &objs, Real const max_distance,
+                             std::vector<IndexSet> &candidates,
+                             Function distance_function = Function{}) const {
+    Integer const n{static_cast<Integer>(objs.size())};
+    candidates.resize(n);
+    this->store_counters(this->parallel_for(n, [&](Integer i, Workspace &ws) {
+      this->within_distance_impl(detail::as_ref(objs[i]), max_distance,
+                                 candidates[i], distance_function, ws);
+    }));
+    return std::any_of(candidates.begin(), candidates.end(),
+                       [](IndexSet const &c) { return !c.empty(); });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Tree information
+  // ---------------------------------------------------------------------------
 
   /**
    * Compute the depth of the tree from a given node.
@@ -1341,33 +893,21 @@ public:
    */
   void depth(Integer const i, Integer &d) const {
     d = 0;
-    if (i < 0) {
+    if (i < 0 || i >= this->size()) {
       return;
     }
-    m_stack.clear();
-    m_stack.reserve(2 * this->size() + 1);
-    m_stack.emplace_back(i);
-    std::vector<Integer> depth_stack;
-    depth_stack.reserve(2 * this->size() + 1);
-    depth_stack.emplace_back(0);
-    Integer depth{0};
-    while (!m_stack.empty()) {
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
+    std::vector<std::pair<Integer, Integer>> stack; // (node, depth)
+    stack.reserve(128);
+    stack.emplace_back(i, 0);
+    while (!stack.empty()) {
+      auto const [id, level] = stack.back();
+      stack.pop_back();
       Node const &node{m_tree_structure[id]};
-      depth = static_cast<Integer>(depth_stack.back());
-      depth_stack.pop_back();
-      if (node.child_l == -1) {
-        d = std::max(d, depth);
+      if (node.child_l < 0) {
+        d = std::max(d, level);
       } else {
-        m_stack.emplace_back(node.child_l);
-        depth_stack.emplace_back(depth + 1);
-      }
-      if (node.child_r == -1) {
-        d = std::max(d, depth);
-      } else {
-        m_stack.emplace_back(node.child_r);
-        depth_stack.emplace_back(depth + 1);
+        stack.emplace_back(node.child_l, level + 1);
+        stack.emplace_back(node.child_r, level + 1);
       }
     }
   }
@@ -1378,33 +918,29 @@ public:
    * \param[in] i Index of the node to start the computation from.
    * \param[out] l Number of leafs of the tree from the given node.
    * \param[out] n Number of nodes of the tree from the given node.
-   * \param[out] b Number of long boxes of the tree from the given node.
+   * \param[out] b Number of long boxes (boxes stored in non-leaf nodes) of the
+   * tree from the given node.
    */
   void nodes(Integer const i, Integer &l, Integer &n, Integer &b) const {
     l = n = b = 0;
-    if (i < 0) {
+    if (i < 0 || i >= this->size()) {
       return;
     }
-    m_stack.clear();
-    m_stack.reserve(2 * this->size() + 1);
-    m_stack.emplace_back(i);
-    while (!m_stack.empty()) {
-      Integer const id{m_stack.back()};
-      m_stack.pop_back();
+    IndexList stack;
+    stack.reserve(128);
+    stack.emplace_back(i);
+    while (!stack.empty()) {
+      Integer const id{stack.back()};
+      stack.pop_back();
       Node const &node{m_tree_structure[id]};
-      if (node.child_l == -1) {
-        ++l;
-      } else {
-        b += node.box_num;
-        m_stack.emplace_back(node.child_l);
-      }
-      if (node.child_r == -1) {
-        ++l;
-      } else {
-        b += node.box_num;
-        m_stack.emplace_back(node.child_r);
-      }
       ++n;
+      if (node.child_l < 0) {
+        ++l;
+      } else {
+        b += node.box_num;
+        stack.emplace_back(node.child_l);
+        stack.emplace_back(node.child_r);
+      }
     }
   }
 
@@ -1417,27 +953,33 @@ public:
     stats.reset();
 
     // Compute/copy the build statistics
-    stats.objects = static_cast<Integer>(m_boxes_ptr->size());
-    this->nodes(0, stats.leafs, stats.nodes, stats.long_boxes);
-    this->depth(0, stats.depth);
-    this->nodes(m_tree_structure[0].child_l, stats.left_leafs, stats.left_nodes,
-                stats.left_long_boxes);
-    this->depth(m_tree_structure[0].child_l, stats.left_depth);
-    this->nodes(m_tree_structure[0].child_r, stats.right_leafs,
-                stats.right_nodes, stats.right_long_boxes);
-    this->depth(m_tree_structure[0].child_r, stats.right_depth);
+    stats.objects =
+        m_boxes_ptr ? static_cast<Integer>(m_boxes_ptr->size()) : 0;
     stats.dump_counter = m_dump_counter;
-    stats.balance_ratio = static_cast<Real>(stats.left_leafs) /
-                          static_cast<Real>(stats.right_leafs);
-    stats.depth_ratio = static_cast<Real>(stats.left_depth) /
-                        static_cast<Real>(stats.right_depth);
+    if (!this->is_empty()) {
+      Node const &root{m_tree_structure[0]};
+      this->nodes(0, stats.leafs, stats.nodes, stats.long_boxes);
+      this->depth(0, stats.depth);
+      this->nodes(root.child_l, stats.left_leafs, stats.left_nodes,
+                  stats.left_long_boxes);
+      this->depth(root.child_l, stats.left_depth);
+      this->nodes(root.child_r, stats.right_leafs, stats.right_nodes,
+                  stats.right_long_boxes);
+      this->depth(root.child_r, stats.right_depth);
+      auto ratio = [](Integer a, Integer b) -> Real {
+        return b != 0 ? static_cast<Real>(a) / static_cast<Real>(b)
+                      : static_cast<Real>(0.0);
+      };
+      stats.balance_ratio = ratio(stats.left_leafs, stats.right_leafs);
+      stats.depth_ratio = ratio(stats.left_depth, stats.right_depth);
+    }
 
     // Copy the check counter
-    stats.check_counter =
-        m_node_check_counter + m_long_check_counter + m_objs_check_counter;
-    stats.node_check_counter = m_node_check_counter;
-    stats.long_check_counter = m_long_check_counter;
-    stats.objs_check_counter = m_objs_check_counter;
+    stats.node_check_counter = m_node_check_counter.load();
+    stats.long_check_counter = m_long_check_counter.load();
+    stats.objs_check_counter = m_objs_check_counter.load();
+    stats.check_counter = stats.node_check_counter + stats.long_check_counter +
+                          stats.objs_check_counter;
   }
 
   /**
@@ -1450,6 +992,694 @@ public:
     this->stats(stats);
     // Print the tree info
     stats.print(os);
+  }
+
+private:
+  // ---------------------------------------------------------------------------
+  // Parallel driver
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Run \c body(i, workspace) for \c i in \f$ [0, n) \f$, in parallel when
+   * OpenMP is available. Each thread owns its workspace. The query counters of
+   * all the threads are summed and stored as the statistics of the batch.
+   * Exceptions thrown by \c body are rethrown on the calling thread.
+   */
+  template <typename Body>
+  QueryCounters parallel_for(Integer const n, Body &&body) const {
+    QueryCounters total;
+#ifdef _OPENMP
+    std::exception_ptr error{nullptr};
+    std::atomic<bool> failed{false};
+    int const num_threads{this->openmp_threads()};
+#pragma omp parallel num_threads(num_threads) if (n > 1 && num_threads > 1)
+    {
+      Workspace ws;
+#pragma omp for schedule(dynamic, 8) nowait
+      for (Integer i = 0; i < n; ++i) {
+        if (failed.load(std::memory_order_relaxed)) {
+          continue;
+        }
+        try {
+          body(i, ws);
+        } catch (...) {
+#pragma omp critical(aabbtree_parallel_for_error)
+          {
+            if (!error) {
+              error = std::current_exception();
+            }
+          }
+          failed.store(true, std::memory_order_relaxed);
+        }
+      }
+#pragma omp critical(aabbtree_parallel_for_counters)
+      total += ws.counters;
+    }
+    if (error) {
+      std::rethrow_exception(error);
+    }
+#else
+    Workspace ws;
+    for (Integer i{0}; i < n; ++i) {
+      body(i, ws);
+    }
+    total = ws.counters;
+#endif
+    return total;
+  }
+
+#ifdef _OPENMP
+  /**
+   * Number of OpenMP threads to use.
+   */
+  int openmp_threads() const {
+    return m_num_threads > 0 ? static_cast<int>(m_num_threads)
+                             : omp_get_max_threads();
+  }
+#endif
+
+  /**
+   * Merge the index map \c src into \c dst (\c src is left in a valid but
+   * unspecified state). Nodes are moved, not copied.
+   */
+  static void merge_index_maps(IndexMap &dst, IndexMap &src) {
+    dst.merge(src);
+    for (auto &[key, values] : src) { // keys already present in dst
+      dst[key].merge(values);
+    }
+  }
+
+  /**
+   * Traverse pairs of nodes of this tree and of another tree, starting from the
+   * pair of roots. \c step(id_s1, id_s2, result, workspace, stack) processes a
+   * pair and pushes the next pairs on the stack.
+   *
+   * With OpenMP the traversal is first expanded breadth-first until enough
+   * independent pairs are available, then the pairs are processed in parallel,
+   * each one with its own partial result. Partial results are merged in a
+   * fixed order with \c merge(dst, src), so the result is deterministic.
+   */
+  template <typename Result, typename Step, typename Merge>
+  void dual_traversal(Tree const &tree, Result &result, Workspace &ws,
+                      Step &&step, Merge &&merge) const {
+    IndexList &stack{ws.stack};
+    stack.clear();
+    stack.emplace_back(0);
+    stack.emplace_back(0);
+#ifdef _OPENMP
+    int const num_threads{this->openmp_threads()};
+    if (num_threads > 1 && !omp_in_parallel() &&
+        this->size() + tree.size() >= AABBTREE_PARALLEL_MIN_NODES) {
+      // Breadth-first expansion until there are enough pairs to balance load
+      std::size_t const target{static_cast<std::size_t>(64 * num_threads)};
+      IndexList next;
+      for (Integer round{0};
+           round < 64 && !stack.empty() && stack.size() < target; ++round) {
+        next.clear();
+        for (std::size_t k{0}; k < stack.size(); k += 2) {
+          step(stack[k], stack[k + 1], result, ws, next);
+        }
+        stack.swap(next);
+      }
+      if (stack.empty()) {
+        return;
+      }
+
+      // Depth-first traversal of each pair in parallel
+      IndexList const frontier{stack};
+      stack.clear();
+      Integer const n_pairs{static_cast<Integer>(frontier.size() / 2)};
+      std::vector<Result> partial(n_pairs);
+      ws.counters += this->parallel_for(n_pairs, [&](Integer i, Workspace &w) {
+        IndexList &s{w.stack};
+        s.clear();
+        s.emplace_back(frontier[2 * i]);
+        s.emplace_back(frontier[2 * i + 1]);
+        while (!s.empty()) {
+          Integer const id_s2{s.back()};
+          s.pop_back();
+          Integer const id_s1{s.back()};
+          s.pop_back();
+          step(id_s1, id_s2, partial[i], w, s);
+        }
+      });
+      for (Result &p : partial) {
+        merge(result, p);
+      }
+      return;
+    }
+#else
+    (void)tree;
+    (void)merge;
+#endif
+    while (!stack.empty()) {
+      Integer const id_s2{stack.back()};
+      stack.pop_back();
+      Integer const id_s1{stack.back()};
+      stack.pop_back();
+      step(id_s1, id_s2, result, ws, stack);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Query implementations (re-entrant: all the state lives in the workspace)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Intersect the tree with an object (see \c intersect).
+   */
+  template <typename Object>
+  void intersect_impl(Object const &obj, IndexSet &candidates,
+                      Workspace &ws) const {
+    candidates.clear();
+    if (this->is_empty()) {
+      return;
+    }
+    BoxUniquePtrList const &boxes{*m_boxes_ptr};
+    QueryCounters &c{ws.counters};
+    IndexList &stack{ws.stack};
+    stack.clear();
+    stack.emplace_back(0);
+    while (!stack.empty()) {
+      Integer const id{stack.back()};
+      stack.pop_back();
+      Node const &node{m_tree_structure[id]};
+
+      // If the object do not intersects the box, skip the node
+      if (++c.node; !node.box.intersects(obj)) {
+        continue;
+      }
+
+      // Intersect the object with the long boxes on the node. If it is a leaf
+      // the long boxes are the boxes of the leaf (and box_long == box).
+      bool const leaf{node.child_l < 0};
+      if (node.box_num > 0 && (leaf || (++c.lng, node.box_long.intersects(obj)))) {
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{node.box_ptr}; i < id_end; ++i) {
+          Integer const pos{m_tree_boxes_map[i]};
+          if (++c.objs; boxes[pos]->intersects(obj)) {
+            candidates.insert(pos);
+          }
+        }
+      }
+
+      // Push children on the stack
+      if (!leaf) {
+        stack.emplace_back(node.child_l);
+        stack.emplace_back(node.child_r);
+      }
+    }
+  }
+
+  /**
+   * Push on the stack the pairs of nodes to be visited after the pair
+   * (id_s1, id_s2) in a tree-tree traversal. A negative id means that only the
+   * long boxes of the node must be considered.
+   */
+  static void push_children_pairs(IndexList &stack, Integer const id_s1,
+                                  Integer const id_s2, Node const &node_1,
+                                  Node const &node_2) {
+    Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
+    Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
+    auto push = [&stack](Integer const a, Integer const b) {
+      stack.emplace_back(a);
+      stack.emplace_back(b);
+    };
+
+    // Check if the nodes are leafs
+    bool const leaf_1{node_1.child_l < 0};
+    bool const leaf_2{node_2.child_l < 0};
+    if (leaf_1 && leaf_2) {
+      return; // We are done on this branch
+    }
+
+    if (leaf_1) {
+      push(id_1, node_2.child_l);
+      push(id_1, node_2.child_r);
+    } else if (leaf_2) {
+      push(node_1.child_l, id_2);
+      push(node_1.child_r, id_2);
+    } else if (node_1.box_tot_num > node_2.box_tot_num) {
+      // Split first the larger tree
+      if (id_s1 >= 0) {
+        push(node_1.child_l, id_s2);
+        push(node_1.child_r, id_s2);
+        if (node_1.box_num > 0) {
+          push(negate(id_1), id_2);
+        }
+      } else if (id_s2 >= 0) { // and id_s1 < 0
+        push(id_s1, node_2.child_l);
+        push(id_s1, node_2.child_r);
+      }
+    } else {
+      if (id_s2 >= 0) {
+        push(id_s1, node_2.child_l);
+        push(id_s1, node_2.child_r);
+        if (node_2.box_num > 0) {
+          push(id_1, negate(id_2));
+        }
+      } else if (id_s1 >= 0) { // and id_s2 < 0
+        push(node_1.child_l, id_s2);
+        push(node_1.child_r, id_s2);
+      }
+    }
+  }
+
+  /**
+   * Process one pair of nodes of a tree-tree intersection: intersect their
+   * long boxes and push the pairs of children to visit next on the stack.
+   * If \c self is true the pairs of a box with itself are discarded.
+   */
+  void intersect_pair_step(Tree const &tree, Integer const id_s1,
+                           Integer const id_s2, IndexMap &candidates,
+                           QueryCounters &c, bool const self,
+                           IndexList &stack) const {
+    BoxUniquePtrList const &boxes_1{*m_boxes_ptr};
+    BoxUniquePtrList const &boxes_2{*tree.m_boxes_ptr};
+    Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
+    Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
+    Node const &node_1{m_tree_structure[id_1]};
+    Node const &node_2{tree.m_tree_structure[id_2]};
+
+    // If the boxes are not intersecting, skip the nodes
+    if (++c.node; !node_1.box.intersects(node_2.box)) {
+      return;
+    }
+
+    // Intersect the long boxes on the nodes
+    if (node_1.box_num > 0 && node_2.box_num > 0) {
+      if (++c.lng; node_1.box_long.intersects(node_2.box_long)) {
+        Integer const id_1_ini{node_1.box_ptr};
+        Integer const id_1_end{node_1.box_ptr + node_1.box_num};
+        Integer const id_2_ini{node_2.box_ptr};
+        Integer const id_2_end{node_2.box_ptr + node_2.box_num};
+        if (node_1.box_num < node_2.box_num) {
+          for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+            Integer const pos_1{m_tree_boxes_map[i]};
+            Box const &box_1{*boxes_1[pos_1]};
+            if (++c.objs; !box_1.intersects(node_2.box_long)) {
+              continue;
+            }
+            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+              Integer const pos_2{tree.m_tree_boxes_map[j]};
+              if (self && pos_1 == pos_2) {
+                continue;
+              }
+              if (++c.objs; box_1.intersects(*boxes_2[pos_2])) {
+                candidates[pos_1].insert(pos_2);
+              }
+            }
+          }
+        } else {
+          for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+            Integer const pos_2{tree.m_tree_boxes_map[j]};
+            Box const &box_2{*boxes_2[pos_2]};
+            if (++c.objs; !box_2.intersects(node_1.box_long)) {
+              continue;
+            }
+            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+              Integer const pos_1{m_tree_boxes_map[i]};
+              if (self && pos_1 == pos_2) {
+                continue;
+              }
+              if (++c.objs; boxes_1[pos_1]->intersects(box_2)) {
+                candidates[pos_1].insert(pos_2);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    push_children_pairs(stack, id_s1, id_s2, node_1, node_2);
+  }
+
+  /**
+   * Intersect the tree with another tree (see \c intersect and
+   * \c self_intersect).
+   */
+  void intersect_tree_impl(Tree const &tree, IndexMap &candidates,
+                           Workspace &ws, bool const self) const {
+    candidates.clear();
+    if (this->is_empty() || tree.is_empty()) {
+      return;
+    }
+    this->dual_traversal(
+        tree, candidates, ws,
+        [this, &tree, self](Integer const id_s1, Integer const id_s2,
+                            IndexMap &result, Workspace &w, IndexList &stack) {
+          this->intersect_pair_step(tree, id_s1, id_s2, result, w.counters,
+                                    self, stack);
+        },
+        [](IndexMap &dst, IndexMap &src) { merge_index_maps(dst, src); });
+  }
+
+  /**
+   * Compute the minimum distance between an object and the tree (see
+   * \c distance).
+   */
+  template <typename Object>
+  Real distance_impl(Object const &obj, IndexSet &candidates,
+                     Workspace &ws) const {
+    candidates.clear();
+    if (this->is_empty()) {
+      return static_cast<Real>(-1.0);
+    }
+    BoxUniquePtrList const &boxes{*m_boxes_ptr};
+    QueryCounters &c{ws.counters};
+    auto dist = [&obj](Box const &b) { return b.interior_distance(obj); };
+
+    // Depth-first traversal visiting the nearest child first, so that the
+    // pruning bound tightens quickly
+    std::vector<HeapItem> &stack{ws.bstack};
+    stack.clear();
+    ++c.node;
+    stack.emplace_back(dist(m_tree_structure[0].box), 0);
+    Real distance{std::numeric_limits<Real>::infinity()};
+    while (!stack.empty()) {
+      auto const [lower_bound, id] = stack.back();
+      stack.pop_back();
+
+      // If the node is farther than the temporary minimum distance, skip it
+      if (lower_bound > distance) {
+        continue;
+      }
+      Node const &node{m_tree_structure[id]};
+
+      // Compute the distance between the object and the long boxes on the
+      // node
+      bool const leaf{node.child_l < 0};
+      if (node.box_num > 0 &&
+          (leaf || (++c.lng, node.box_long.interior_distance(obj) <= distance))) {
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{node.box_ptr}; i < id_end; ++i) {
+          Integer const pos{m_tree_boxes_map[i]};
+          ++c.objs;
+          Real const tmp_distance{boxes[pos]->interior_distance(obj)};
+          if (tmp_distance < distance) {
+            candidates.clear();
+            candidates.insert(pos);
+            distance = tmp_distance;
+          } else if (tmp_distance == distance) {
+            candidates.insert(pos);
+          }
+        }
+      }
+
+      // Push children on the stack (nearest first)
+      if (!leaf) {
+        this->push_children_nearest_first(stack, node, distance, c, dist);
+      }
+    }
+    return distance;
+  }
+
+  /**
+   * Partial result of a tree-tree distance query.
+   */
+  struct DistanceResult {
+    Real distance{std::numeric_limits<Real>::infinity()};
+    IndexMap candidates;
+  };
+
+  /**
+   * Atomically set \c a to \f$ \min(a, v) \f$.
+   */
+  static void atomic_min(std::atomic<Real> &a, Real const v) {
+    Real current{a.load(std::memory_order_relaxed)};
+    while (v < current &&
+           !a.compare_exchange_weak(current, v, std::memory_order_relaxed)) {
+    }
+  }
+
+  /**
+   * Process one pair of nodes of a tree-tree distance query. The pruning bound
+   * is the minimum between the local best distance and the global one shared
+   * by all the threads.
+   */
+  void distance_pair_step(Tree const &tree, Integer const id_s1,
+                          Integer const id_s2, DistanceResult &r,
+                          std::atomic<Real> &global, QueryCounters &c,
+                          IndexList &stack) const {
+    BoxUniquePtrList const &boxes_1{*m_boxes_ptr};
+    BoxUniquePtrList const &boxes_2{*tree.m_boxes_ptr};
+    Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
+    Integer const id_2{id_s2 < 0 ? negate(id_s2) : id_s2};
+    Node const &node_1{m_tree_structure[id_1]};
+    Node const &node_2{tree.m_tree_structure[id_2]};
+
+    Real bound{std::min(r.distance, global.load(std::memory_order_relaxed))};
+    auto update = [&r, &global, &bound](Real const d, Integer const pos_1,
+                                        Integer const pos_2) {
+      if (d > bound) {
+        return;
+      }
+      if (d < r.distance) {
+        r.candidates.clear();
+        r.candidates[pos_1].insert(pos_2);
+        r.distance = bound = d;
+        atomic_min(global, d);
+      } else { // d == r.distance
+        r.candidates[pos_1].insert(pos_2);
+      }
+    };
+
+    // If the nodes are farther than the minimum distance, skip them
+    if (++c.node; node_1.box.interior_distance(node_2.box) > bound) {
+      return;
+    }
+
+    // Compute the distance between the long boxes on the nodes
+    if (node_1.box_num > 0 && node_2.box_num > 0) {
+      if (++c.lng; node_1.box_long.interior_distance(node_2.box_long) <= bound) {
+        Integer const id_1_ini{node_1.box_ptr};
+        Integer const id_1_end{node_1.box_ptr + node_1.box_num};
+        Integer const id_2_ini{node_2.box_ptr};
+        Integer const id_2_end{node_2.box_ptr + node_2.box_num};
+        if (node_1.box_num < node_2.box_num) {
+          for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+            Integer const pos_1{m_tree_boxes_map[i]};
+            Box const &box_1{*boxes_1[pos_1]};
+            if (++c.objs; box_1.interior_distance(node_2.box_long) > bound) {
+              continue;
+            }
+            for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+              Integer const pos_2{tree.m_tree_boxes_map[j]};
+              ++c.objs;
+              update(box_1.interior_distance(*boxes_2[pos_2]), pos_1, pos_2);
+            }
+          }
+        } else {
+          for (Integer j{id_2_ini}; j < id_2_end; ++j) {
+            Integer const pos_2{tree.m_tree_boxes_map[j]};
+            Box const &box_2{*boxes_2[pos_2]};
+            if (++c.objs; box_2.interior_distance(node_1.box_long) > bound) {
+              continue;
+            }
+            for (Integer i{id_1_ini}; i < id_1_end; ++i) {
+              Integer const pos_1{m_tree_boxes_map[i]};
+              ++c.objs;
+              update(boxes_1[pos_1]->interior_distance(box_2), pos_1, pos_2);
+            }
+          }
+        }
+      }
+    }
+
+    // Push the next pairs, sorted so that the nearest pair is visited first
+    // (and drop the pairs that are already farther than the bound)
+    std::size_t const first{stack.size()};
+    push_children_pairs(stack, id_s1, id_s2, node_1, node_2);
+    std::size_t const n_new{(stack.size() - first) / 2};
+    if (n_new > 0) {
+      std::array<std::tuple<Real, Integer, Integer>, 3> pairs;
+      std::size_t n_kept{0};
+      for (std::size_t k{0}; k < n_new; ++k) {
+        Integer const a{stack[first + 2 * k]};
+        Integer const b{stack[first + 2 * k + 1]};
+        Box const &box_a{a < 0 ? m_tree_structure[negate(a)].box_long
+                               : m_tree_structure[a].box};
+        Box const &box_b{b < 0 ? tree.m_tree_structure[negate(b)].box_long
+                               : tree.m_tree_structure[b].box};
+        Real const d{box_a.interior_distance(box_b)};
+        if (d <= bound) {
+          pairs[n_kept++] = std::make_tuple(d, a, b);
+        }
+      }
+      std::sort(pairs.begin(), pairs.begin() + n_kept,
+                [](auto const &x, auto const &y) {
+                  return std::get<0>(x) > std::get<0>(y);
+                });
+      stack.resize(first);
+      for (std::size_t k{0}; k < n_kept; ++k) {
+        stack.emplace_back(std::get<1>(pairs[k]));
+        stack.emplace_back(std::get<2>(pairs[k]));
+      }
+    }
+  }
+
+  /**
+   * Compute the minimum distance between the tree and another tree (see
+   * \c distance).
+   */
+  Real distance_tree_impl(Tree const &tree, IndexMap &candidates,
+                          Workspace &ws) const {
+    candidates.clear();
+    if (this->is_empty() || tree.is_empty()) {
+      return static_cast<Real>(-1.0);
+    }
+    std::atomic<Real> global{std::numeric_limits<Real>::infinity()};
+    DistanceResult result;
+    this->dual_traversal(
+        tree, result, ws,
+        [this, &tree, &global](Integer const id_s1, Integer const id_s2,
+                               DistanceResult &r, Workspace &w,
+                               IndexList &stack) {
+          this->distance_pair_step(tree, id_s1, id_s2, r, global, w.counters,
+                                   stack);
+        },
+        [](DistanceResult &dst, DistanceResult &src) {
+          if (src.distance < dst.distance) {
+            dst = std::move(src);
+          } else if (src.distance == dst.distance) {
+            merge_index_maps(dst.candidates, src.candidates);
+          }
+        });
+    candidates = std::move(result.candidates);
+    return result.distance;
+  }
+
+  /**
+   * Find the first \f$ n \f$ candidates from an object (see \c closest).
+   */
+  template <typename Object, typename Function>
+  Real closest_impl(Object const &obj, Integer const n, IndexSet &candidates,
+                    Function &distance_function, Workspace &ws) const {
+    candidates.clear();
+    if (this->is_empty() || n <= 0) {
+      return static_cast<Real>(-1.0);
+    }
+    BoxUniquePtrList const &boxes{*m_boxes_ptr};
+    QueryCounters &c{ws.counters};
+    auto dist = [&obj, &distance_function](Box const &b) {
+      return distance_function(obj, b);
+    };
+
+    // Depth-first traversal visiting the nearest child first
+    std::vector<HeapItem> &stack{ws.bstack};
+    stack.clear();
+    ++c.node;
+    stack.emplace_back(dist(m_tree_structure[0].box), 0);
+
+    // Max-heap of the best candidates found so far (distance, index)
+    std::vector<HeapItem> &heap{ws.heap};
+    heap.clear();
+    auto cmp = [](HeapItem const &a, HeapItem const &b) {
+      return a.first < b.first;
+    };
+
+    // Pruning bound: infinite until n candidates have been found, then the
+    // maximum distance among the candidates
+    Real bound{std::numeric_limits<Real>::infinity()};
+    std::size_t const n_size{static_cast<std::size_t>(n)};
+
+    while (!stack.empty()) {
+      auto const [lower_bound, id] = stack.back();
+      stack.pop_back();
+
+      // If the node is farther than the bound, skip it
+      if (lower_bound > bound) {
+        continue;
+      }
+      Node const &node{m_tree_structure[id]};
+
+      // Compute the distance between the object and the long boxes on the
+      // node
+      bool const leaf{node.child_l < 0};
+      if (node.box_num > 0 &&
+          (leaf || (++c.lng, distance_function(obj, node.box_long) <= bound))) {
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{node.box_ptr}; i < id_end; ++i) {
+          Integer const pos{m_tree_boxes_map[i]};
+          ++c.objs;
+          Real const tmp_distance{distance_function(obj, *boxes[pos])};
+          if (tmp_distance < bound) {
+            if (heap.size() == n_size) {
+              std::pop_heap(heap.begin(), heap.end(), cmp);
+              heap.pop_back();
+            }
+            heap.emplace_back(tmp_distance, pos);
+            std::push_heap(heap.begin(), heap.end(), cmp);
+            if (heap.size() == n_size) {
+              bound = heap.front().first;
+            }
+          }
+        }
+      }
+
+      // Push children on the stack (nearest first)
+      if (!leaf) {
+        this->push_children_nearest_first(stack, node, bound, c, dist);
+      }
+    }
+
+    // Extract indices into candidates
+    if (heap.empty()) {
+      return static_cast<Real>(-1.0);
+    }
+    for (HeapItem const &item : heap) {
+      candidates.insert(item.second);
+    }
+    return heap.front().first;
+  }
+
+  /**
+   * Find the candidates within a given distance (see \c within_distance).
+   */
+  template <typename Object, typename Function>
+  void within_distance_impl(Object const &obj, Real const max_distance,
+                            IndexSet &candidates, Function &distance_function,
+                            Workspace &ws) const {
+    candidates.clear();
+    if (this->is_empty()) {
+      return;
+    }
+    BoxUniquePtrList const &boxes{*m_boxes_ptr};
+    QueryCounters &c{ws.counters};
+    IndexList &stack{ws.stack};
+    stack.clear();
+    stack.emplace_back(0);
+    while (!stack.empty()) {
+      Integer const id{stack.back()};
+      stack.pop_back();
+      Node const &node{m_tree_structure[id]};
+
+      // If the node is farther than the maximum distance, skip it
+      if (++c.node; distance_function(obj, node.box) > max_distance) {
+        continue;
+      }
+
+      // Compute the distance between the object and the long boxes on the
+      // node
+      bool const leaf{node.child_l < 0};
+      if (node.box_num > 0 &&
+          (leaf ||
+           (++c.lng, distance_function(obj, node.box_long) <= max_distance))) {
+        Integer const id_end{node.box_ptr + node.box_num};
+        for (Integer i{node.box_ptr}; i < id_end; ++i) {
+          Integer const pos{m_tree_boxes_map[i]};
+          if (++c.objs; distance_function(obj, *boxes[pos]) <= max_distance) {
+            candidates.insert(pos);
+          }
+        }
+      }
+
+      // Push children on the stack
+      if (!leaf) {
+        stack.emplace_back(node.child_l);
+        stack.emplace_back(node.child_r);
+      }
+    }
   }
 
 }; // class Tree

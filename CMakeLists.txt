@@ -67,6 +67,17 @@ add_library(AABBtree::AABBtree ALIAS AABBtree)
 
 target_link_libraries(AABBtree INTERFACE Eigen3::Eigen)
 
+# Optional OpenMP support (parallel batch queries)
+option(AABBTREE_ENABLE_OPENMP "Enable OpenMP parallelism in AABBtree" ON)
+set(AABBTREE_USE_OPENMP OFF)
+if(AABBTREE_ENABLE_OPENMP)
+  include(AABBtreeOpenMP)
+  if(OpenMP_CXX_FOUND)
+    target_link_libraries(AABBtree INTERFACE OpenMP::OpenMP_CXX)
+    set(AABBTREE_USE_OPENMP ON)
+  endif()
+endif()
+
 target_include_directories(AABBtree INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>

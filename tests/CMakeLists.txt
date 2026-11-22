@@ -34,3 +34,14 @@ target_link_libraries(test_tree_distance PRIVATE AABBtree Catch2::Catch2WithMain
 file(GLOB_RECURSE TEST_TREE_INTERSECTION "${CMAKE_CURRENT_SOURCE_DIR}/test_tree_intersection.cc")
 add_executable(test_tree_intersection ${TEST_TREE_INTERSECTION})
 target_link_libraries(test_tree_intersection PRIVATE AABBtree Catch2::Catch2WithMain Matplot++::matplot)
+
+file(GLOB_RECURSE TEST_TREE_BRUTEFORCE "${CMAKE_CURRENT_SOURCE_DIR}/test_tree_bruteforce.cc")
+add_executable(test_tree_bruteforce ${TEST_TREE_BRUTEFORCE})
+target_link_libraries(test_tree_bruteforce PRIVATE AABBtree Catch2::Catch2WithMain Matplot++::matplot)
+
+# Register the tests with CTest
+enable_testing()
+foreach(TEST_NAME test_box test_ray test_tree_objs test_tree_tree test_tree_distance
+                  test_tree_intersection test_tree_bruteforce)
+  add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endforeach()

@@ -131,19 +131,14 @@ int main() {
     return distance / (t_steps - 1);
   };
 
-  timer.tic();
+  // Query the first n_clusters boxes in parallel (OpenMP, if available)
+  std::vector<Box const *> queries(n_clusters);
   for (Integer i{0}; i < n_clusters; ++i) {
-    clusters_distance[i] = tree.closest(*tree.box(i), n_neighbours, clusters[i],
-                                        custom_distance_fun);
-    if (i % 100 == 0) {
-      timer.toc();
-      std::cout << "Cluster " << i << " of " << n_clusters << std::endl;
-      Real estimated_time = timer.elapsed_s() / 100 * (n_clusters - i) / 60;
-      std::cout << "Estimated time: " << std::setprecision(2) << std::fixed
-                << estimated_time << " min\n";
-      timer.tic();
-    }
+    queries[i] = tree.box(i).get();
   }
+  timer.tic();
+  tree.closest_batch(queries, n_neighbours, clusters_distance, clusters,
+                     custom_distance_fun);
   timer.toc();
 
   // Find the best clusters (minimum distance)

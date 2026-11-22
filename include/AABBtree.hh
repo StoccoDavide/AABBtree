@@ -16,6 +16,10 @@
 // C++17 standard libraries
 #include <algorithm>
 #include <array>
+#include <atomic>
+#include <cmath>
+#include <cstdlib>
+#include <exception>
 #include <functional>
 #include <iostream>
 #include <iterator>
@@ -25,13 +29,22 @@
 #include <numeric>
 #include <queue>
 #include <set>
+#include <sstream>
+#include <stdexcept>
+#include <tuple>
 #include <type_traits>
+#include <typeinfo>
 #include <utility>
 #include <vector>
 
 // Eigen library
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+
+// OpenMP (optional, used by the batch queries)
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 // Print AABBtree errors
 #ifndef AABBTREE_ERROR
@@ -65,6 +78,12 @@
   if (!(COND)) {                                                               \
     AABBTREE_WARNING(MSG);                                                     \
   }
+#endif
+
+// Minimum number of nodes (sum over the two trees) for a tree-tree query to
+// run in parallel with OpenMP
+#ifndef AABBTREE_PARALLEL_MIN_NODES
+#define AABBTREE_PARALLEL_MIN_NODES 1024
 #endif
 
 // Default integer AABBtree type
