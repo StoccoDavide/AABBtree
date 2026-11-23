@@ -12,10 +12,10 @@
 
 #pragma once
 
-#ifndef AABBTREE_RAY_HXX
-#define AABBTREE_RAY_HXX
+#ifndef INCLUDE_AABBTREE_RAY_HH
+#define INCLUDE_AABBTREE_RAY_HH
 
-#include "AABBtree/Box.hxx"
+#include "AABBtree/Box.hh"
 
 namespace AABBtree {
 
@@ -34,9 +34,7 @@ namespace AABBtree {
  * \tparam N Dimension of the ambient space.
  * \note The direction vector is not required to be normalized.
  */
-template <typename Real, Integer N> class Ray {
-  static_assert(std::is_floating_point<Real>::value,
-                "Ray Real type must be a floating-point type.");
+template <std::floating_point Real, Integer N> class Ray {
   static_assert(N > 0, "Ray dimension must be positive.");
 
   using Point = AABBtree::Point<Real, N>;
@@ -84,8 +82,8 @@ public:
    * \param[in] d Direction of the ray.
    * \note This constructor is only available for 1D rays.
    */
-  template <Integer M = N, std::enable_if_t<M == 1, int> = 0>
-  Ray(Real const o, Real const d) : m_origin(o), m_direction(d) {}
+  Ray(Real const o, Real const d)
+    requires(N == 1) : m_origin(o), m_direction(d) {}
 
   /**
    * Class constructor for the 2D ray.
@@ -95,8 +93,8 @@ public:
    * \param[in] d_y Direction \f$ y \f$-axis component.
    * \note This constructor is only available for 2D rays.
    */
-  template <Integer M = N, std::enable_if_t<M == 2, int> = 0>
   Ray(Real const o_x, Real const o_y, Real const d_x, Real const d_y)
+    requires(N == 2)
       : m_origin(o_x, o_y), m_direction(d_x, d_y) {}
 
   /**
@@ -109,9 +107,9 @@ public:
    * \param[in] d_z Direction \f$ z \f$-axis component.
    * \note This constructor is only available for 3D rays.
    */
-  template <Integer M = N, std::enable_if_t<M == 3, int> = 0>
   Ray(Real const o_x, Real const o_y, Real const o_z, Real const d_x,
       Real const d_y, Real const d_z)
+    requires(N == 3)
       : m_origin(o_x, o_y, o_z), m_direction(d_x, d_y, d_z) {}
 
   /**
@@ -119,7 +117,7 @@ public:
    * \param[in] r Ray to copy.
    * \tparam OtherReal Type of the scalar coefficients of the ray to copy.
    */
-  template <typename OtherReal>
+  template <std::floating_point OtherReal>
   explicit Ray(Ray<OtherReal, N> const &r)
       : m_origin(r.origin().template cast<Real>()),
         m_direction(r.direction().template cast<Real>()) {}
@@ -129,7 +127,7 @@ public:
    * \tparam NewReal the new scalar type
    * \return A copy of the ray with the new scalar type.
    */
-  template <typename NewReal> Ray<NewReal, N> cast() const {
+  template <std::floating_point NewReal> Ray<NewReal, N> cast() const {
     return Ray<NewReal, N>(m_origin.template cast<NewReal>(),
                            m_direction.template cast<NewReal>());
   }
@@ -629,7 +627,7 @@ private:
  * \tparam Real Type of the scalar coefficients.
  * \tparam N Dimension of the ambient space.
  */
-template <typename Real, Integer N>
+template <std::floating_point Real, Integer N>
 std::ostream &operator<<(std::ostream &os, Ray<Real, N> const &r) {
   r.print(os);
   return os;
@@ -637,4 +635,4 @@ std::ostream &operator<<(std::ostream &os, Ray<Real, N> const &r) {
 
 } // namespace AABBtree
 
-#endif // AABBTREE_RAY_HXX
+#endif // INCLUDE_AABBTREE_RAY_HH

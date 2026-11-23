@@ -8,7 +8,7 @@
  * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -36,7 +36,7 @@ int main() {
   constexpr Real t_ini{64328.0}; // January 1, 2035
   constexpr Integer n_neighbours{2};
   constexpr Real t_end{t_ini + 15.0 * 365.0};
-  constexpr Integer t_steps{15.0 * 365};
+  constexpr Integer t_steps{15 * 365};
 #ifdef AABBTREE_ENABLE_PLOTTING
   constexpr Integer l_trace{365};
 #endif

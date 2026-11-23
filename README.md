@@ -1,6 +1,6 @@
 # AABBtree
 
-`AABBtree` is a library for the construction and manipulation of axis-aligned bounding box (AABB) trees. The library is designed to be used in the context of collision detection, and other applications that require the efficient computation of intersections between axis-aligned bounding boxes. It provides a simple and intuitive interface for the construction of AABB trees from a set of axis-aligned bounding boxes, as well as for the computation of intersections between AABB trees, individual AABBs, and points. The library is implemented in C++17 and is header-only, meaning that it can be easily integrated into existing C++ projects without the need for additional dependencies. This fast and efficient library is implemented in C++17 and is header-only, meaning that it can be easily integrated into existing C++ projects without the need for additional dependencies or compilation steps.
+`AABBtree` is a library for the construction and manipulation of axis-aligned bounding box (AABB) trees. The library is designed to be used in the context of collision detection, and other applications that require the efficient computation of intersections between axis-aligned bounding boxes. It provides a simple and intuitive interface for the construction of AABB trees from a set of axis-aligned bounding boxes, as well as for the computation of intersections between AABB trees, individual AABBs, and points. The library is implemented in C++20 and is header-only, meaning that it can be easily integrated into existing C++ projects without the need for additional dependencies. This fast and efficient library is implemented in C++20 and is header-only, meaning that it can be easily integrated into existing C++ projects without the need for additional dependencies or compilation steps.
 
 Are you looking for the online documentation? Visit [this link](https://stoccodavide.github.io/AABBtree/)!
 
@@ -8,7 +8,7 @@ Are you looking for the online documentation? Visit [this link](https://stoccoda
 
 ### Quick and dirty
 
-`AABBtree` is an header-only library that depends only on `CMake` (version >= 3.14).
+`AABBtree` is an header-only library that requires a C++20 compiler, `CMake` (version >= 3.14) and [`Eigen`](https://eigen.tuxfamily.org) (version >= 3.4, downloaded automatically if not found). [`OpenMP`](https://www.openmp.org) is optional: when it is found the tree construction, the batch queries (`*_batch` methods) and the tree-tree queries run in parallel. It can be disabled with `-DAABBTREE_ENABLE_OPENMP=OFF`.
 
 ### CMake
 

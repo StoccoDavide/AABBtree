@@ -2,14 +2,16 @@ cmake_minimum_required(VERSION 3.14)
 
 project(test)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-option(ADD_SUBDIRECTORY_METHOD OFF)
-option(FETCH_CONTENT_METHOD ON)
-option(FIND_PACKAGE_METHOD OFF)
+option(ADD_SUBDIRECTORY_METHOD "Include AABBtree with add_subdirectory" OFF)
+option(FETCH_CONTENT_METHOD "Include AABBtree with FetchContent" OFF)
+option(FIND_PACKAGE_METHOD "Include AABBtree with find_package" OFF)
 
-set(CMAKE_BUILD_TYPE Release)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 add_executable(test test.cc)
 

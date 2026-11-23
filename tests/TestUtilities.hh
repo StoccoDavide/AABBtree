@@ -13,7 +13,7 @@
 #ifndef INCLUDE_TEST_UTILITIES_HH
 #define INCLUDE_TEST_UTILITIES_HH
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <random>
 #include <vector>
 

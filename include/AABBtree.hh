@@ -13,11 +13,12 @@
 #ifndef INCLUDE_AABBTREE_HH
 #define INCLUDE_AABBTREE_HH
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <algorithm>
 #include <array>
 #include <atomic>
 #include <cmath>
+#include <concepts>
 #include <cstdlib>
 #include <exception>
 #include <functional>
@@ -28,6 +29,7 @@
 #include <memory>
 #include <numeric>
 #include <queue>
+#include <ranges>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -111,8 +113,8 @@ namespace AABBtree {
  * AABBTREE_DEFAULT_INTEGER_TYPE. The default value is \c int.
  */
 using Integer = AABBTREE_DEFAULT_INTEGER_TYPE;
-static_assert(std::is_integral<Integer>::value,
-              "AABBTREE_DEFAULT_INTEGER_TYPE must be an integral type.");
+static_assert(std::signed_integral<Integer>,
+              "AABBTREE_DEFAULT_INTEGER_TYPE must be a signed integral type.");
 
 using IndexSet = std::set<Integer>;
 using IndexMap = std::map<Integer, IndexSet>;
@@ -122,7 +124,7 @@ using IndexPairList = std::vector<IndexPair>;
 using OutStream = std::basic_ostream<char>;
 
 // Type aliases
-template <typename Real, Integer N> class Box;
+template <std::floating_point Real, Integer N> class Box;
 template <typename Real, Integer N>
 using BoxUniquePtr = std::unique_ptr<Box<Real, N>>;
 template <typename Real, Integer N>
@@ -132,8 +134,8 @@ template <typename Real, Integer N> using Point = Eigen::Vector<Real, N>;
 
 } // namespace AABBtree
 
-#include "AABBtree/Box.hxx"
-#include "AABBtree/Ray.hxx"
-#include "AABBtree/Tree.hxx"
+#include "AABBtree/Box.hh"
+#include "AABBtree/Ray.hh"
+#include "AABBtree/Tree.hh"
 
 #endif // INCLUDE_AABBTREE_HH

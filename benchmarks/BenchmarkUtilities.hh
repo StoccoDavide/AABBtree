@@ -11,7 +11,7 @@
 #ifndef INCLUDE_BENCHMARK_UTILITIES_HH
 #define INCLUDE_BENCHMARK_UTILITIES_HH
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -267,9 +267,9 @@ template <typename Real, typename Integer>
 void KeplerianToCartesian(Keplerian<Real, Integer> const &kepl, Real &x,
                           Real &y, Real &z) {
   Real E{SolveKepler<Real, Integer>(kepl.m, kepl.e)};
-  Real nu{2.0 * std::atan2(std::sqrt(1.0 + kepl.e) * std::sin(E / 2),
-                           std::sqrt(1.0 - kepl.e) * std::cos(E / 2))};
-  Real r{kepl.a * (1.0 - kepl.e * std::cos(E))};
+  Real nu{Real(2) * std::atan2(std::sqrt(Real(1) + kepl.e) * std::sin(E / 2),
+                               std::sqrt(Real(1) - kepl.e) * std::cos(E / 2))};
+  Real r{kepl.a * (Real(1) - kepl.e * std::cos(E))};
   Real cos_lan{std::cos(kepl.lan)}, sin_lan{std::sin(kepl.lan)};
   Real cos_argperi{std::cos(kepl.argperi)}, sin_argperi{std::sin(kepl.argperi)};
   Real cos_i{std::cos(kepl.i)}, sin_i{std::sin(kepl.i)};

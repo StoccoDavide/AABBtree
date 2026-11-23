@@ -10,7 +10,7 @@
 
 // Compare every tree query against a brute-force O(n^2) reference.
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <algorithm>
 #include <cmath>
 #include <memory>

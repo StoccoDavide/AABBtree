@@ -12,10 +12,10 @@
 
 #pragma once
 
-#ifndef AABBTREE_BOX_HXX
-#define AABBTREE_BOX_HXX
+#ifndef INCLUDE_AABBTREE_BOX_HH
+#define INCLUDE_AABBTREE_BOX_HH
 
-#include "AABBtree/Ray.hxx"
+#include "AABBtree/Ray.hh"
 
 namespace AABBtree {
 
@@ -24,7 +24,7 @@ namespace AABBtree {
  * \tparam Real Type of the scalar coefficients.
  * \tparam N Dimension of the ambient space.
  */
-template <typename Real, Integer N> class Ray;
+template <std::floating_point Real, Integer N> class Ray;
 
 /**
  * \brief A class representing an axis-aligned bounding box (AABB) in
@@ -47,9 +47,7 @@ template <typename Real, Integer N> class Ray;
  * greater than the corresponding component of the maximum corner.
  * \note All methods are thread-safe unless explicitly noted otherwise.
  */
-template <typename Real, Integer N> class Box {
-  static_assert(std::is_floating_point<Real>::value,
-                "Box Real type must be a floating-point type.");
+template <std::floating_point Real, Integer N> class Box {
   static_assert(N > 0, "Box dimension must be positive.");
 
   using Point = AABBtree::Point<Real, N>;
@@ -104,8 +102,8 @@ public:
    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
    * \note This constructor is only available for 1D boxes.
    */
-  template <Integer M = N, std::enable_if_t<M == 1, int> = 0>
-  Box(Real const x_min, Real const x_max) : m_min(x_min), m_max(x_max) {}
+  Box(Real const x_min, Real const x_max)
+    requires(N == 1) : m_min(x_min), m_max(x_max) {}
 
   /**
    * Class constructor for the 2D axis-aligned bounding box.
@@ -115,8 +113,8 @@ public:
    * \param[in] y_max Maximal \f$ y \f$-axis corner of the box.
    * \note This constructor is only available for 2D boxes.
    */
-  template <Integer M = N, std::enable_if_t<M == 2, int> = 0>
   Box(Real const x_min, Real const y_min, Real const x_max, Real const y_max)
+    requires(N == 2)
       : m_min(x_min, y_min), m_max(x_max, y_max) {}
 
   /**
@@ -129,9 +127,9 @@ public:
    * \param[in] z_max Maximal \f$ z \f$-axis corner of the box.
    * \note This constructor is only available for 3D boxes.
    */
-  template <Integer M = N, std::enable_if_t<M == 3, int> = 0>
   Box(Real const x_min, Real const y_min, Real const z_min, Real const x_max,
       Real const y_max, Real const z_max)
+    requires(N == 3)
       : m_min(x_min, y_min, z_min), m_max(x_max, y_max, z_max) {}
 
   /**
@@ -140,7 +138,7 @@ public:
    * \param[in] b Box to copy.
    * \tparam OtherReal Type of the scalar coefficients of the box to copy.
    */
-  template <typename OtherReal>
+  template <std::floating_point OtherReal>
   explicit Box(Box<OtherReal, N> const &b)
       : m_min(b.min().template cast<Real>()),
         m_max(b.max().template cast<Real>()) {}
@@ -155,13 +153,9 @@ public:
   /**
    * Cast the current object to a new scalar type.
    * \tparam NewReal the new scalar type.
-   * \note If the new real type is equal to the current scalar type currently
-   * used, then this function returns a const reference to the current object.
+   * \return A copy of the box with the new scalar type.
    */
-  template <typename NewReal> Box<NewReal, N> cast() const {
-    if constexpr (std::is_same<Real, NewReal>::value) {
-      return *this;
-    }
+  template <std::floating_point NewReal> Box<NewReal, N> cast() const {
     return Box<NewReal, N>(m_min.template cast<NewReal>(),
                            m_max.template cast<NewReal>());
   }
@@ -268,8 +262,8 @@ public:
   void sort_axes_length(Vector &sizes, Eigen::Vector<Integer, N> &ipos) const {
     sizes = m_max - m_min;
     ipos = Eigen::Vector<Integer, N>::LinSpaced(N, 0, N - 1);
-    std::sort(ipos.data(), ipos.data() + N,
-              [&sizes](Integer i, Integer j) { return sizes[i] > sizes[j]; });
+    std::ranges::sort(ipos.data(), ipos.data() + N, std::ranges::greater{},
+                      [&sizes](Integer i) { return sizes[i]; });
   }
 
   /**
@@ -957,7 +951,7 @@ public:
  * \tparam Real Type of the scalar coefficients.
  * \tparam N Dimension of the ambient space.
  */
-template <typename Real, Integer N>
+template <std::floating_point Real, Integer N>
 std::ostream &operator<<(std::ostream &os, Box<Real, N> const &b) {
   b.print(os);
   return os;
@@ -965,4 +959,4 @@ std::ostream &operator<<(std::ostream &os, Box<Real, N> const &b) {
 
 } // namespace AABBtree
 
-#endif // AABBTREE_BOX_HXX
+#endif // INCLUDE_AABBTREE_BOX_HH

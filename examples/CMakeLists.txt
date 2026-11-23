@@ -8,14 +8,13 @@
 # davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-file(GLOB_RECURSE EXAMPLE_BOX "${CMAKE_CURRENT_SOURCE_DIR}/example_box.cc")
-add_executable(example_box ${EXAMPLE_BOX})
-target_link_libraries(example_box PRIVATE AABBtree)
+set(AABBTREE_EXAMPLES
+  example_box
+  example_ray
+  example_tree
+)
 
-file(GLOB_RECURSE EXAMPLE_RAY "${CMAKE_CURRENT_SOURCE_DIR}/example_ray.cc")
-add_executable(example_ray ${EXAMPLE_RAY})
-target_link_libraries(example_ray PRIVATE AABBtree)
-
-file(GLOB_RECURSE EXAMPLE_TREE "${CMAKE_CURRENT_SOURCE_DIR}/example_tree.cc")
-add_executable(example_tree ${EXAMPLE_TREE})
-target_link_libraries(example_tree PRIVATE AABBtree)
+foreach(EXAMPLE_NAME IN LISTS AABBTREE_EXAMPLES)
+  add_executable(${EXAMPLE_NAME} ${EXAMPLE_NAME}.cc)
+  target_link_libraries(${EXAMPLE_NAME} PRIVATE AABBtree::AABBtree aabbtree_project_options)
+endforeach()

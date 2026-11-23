@@ -8,7 +8,7 @@
  * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <chrono>
 #include <fstream>
 #include <iomanip>

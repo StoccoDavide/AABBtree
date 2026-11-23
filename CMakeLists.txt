@@ -10,14 +10,6 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-# Set default build type to Release if not specified
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build" FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(AABBtreeVersion)
@@ -30,44 +22,62 @@ project(AABBtree
   LANGUAGES CXX
 )
 
+# True when AABBtree is the main project, false when it is included by another
+# project (add_subdirectory or FetchContent)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(AABBTREE_IS_TOP_LEVEL ON)
+else()
+  set(AABBTREE_IS_TOP_LEVEL OFF)
+endif()
+
 if(NOT AABBTREE_VERSION_PRERELEASE)
   set(AABBTREE_FULL_VERSION "${AABBTREE_VERSION}")
-  write_version_file()
+  if(AABBTREE_IS_TOP_LEVEL)
+    write_version_file()
+  endif()
 else()
   set(AABBTREE_FULL_VERSION "${AABBTREE_VERSION}-${AABBTREE_VERSION_PRERELEASE}")
 endif()
 message(STATUS "AABBtree: version ${AABBTREE_FULL_VERSION}")
 
 set(AABBTREE_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-if(NOT CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-  message(STATUS "AABBtree: CMAKE_INSTALL_PREFIX not specified, defaulting to ${CMAKE_CURRENT_SOURCE_DIR}")
-endif()
-
-
-if (APPLE OR UNIX)
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.17.0" AND CMAKE_GENERATOR STREQUAL "Xcode")
-    # Set the minimum macOS version for Xcode
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0" CACHE STRING "Minimum macOS version" FORCE)
-    set(CMAKE_XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" )
-    set(CMAKE_XCODE_GENERATE_SCHEME TRUE )
+# Settings that only make sense when AABBtree is the main project (they must
+# not change the configuration of a parent project)
+if(AABBTREE_IS_TOP_LEVEL)
+  if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "AABBtree: CMAKE_BUILD_TYPE not specified, defaulting to Release")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build" FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+  endif()
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0" CACHE STRING "Minimum macOS version")
+    set(CMAKE_XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(CMAKE_XCODE_GENERATE_SCHEME TRUE)
   endif()
 endif()
 
+# ------------------------------------------------------------------------------
+# Library (header-only)
+# ------------------------------------------------------------------------------
 
-# Dependencies
+include(GNUInstallDirs)
 include(AABBtreeEigen3)
 
-# Library definition
 add_library(AABBtree INTERFACE)
 add_library(AABBtree::AABBtree ALIAS AABBtree)
 
+# Only the usage requirements needed to compile the headers are propagated to
+# the users of the library: C++20, the include directory and the dependencies
+target_compile_features(AABBtree INTERFACE cxx_std_20)
 target_link_libraries(AABBtree INTERFACE Eigen3::Eigen)
+target_include_directories(AABBtree INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
-# Optional OpenMP support (parallel batch queries)
+# Optional OpenMP support (parallel build, batch and tree-tree queries)
 option(AABBTREE_ENABLE_OPENMP "Enable OpenMP parallelism in AABBtree" ON)
 set(AABBTREE_USE_OPENMP OFF)
 if(AABBTREE_ENABLE_OPENMP)
@@ -78,72 +88,68 @@ if(AABBTREE_ENABLE_OPENMP)
   endif()
 endif()
 
-target_include_directories(AABBtree INTERFACE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
+# ------------------------------------------------------------------------------
+# Tests, benchmarks and examples (only when AABBtree is the main project)
+# ------------------------------------------------------------------------------
 
-# INFO: Ensure this options are only available to developers. In theory we could leave them available,
-# but the call to `target_sources` breaks `fetchcontent` compatibility due to absolute paths being
-# added to `INTERFACE_SOURCES`. I tried solving it, but it seems to be poorly documented, supported, etc.
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  #if(NOT CMAKE_BUILD_TYPE)
-  #  set(CMAKE_BUILD_TYPE "Debug")
-  #  message(STATUS "AABBtree: CMAKE_BUILD_TYPE not specified, defaulting to ${CMAKE_BUILD_TYPE}")
-  #endif()
-
+if(AABBTREE_IS_TOP_LEVEL)
   option(BUILD_TESTS "Build tests" ON)
   option(BUILD_BENCHMARKS "Build benchmarks" ON)
   option(BUILD_EXAMPLES "Build examples" ON)
-
-  if( CMAKE_GENERATOR STREQUAL "Xcode")
+  option(AABBTREE_ENABLE_NATIVE_OPTIMIZATIONS
+    "Compile tests, benchmarks and examples with -march=native -ffast-math" ON)
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
     option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" ON)
   else()
     option(AABBTREE_ENABLE_PLOTTING "Enable plotting with Matplot++" OFF)
   endif()
 
-  file(GLOB_RECURSE HEADER_FILES_HH "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh")
-  file(GLOB_RECURSE HEADER_FILES_HXX "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hxx")
-  message(STATUS "AABBtree: found ${HEADER_FILES_HXX} header files")
-  foreach(HEADER_FILE IN LISTS HEADER_FILES_HH HEADER_FILES_HXX)
-    file(
-      RELATIVE_PATH
-      RELATIVE_PATH_HEADER_FILE
-      ${CMAKE_CURRENT_SOURCE_DIR} ${HEADER_FILE}
-    )
-    list(APPEND RELATIVE_HEADER_FILES ${RELATIVE_PATH_HEADER_FILE})
-  endforeach()
-  target_sources(AABBtree INTERFACE $<BUILD_INTERFACE:${RELATIVE_HEADER_FILES}>)
+  # Show the headers in the IDEs. A separate target is used, so that the
+  # exported AABBtree target does not carry any source path.
+  file(GLOB_RECURSE AABBTREE_HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh")
+  add_custom_target(AABBtree_headers SOURCES ${AABBTREE_HEADERS})
+
+  # Compiler options for the code of this project: strict warnings, and
+  # optionally aggressive optimizations. They are not propagated to the users
+  # of the library.
+  add_library(aabbtree_project_options INTERFACE)
+  if(MSVC)
+    target_compile_options(aabbtree_project_options INTERFACE /W4 /WX)
+  else()
+    target_compile_options(aabbtree_project_options INTERFACE
+      -Wall -Wextra -pedantic -Werror)
+    if(AABBTREE_ENABLE_NATIVE_OPTIMIZATIONS)
+      set(AABBTREE_NATIVE_FLAGS -march=native -ffast-math -fno-finite-math-only -funroll-loops)
+      target_compile_options(aabbtree_project_options INTERFACE
+        "$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:${AABBTREE_NATIVE_FLAGS}>")
+    endif()
+  endif()
+  if(AABBTREE_ENABLE_PLOTTING)
+    target_compile_definitions(aabbtree_project_options INTERFACE AABBTREE_ENABLE_PLOTTING)
+  endif()
 
   if(BUILD_TESTS)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    enable_testing()
+    add_subdirectory(tests)
   endif()
-
   if(BUILD_BENCHMARKS)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/benchmarks)
+    add_subdirectory(benchmarks)
   endif()
-
   if(BUILD_EXAMPLES)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
-  endif()
-
-  if(AABBTREE_ENABLE_PLOTTING)
-    target_compile_definitions(AABBtree INTERFACE AABBTREE_ENABLE_PLOTTING)
+    add_subdirectory(examples)
   endif()
 endif()
 
-if(MSVC)
-  target_compile_options(AABBtree INTERFACE /W4 /WX)
-else()
-  target_compile_options(AABBtree INTERFACE -Wall -Wextra -pedantic -Werror -Wno-narrowing -DNDEBUG -DEIGEN_NO_DEBUG -march=native -ffast-math -fno-finite-math-only -funroll-loops)
-endif()
-
-# Installation
-install(TARGETS AABBtree EXPORT AABBtreeTargets)
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+# ------------------------------------------------------------------------------
+# Installation and package configuration
+# ------------------------------------------------------------------------------
 
 include(CMakePackageConfigHelpers)
+
+set(AABBTREE_INSTALL_CMAKEDIR "${CMAKE_INSTALL_DATADIR}/cmake/AABBtree")
+
+install(TARGETS AABBtree EXPORT AABBtreeTargets)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 export(EXPORT AABBtreeTargets
   FILE ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeTargets.cmake
@@ -153,23 +159,31 @@ export(EXPORT AABBtreeTargets
 install(EXPORT AABBtreeTargets
   FILE AABBtreeTargets.cmake
   NAMESPACE AABBtree::
-  DESTINATION lib/cmake/AABBtree
+  DESTINATION ${AABBTREE_INSTALL_CMAKEDIR}
 )
 
 configure_package_config_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfig.cmake
-  INSTALL_DESTINATION lib/cmake/AABBtree
+  INSTALL_DESTINATION ${AABBTREE_INSTALL_CMAKEDIR}
 )
 
+# The library is header-only: the package fits any architecture
 write_basic_package_version_file(
-  AABBtreeConfigVersion.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfigVersion.cmake
   VERSION ${PROJECT_VERSION}
   COMPATIBILITY SameMajorVersion
+  ARCH_INDEPENDENT
 )
+
+# The OpenMP module is shipped with the package, so that the users find the
+# OpenMP runtime the same way (e.g. libomp with Apple Clang)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/AABBtreeOpenMP.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeOpenMP.cmake COPYONLY)
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfigVersion.cmake
-  DESTINATION lib/cmake/AABBtree
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AABBtreeOpenMP.cmake
+  DESTINATION ${AABBTREE_INSTALL_CMAKEDIR}
 )

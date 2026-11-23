@@ -8,7 +8,7 @@
  * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <iostream>
 #include <vector>
 
@@ -202,9 +202,9 @@ TEMPLATE_TEST_CASE("Tree-Point-Ray)", "[template]", float, double) {
     }
   }
 #endif
-  TestType const distance_within{
+  bool const found_within{
       tree.within_distance(point, max_distance, candidates, distance_func)};
-  if (distance_within > 0.0) {
+  if (found_within) {
 #ifdef AABBTREE_ENABLE_PLOTTING
     P.plot_circle<TestType, 2>(point, max_distance, colors[0], 2.0);
     for (const auto &i : candidates) {

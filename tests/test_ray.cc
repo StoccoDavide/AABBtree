@@ -8,8 +8,9 @@
  * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// C++17 standard libraries
+// C++20 standard libraries
 #include <iostream>
+#include <numbers>
 #include <random>
 #include <vector>
 
@@ -47,7 +48,7 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
   SECTION("Intersection") {
     Ray ray(-1.0, 2.0, 0.0, -1.0);
     Box box(-2.0, -2.0, 1.0, 1.0);
-    Point c, f;
+    Point c{Point::Zero()}, f{Point::Zero()};
     ray.intersect(box, c, f, tol);
     TestType d_int{ray.interior_distance(box, tol)};
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -75,7 +76,7 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
   SECTION("Point distance") {
     Ray ray(-1.0, 2.0, 0.0, -1.0);
     Point pnt(2.0, -2.0);
-    Point c;
+    Point c{Point::Zero()};
     ray.distance(pnt, c);
     TestType d{ray.distance(pnt)};
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -101,7 +102,7 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
   SECTION("Interior distance") {
     Ray ray(2.0, 2.0, 0.0, -1.0);
     Box box(-2.0, -2.0, 1.0, 1.0);
-    Point c, f;
+    Point c{Point::Zero()}, f{Point::Zero()};
     ray.interior_distance(box, c, f, tol);
     TestType d_int{ray.interior_distance(box, tol)};
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -127,7 +128,7 @@ TEMPLATE_TEST_CASE("Ray", "[template]", float, double) {
   SECTION("Exterior distance") {
     Ray ray(2.0, 2.0, 0.5, 1.0);
     Box box(-2.0, -2.0, 1.0, 1.0);
-    Point c, f;
+    Point c{Point::Zero()}, f{Point::Zero()};
     ray.exterior_distance(box, c, f, tol);
     TestType d_int{ray.exterior_distance(box, tol)};
 #ifdef AABBTREE_ENABLE_PLOTTING
@@ -195,7 +196,7 @@ TEMPLATE_TEST_CASE("Ray-box queries match brute force", "[template]", float,
     Box const box(Point(c - h), Point(c + h));
 
     // Interior distance: exact minimum, never above any sample
-    Point p1, p2;
+    Point p1{Point::Zero()}, p2{Point::Zero()};
     double const d_int{ray.interior_distance(box, p1, p2)};
     double const d_int_brute{sampled_minimum(
         ray, box, [](Box const &b, Point const &p) {
@@ -218,7 +219,7 @@ TEMPLATE_TEST_CASE("Ray-box queries match brute force", "[template]", float,
     CHECK(d_ext >= d_int);
 
     // Intersection is consistent with the interior distance
-    Point entry, exit;
+    Point entry{Point::Zero()}, exit{Point::Zero()};
     bool const hit{ray.intersect(box, entry, exit)};
     CHECK(hit == ray.intersects(box));
     if (d_int > 1.0e-3) {
@@ -257,7 +258,7 @@ TEMPLATE_TEST_CASE("Ray utilities", "[template]", float, double) {
 
   SECTION("intersect from inside") {
     Box2 const box(0.0, 0.0, 3.0, 2.0);
-    Point2 entry, exit;
+    Point2 entry{Point2::Zero()}, exit{Point2::Zero()};
     REQUIRE(ray.intersect(box, entry, exit));
     CHECK(entry.isApprox(Point2(1.0, 1.0)));
     CHECK(exit.isApprox(Point2(3.0, 1.0)));
@@ -265,7 +266,7 @@ TEMPLATE_TEST_CASE("Ray utilities", "[template]", float, double) {
 
   SECTION("transform") {
     Eigen::Transform<Real, 2, Eigen::Affine> t{Eigen::Transform<Real, 2, Eigen::Affine>::Identity()};
-    t.rotate(Real(EIGEN_PI / 2)).pretranslate(Point2(1.0, 0.0));
+    t.rotate(std::numbers::pi_v<Real> / 2).pretranslate(Point2(1.0, 0.0));
     Ray2 const r{ray.transformed(t)};
     CHECK(r.origin().isApprox(Point2(0.0, 1.0)));
     CHECK(r.direction().isApprox(Point2(0.0, 2.0)));

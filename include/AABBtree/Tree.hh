@@ -10,26 +10,24 @@
 
 #pragma once
 
-#ifndef INCLUDE_AABBTREE_TREE_HXX
-#define INCLUDE_AABBTREE_TREE_HXX
+#ifndef INCLUDE_AABBTREE_TREE_HH
+#define INCLUDE_AABBTREE_TREE_HH
 
-#include "AABBtree/Box.hxx"
+#include "AABBtree/Box.hh"
 
 namespace AABBtree {
 
 namespace detail {
 
 /**
- * Access an object stored either by value or through a (smart) pointer.
+ * Access an object stored either by value or through a pointer (raw or smart).
  */
-template <typename T> T const &as_ref(T const &x) { return x; }
-template <typename T> T const &as_ref(T const *x) { return *x; }
-template <typename T> T const &as_ref(T *x) { return *x; }
-template <typename T> T const &as_ref(std::unique_ptr<T> const &x) {
-  return *x;
-}
-template <typename T> T const &as_ref(std::shared_ptr<T> const &x) {
-  return *x;
+template <typename T> decltype(auto) as_ref(T const &x) {
+  if constexpr (requires { *x; }) {
+    return *x;
+  } else {
+    return x;
+  }
 }
 
 /**
@@ -51,6 +49,51 @@ public:
 };
 
 } // namespace detail
+
+/**
+ * \brief An object that can be intersected with a box, i.e. the box has a
+ * method \c intersects(object).
+ */
+template <typename Object, typename Real, Integer N>
+concept IntersectableWithBox =
+    requires(Box<Real, N> const &box, Object const &object) {
+      { box.intersects(object) } -> std::convertible_to<bool>;
+    };
+
+/**
+ * \brief An object whose distance from a box can be computed, i.e. the box has
+ * a method \c interior_distance(object).
+ */
+template <typename Object, typename Real, Integer N>
+concept DistanceFromBox =
+    requires(Box<Real, N> const &box, Object const &object) {
+      { box.interior_distance(object) } -> std::convertible_to<Real>;
+    };
+
+/**
+ * \brief A function computing a distance between an object and a box, called
+ * as \c function(object, box).
+ */
+template <typename Function, typename Object, typename Real, Integer N>
+concept BoxDistanceFunction =
+    requires(Function &function, Object const &object, Box<Real, N> const &box) {
+      { function(object, box) } -> std::convertible_to<Real>;
+    };
+
+/**
+ * \brief A random-access range of query objects, stored by value or through
+ * pointers (raw or smart).
+ */
+template <typename Container>
+concept QueryRange = std::ranges::random_access_range<Container const> &&
+                     std::ranges::sized_range<Container const>;
+
+/**
+ * \brief Type of the objects stored in a query range (pointers dereferenced).
+ */
+template <QueryRange Container>
+using QueryObject = std::remove_cvref_t<decltype(detail::as_ref(
+    std::declval<std::ranges::range_reference_t<Container const>>()))>;
 
 /**
  * \brief A class representing a \em non-recursive axis-aligned bounding box
@@ -90,13 +133,8 @@ public:
  * \tparam Real Type of the scalar coefficients
  * \tparam N Dimension of the ambient space.
  */
-template <typename Real, Integer N> class Tree {
+template <std::floating_point Real, Integer N> class Tree {
 public:
-  static_assert(std::is_floating_point<Real>::value,
-                "Tree Real type must be a floating-point type.");
-  static_assert(std::is_integral<Integer>::value &&
-                    std::is_signed<Integer>::value,
-                "Tree integer type must be a signed integer type.");
   static_assert(N > 0, "Tree dimension must be positive.");
 
   /**
@@ -223,7 +261,7 @@ private:
    * Default distance function: interior distance between an object and a box.
    */
   struct InteriorDistance {
-    template <typename Object>
+    template <DistanceFromBox<Real, N> Object>
     Real operator()(Object const &o, Box const &b) const {
       return b.interior_distance(o);
     }
@@ -464,13 +502,14 @@ public:
     }
 
     // Setup the root node
-    Node root;
-    root.parent = -1;
-    root.child_l = -1;
-    root.child_r = -1;
-    root.box_ptr = 0;
-    root.box_num = num_boxes;
-    root.box_tot_num = num_boxes;
+    Node root{.box = Box{},
+              .box_long = Box{},
+              .box_ptr = 0,
+              .box_num = num_boxes,
+              .box_tot_num = num_boxes,
+              .parent = -1,
+              .child_l = -1,
+              .child_r = -1};
 
     // Setup the boxes map and compute the root box
     root.box.set_empty();
@@ -515,7 +554,7 @@ public:
    * \note Object must have a method \c intersects that computes the
    * intersection with a box.
    */
-  template <typename Object>
+  template <IntersectableWithBox<Real, N> Object>
   bool intersect(Object const &obj, IndexSet &candidates) const {
     Workspace ws;
     this->intersect_impl(obj, candidates, ws);
@@ -595,7 +634,7 @@ public:
       ids.emplace_back(p.first);
       ids.emplace_back(p.second);
     }
-    std::sort(ids.begin(), ids.end());
+    std::ranges::sort(ids);
     candidates.clear();
     for (Integer const id : ids) {
       candidates.emplace_hint(candidates.end(), id);
@@ -613,7 +652,7 @@ public:
    * \note Object must have a method \c interior_distance that computes the
    * distance to a box.
    */
-  template <typename Object>
+  template <DistanceFromBox<Real, N> Object>
   Real distance(Object const &obj, IndexSet &candidates) const {
     Workspace ws;
     Real const d{this->distance_impl(obj, candidates, ws)};
@@ -652,6 +691,7 @@ public:
    * \f$ d(o, A) \leq d(o, B) \f$. This is used to prune the tree.
    */
   template <typename Object, typename Function = InteriorDistance>
+    requires BoxDistanceFunction<Function, Object, Real, N>
   Real closest(Object const &obj, Integer const n, IndexSet &candidates,
                Function distance_function = Function{}) const {
     Workspace ws;
@@ -677,6 +717,7 @@ public:
    * inclusion (see \c closest).
    */
   template <typename Object, typename Function = InteriorDistance>
+    requires BoxDistanceFunction<Function, Object, Real, N>
   bool within_distance(Object const &obj, Real const max_distance,
                        IndexSet &candidates,
                        Function distance_function = Function{}) const {
@@ -699,7 +740,8 @@ public:
    * \return True if at least one object intersects the tree.
    * \tparam Container Type of the container of objects.
    */
-  template <typename Container>
+  template <QueryRange Container>
+    requires IntersectableWithBox<QueryObject<Container>, Real, N>
   bool intersect_batch(Container const &objs,
                        std::vector<IndexSet> &candidates) const {
     Integer const n{static_cast<Integer>(objs.size())};
@@ -707,8 +749,8 @@ public:
     this->store_counters(this->parallel_for(n, [&](Integer i, Workspace &ws) {
       this->intersect_impl(detail::as_ref(objs[i]), candidates[i], ws);
     }));
-    return std::any_of(candidates.begin(), candidates.end(),
-                       [](IndexSet const &c) { return !c.empty(); });
+    return std::ranges::any_of(candidates,
+                               [](IndexSet const &c) { return !c.empty(); });
   }
 
   /**
@@ -718,7 +760,8 @@ public:
    * \param[out] candidates For each object, the minimum distance candidates.
    * \tparam Container Type of the container of objects.
    */
-  template <typename Container>
+  template <QueryRange Container>
+    requires DistanceFromBox<QueryObject<Container>, Real, N>
   void distance_batch(Container const &objs, std::vector<Real> &distances,
                       std::vector<IndexSet> &candidates) const {
     Integer const n{static_cast<Integer>(objs.size())};
@@ -740,7 +783,8 @@ public:
    * \tparam Container Type of the container of objects.
    * \tparam Function Type of the custom distance function.
    */
-  template <typename Container, typename Function = InteriorDistance>
+  template <QueryRange Container, typename Function = InteriorDistance>
+    requires BoxDistanceFunction<Function, QueryObject<Container>, Real, N>
   void closest_batch(Container const &objs, Integer const n,
                      std::vector<Real> &distances,
                      std::vector<IndexSet> &candidates,
@@ -764,7 +808,8 @@ public:
    * \tparam Container Type of the container of objects.
    * \tparam Function Type of the custom distance function.
    */
-  template <typename Container, typename Function = InteriorDistance>
+  template <QueryRange Container, typename Function = InteriorDistance>
+    requires BoxDistanceFunction<Function, QueryObject<Container>, Real, N>
   bool within_distance_batch(Container const &objs, Real const max_distance,
                              std::vector<IndexSet> &candidates,
                              Function distance_function = Function{}) const {
@@ -774,8 +819,8 @@ public:
       this->within_distance_impl(detail::as_ref(objs[i]), max_distance,
                                  candidates[i], distance_function, ws);
     }));
-    return std::any_of(candidates.begin(), candidates.end(),
-                       [](IndexSet const &c) { return !c.empty(); });
+    return std::ranges::any_of(candidates,
+                               [](IndexSet const &c) { return !c.empty(); });
   }
 
   // ---------------------------------------------------------------------------
@@ -930,8 +975,8 @@ private:
     Vector const sizes{node.box.max() - node.box.min()};
     Integer sorting[N];
     std::iota(sorting, sorting + N, 0);
-    std::sort(sorting, sorting + N,
-              [&sizes](Integer i, Integer j) { return sizes[i] > sizes[j]; });
+    std::ranges::sort(sorting, std::ranges::greater{},
+                      [&sizes](Integer i) { return sizes[i]; });
 
     Integer axis, n_long, n_left, n_right, id_ini, id_end;
     Real separation_line, separation_tolerance;
@@ -1031,23 +1076,25 @@ private:
       node.box_long.extend(*boxes[m_tree_boxes_map[j++]]);
     }
 
-    node_l.child_l = node_l.child_r = -1;
-    node_l.box_num = node_l.box_tot_num = n_left;
-    node_l.box.set_empty();
-    node_l.box_ptr = j;
-    for (Integer i{0}; i < n_left; ++i) {
-      node_l.box.extend(*boxes[m_tree_boxes_map[j++]]);
-    }
-    node_l.box_long = node_l.box;
-
-    node_r.child_l = node_r.child_r = -1;
-    node_r.box_num = node_r.box_tot_num = n_right;
-    node_r.box.set_empty();
-    node_r.box_ptr = j;
-    for (Integer i{0}; i < n_right; ++i) {
-      node_r.box.extend(*boxes[m_tree_boxes_map[j++]]);
-    }
-    node_r.box_long = node_r.box;
+    // A new leaf owning the next `count` boxes of the map (the parent is set by
+    // the caller)
+    auto make_leaf = [&](Integer const count) {
+      Integer const first{j};
+      Box bound; // Empty box
+      for (Integer i{0}; i < count; ++i) {
+        bound.extend(*boxes[m_tree_boxes_map[j++]]);
+      }
+      return Node{.box = bound,
+                  .box_long = bound, // A leaf: all its boxes are long boxes
+                  .box_ptr = first,
+                  .box_num = count,
+                  .box_tot_num = count,
+                  .parent = -1,
+                  .child_l = -1,
+                  .child_r = -1};
+    };
+    node_l = make_leaf(n_left);
+    node_r = make_leaf(n_right);
     return true;
   }
 
@@ -1480,8 +1527,9 @@ private:
    * boxes of a node against themselves in a self-intersection).
    */
   static void finalize_result(IndexPairList &pairs) {
-    std::sort(pairs.begin(), pairs.end());
-    pairs.erase(std::unique(pairs.begin(), pairs.end()), pairs.end());
+    std::ranges::sort(pairs);
+    auto const duplicates{std::ranges::unique(pairs)};
+    pairs.erase(duplicates.begin(), duplicates.end());
   }
   static void finalize_result(IndexMap &) {}
 
@@ -1956,4 +2004,4 @@ private:
 
 } // namespace AABBtree
 
-#endif // INCLUDE_AABBTREE_TREE_HXX
+#endif // INCLUDE_AABBTREE_TREE_HH
