@@ -102,10 +102,9 @@ public:
    * Class constructor for the 1D axis-aligned bounding box.
    * \param[in] x_min Minimal \f$ x \f$-axis corner of the box.
    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
-   * \tparam T Type of the scalar coefficients.
    * \note This constructor is only available for 1D boxes.
    */
-  template <typename = std::enable_if<N == 1>>
+  template <Integer M = N, std::enable_if_t<M == 1, int> = 0>
   Box(Real const x_min, Real const x_max) : m_min(x_min), m_max(x_max) {}
 
   /**
@@ -114,10 +113,9 @@ public:
    * \param[in] y_min Minimal \f$ y \f$-axis corner of the box.
    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
    * \param[in] y_max Maximal \f$ y \f$-axis corner of the box.
-   * \tparam T Type of the scalar coefficients.
    * \note This constructor is only available for 2D boxes.
    */
-  template <typename = std::enable_if<N == 2>>
+  template <Integer M = N, std::enable_if_t<M == 2, int> = 0>
   Box(Real const x_min, Real const y_min, Real const x_max, Real const y_max)
       : m_min(x_min, y_min), m_max(x_max, y_max) {}
 
@@ -129,10 +127,9 @@ public:
    * \param[in] x_max Maximal \f$ x \f$-axis corner of the box.
    * \param[in] y_max Maximal \f$ y \f$-axis corner of the box.
    * \param[in] z_max Maximal \f$ z \f$-axis corner of the box.
-   * \tparam T Type of the scalar coefficients.
    * \note This constructor is only available for 3D boxes.
    */
-  template <typename = std::enable_if<N == 3>>
+  template <Integer M = N, std::enable_if_t<M == 3, int> = 0>
   Box(Real const x_min, Real const y_min, Real const z_min, Real const x_max,
       Real const y_max, Real const z_max)
       : m_min(x_min, y_min, z_min), m_max(x_max, y_max, z_max) {}
@@ -145,8 +142,8 @@ public:
    */
   template <typename OtherReal>
   explicit Box(Box<OtherReal, N> const &b)
-      : m_min(b.m_min.template cast<Real>()),
-        m_max(b.m_max.template cast<Real>()) {}
+      : m_min(b.min().template cast<Real>()),
+        m_max(b.max().template cast<Real>()) {}
 
   /**
    * Assignment perator for a axis-aligned box given another box.
@@ -411,9 +408,11 @@ public:
    * axis-alignment.
    */
   template <typename Transform> Box transformed(Transform const &t) const {
-    Box result(m_min.transform(t), m_max.transform(t));
-    result.reorder();
-    return result;
+    // Transform the center, and bound the transformed half sizes with the
+    // absolute value of the linear part (exact for the box of a rotated box)
+    Point const center{t * this->baricenter()};
+    Vector const half{t.linear().cwiseAbs() * (Real(0.5) * (m_max - m_min))};
+    return Box(Point(center - half), Point(center + half));
   }
 
   /**
@@ -425,9 +424,7 @@ public:
    * axis-alignment.
    */
   template <typename Transform> Box &transform(Transform const &t) {
-    m_min.transform(t);
-    m_max.transform(t);
-    this->reorder();
+    *this = this->transformed(t);
     return *this;
   }
 
@@ -559,8 +556,10 @@ public:
    * otherwise.
    */
   Real squared_interior_distance(Point const &p, Point &c) const {
-    if (this->contains(p))
+    if (this->contains(p)) {
+      c = p; // The closest point of the box is the point itself
       return 0;
+    }
     c = p.cwiseMax(m_min).cwiseMin(m_max);
     return (p - c).squaredNorm();
   }
@@ -688,9 +687,8 @@ public:
    * otherwise.
    */
   Real squared_interior_distance(Box const &b, Point &p1, Point &p2) const {
-    if (this->intersects(b)) {
-      return 0.0;
-    }
+    // On the axes where the boxes overlap both points are the center of the
+    // overlap (if the boxes intersect, p1 = p2 is a point of the intersection)
     for (Integer i{0}; i < N; ++i) {
       if (m_min[i] > b.m_max[i]) {
         p1[i] = b.m_max[i];
