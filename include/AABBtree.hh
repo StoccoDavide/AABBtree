@@ -86,6 +86,11 @@
 #define AABBTREE_PARALLEL_MIN_NODES 1024
 #endif
 
+// Subtrees with more boxes than this are built as separate OpenMP tasks
+#ifndef AABBTREE_PARALLEL_BUILD_GRAIN
+#define AABBTREE_PARALLEL_BUILD_GRAIN 4096
+#endif
+
 // Default integer AABBtree type
 #ifndef AABBTREE_DEFAULT_INTEGER_TYPE
 #define AABBTREE_DEFAULT_INTEGER_TYPE int
@@ -112,6 +117,8 @@ static_assert(std::is_integral<Integer>::value,
 using IndexSet = std::set<Integer>;
 using IndexMap = std::map<Integer, IndexSet>;
 using IndexList = std::vector<Integer>;
+using IndexPair = std::pair<Integer, Integer>;
+using IndexPairList = std::vector<IndexPair>;
 using OutStream = std::basic_ostream<char>;
 
 // Type aliases

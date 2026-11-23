@@ -19,6 +19,7 @@
 
 // AABBtree library (force the parallel tree-tree path also for small trees)
 #define AABBTREE_PARALLEL_MIN_NODES 8
+#define AABBTREE_PARALLEL_BUILD_GRAIN 16
 #include "AABBtree.hh"
 using namespace AABBtree;
 
@@ -150,6 +151,16 @@ TEMPLATE_TEST_CASE("Tree queries match brute force", "[template]", float,
     bool const hit{tree_1.intersect(tree_2, candidates)};
     CHECK(hit == !expected.empty());
     CHECK(candidates == expected);
+
+    IndexPairList expected_pairs;
+    for (auto const &[i, js] : expected) {
+      for (Integer j : js) {
+        expected_pairs.emplace_back(i, j);
+      }
+    }
+    IndexPairList pairs;
+    CHECK(tree_1.intersect(tree_2, pairs) == !expected_pairs.empty());
+    CHECK(pairs == expected_pairs);
   }
 
   SECTION("Self intersection") {
@@ -170,6 +181,18 @@ TEMPLATE_TEST_CASE("Tree queries match brute force", "[template]", float,
     IndexSet candidates_set;
     CHECK(tree_1.self_intersect(candidates_set) == !expected_set.empty());
     CHECK(candidates_set == expected_set);
+
+    IndexPairList expected_pairs;
+    for (auto const &[i, js] : expected_map) {
+      for (Integer j : js) {
+        if (i < j) {
+          expected_pairs.emplace_back(i, j);
+        }
+      }
+    }
+    IndexPairList pairs;
+    CHECK(tree_1.self_intersect(pairs) == !expected_pairs.empty());
+    CHECK(pairs == expected_pairs);
   }
 
   SECTION("Object distance") {
@@ -451,4 +474,48 @@ TEST_CASE("Concurrent const queries are safe", "[threads]") {
   for (int t{0}; t < n_threads; ++t) {
     CHECK(errors[t] == 0);
   }
+}
+
+TEMPLATE_TEST_CASE("Parallel build is deterministic", "[template]", float,
+                   double) {
+  using Real = TestType;
+  using Tree = AABBtree::Tree<Real, N_DIM>;
+  Integer const max_nodal_objects{GENERATE(1, 10, 100)};
+  CAPTURE(max_nodal_objects);
+
+  Tree serial, parallel;
+  serial.num_threads(1);
+  parallel.num_threads(0);
+  serial.max_nodal_objects(max_nodal_objects);
+  parallel.max_nodal_objects(max_nodal_objects);
+  serial.build(BuildBoxes<Real>(20000, 42u));
+  parallel.build(BuildBoxes<Real>(20000, 42u));
+
+  REQUIRE(serial.size() == parallel.size());
+  Integer mismatches{0};
+  Integer objects{0};
+  for (Integer i{0}; i < serial.size(); ++i) {
+    auto const &a{serial.node(i)};
+    auto const &b{parallel.node(i)};
+    mismatches += a.parent != b.parent || a.child_l != b.child_l ||
+                  a.child_r != b.child_r || a.box_ptr != b.box_ptr ||
+                  a.box_num != b.box_num || a.box_tot_num != b.box_tot_num ||
+                  a.box.min() != b.box.min() || a.box.max() != b.box.max() ||
+                  a.box_long.min() != b.box_long.min() ||
+                  a.box_long.max() != b.box_long.max();
+    objects += a.box_num;
+    // Parent/child links are consistent
+    if (a.child_l >= 0) {
+      CHECK(serial.node(a.child_l).parent == i);
+      CHECK(serial.node(a.child_r).parent == i);
+    }
+  }
+  CHECK(mismatches == 0);
+  CHECK(objects == 20000);
+
+  typename Tree::Statistics s1, s2;
+  serial.stats(s1);
+  parallel.stats(s2);
+  CHECK(s1.dump_counter == s2.dump_counter);
+  CHECK(s1.depth == s2.depth);
 }

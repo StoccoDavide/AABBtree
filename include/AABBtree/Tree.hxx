@@ -67,9 +67,10 @@ public:
  * \note Thread safety: once the tree is built, all the \c const methods can be
  * called concurrently from multiple threads. The query statistics returned by
  * \c stats() refer to the last completed query (or batch of queries).
- * \note With OpenMP support (\c _OPENMP defined) the \c *_batch methods and
- * the tree-tree queries (\c intersect(Tree), \c self_intersect and
- * \c distance(Tree)) run in parallel. The number of threads is set with
+ * \note With OpenMP support (\c _OPENMP defined) \c build, the \c *_batch
+ * methods and the tree-tree queries (\c intersect(Tree), \c self_intersect and
+ * \c distance(Tree)) run in parallel. The tree built does not depend on the
+ * number of threads. The number of threads is set with
  * \c num_threads (1 disables parallelism). Tree-tree queries run serially
  * when called from inside a parallel region or when the trees have fewer than
  * \c AABBTREE_PARALLEL_MIN_NODES nodes in total. Results do not depend on the
@@ -425,7 +426,7 @@ public:
                     "not valid. Please provide a valid pointer to the "
                     "bounding boxes before building the tree.");
 
-    BoxUniquePtrList &boxes{*m_boxes_ptr};
+    BoxUniquePtrList const &boxes{*m_boxes_ptr};
 
     // Clear tree structure
     Integer const num_boxes{static_cast<Integer>(boxes.size())};
@@ -437,7 +438,6 @@ public:
     if (num_boxes == 0) {
       return;
     }
-    m_tree_structure.reserve(2 * num_boxes + 1);
 
     // Setup the root node
     Node root;
@@ -445,201 +445,37 @@ public:
     root.child_l = -1;
     root.child_r = -1;
     root.box_ptr = 0;
-    root.box_num = 0;
+    root.box_num = num_boxes;
     root.box_tot_num = num_boxes;
 
     // Setup the boxes map and compute the root box
     root.box.set_empty();
-    m_tree_boxes_map.reserve(num_boxes);
-    for (BoxUniquePtr const &box : boxes) {
-      root.box.extend(*box);
-      m_tree_boxes_map.emplace_back(root.box_num++);
+    m_tree_boxes_map.resize(num_boxes);
+    for (Integer i{0}; i < num_boxes; ++i) {
+      root.box.extend(*boxes[i]);
+      m_tree_boxes_map[i] = i;
     }
     // The root is a leaf until it is split: all its boxes are "long" boxes
     root.box_long = root.box;
-    m_tree_structure.emplace_back(root);
 
-    // Setup the stack
-    IndexList stack;
-    stack.reserve(128);
-    stack.emplace_back(0);
+    // Build the subtrees. Every node only reorders its own range of the boxes
+    // map, so different subtrees can be built concurrently. Large subtrees
+    // are split into OpenMP tasks, small ones are built serially.
+    IndexList best_map(num_boxes);
+    BuildPart top;
+#ifdef _OPENMP
+    int const num_threads{this->openmp_threads()};
+    bool const parallel{num_threads > 1 && !omp_in_parallel() &&
+                        num_boxes > AABBTREE_PARALLEL_BUILD_GRAIN};
+#pragma omp parallel num_threads(num_threads) if (parallel)
+#pragma omp single
+#endif
+    this->build_part(&top, root, &best_map, 0);
 
-    // Main loop that divide the nodes iteratively until all constraints
-    // satisfied
-    IndexList best_map(m_tree_boxes_map.size());
-    while (!stack.empty()) {
-      // Pop the node from stack
-      Integer const id{stack.back()};
-      stack.pop_back();
-
-      // Get the node
-      Node &node{m_tree_structure[id]};
-
-      // If the node has less than one object, skip it
-      if (node.box_num <= 1) {
-        continue;
-      }
-
-      // Compute the separation line and tolerance
-      Vector sizes{node.box.max() - node.box.min()};
-      Integer sorting[N];
-      std::iota(sorting, sorting + N, 0);
-      auto compare = [&sizes](Integer i, Integer j) -> bool {
-        return sizes[i] > sizes[j];
-      };
-      std::sort(sorting, sorting + N, compare);
-
-      Integer axis, n_long, n_left, n_right, id_ini, id_end;
-      Real separation_line, separation_tolerance;
-
-      Integer n_long_saved{node.box_num + 1};
-      Integer n_diff_saved{node.box_num + 1};
-      Integer axis_saved{sorting[0]};
-      bool valid_axis_found{false};
-      for (Integer dump{0}; dump < m_max_dumpings; ++dump) {
-        axis = sorting[dump];
-        separation_line = node.box.baricenter(axis);
-        separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
-
-        // Separate short and long boxes
-        n_long = n_left = n_right = 0;
-        id_ini = node.box_ptr;
-        id_end = node.box_ptr + node.box_num;
-        while (id_ini < id_end) {
-          Box const &box_id{*boxes[m_tree_boxes_map[id_ini]]};
-          typename Box::Side const side{
-              box_id.which_side(separation_line, separation_tolerance, axis)};
-          switch (side) {
-          case Box::Side::LEFT: // Left boxes are moved to the end
-            ++n_left;
-            --id_end;
-            std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
-            break;
-          case Box::Side::RIGHT: // Right boxes are moved to the end
-            ++n_right;
-            --id_end;
-            std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
-            break;
-          default:
-            ++n_long;
-            ++id_ini;
-          }
-        }
-
-        // Save the first and the best solution found so far
-        Integer n_diff{std::abs(n_left - n_right)};
-        if ((n_long <= n_long_saved && n_long <= m_max_nodal_objects &&
-             n_diff < n_diff_saved) ||
-            !valid_axis_found) {
-          n_long_saved = n_long;
-          n_diff_saved = n_diff;
-          axis_saved = axis;
-          std::copy_n(m_tree_boxes_map.data() + node.box_ptr, node.box_num,
-                      best_map.data() + node.box_ptr);
-          valid_axis_found = true;
-        }
-
-        ++m_dump_counter;
-      }
-
-      // Check if a valid solution has been found
-      AABBTREE_ASSERT_WARNING(
-          valid_axis_found,
-          "AABBtree::Tree::build(...): Failed to find a valid "
-          "splitting axis.");
-
-      // Terminate splitting if the number of long boxes if cannot be split
-      if (n_long_saved == node.box_num) {
-        continue;
-      }
-
-      // Use the best solution found
-      std::copy_n(best_map.data() + node.box_ptr, node.box_num,
-                  m_tree_boxes_map.data() + node.box_ptr);
-      n_long = n_long_saved;
-      axis = axis_saved;
-      separation_line = node.box.baricenter(axis);
-      separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
-
-      // Separate the left and right boxes
-      n_left = n_right = 0;
-      id_ini = node.box_ptr + n_long;
-      id_end = node.box_ptr + node.box_num;
-      while (id_ini < id_end) {
-        Box const &box_id{*boxes[m_tree_boxes_map[id_ini]]};
-        typename Box::Side const side{
-            box_id.which_side(separation_line, separation_tolerance, axis)};
-        switch (side) {
-        case Box::Side::LEFT: // Left boxes stay in place
-          ++id_ini;
-          ++n_left;
-          break;
-        case Box::Side::RIGHT: // Right boxes are swapped with the last one
-          --id_end;
-          ++n_right;
-          std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
-          break;
-        default:
-          break;
-        }
-      }
-
-      // Set the left and right children indexes
-      node.child_l = static_cast<Integer>(this->size() + 0);
-      node.child_r = static_cast<Integer>(this->size() + 1);
-
-      // Finalize the root node setup (left and right children)
-      Node node_l;
-      node_l.parent = id;  // Current node
-      node_l.child_l = -1; // Default (leaf)
-      node_l.child_r = -1; // Default (leaf)
-      node_l.box_num = n_left;
-      node_l.box_tot_num = n_left;
-
-      Node node_r;
-      node_r.parent = id;  // Current node
-      node_r.child_l = -1; // Default (leaf)
-      node_r.child_r = -1; // Default (leaf)
-      node_r.box_num = n_right;
-      node_r.box_tot_num = n_right;
-
-      // Compute the bounding box of the long boxes, and left and right
-      // children
-      Integer j{node.box_ptr};
-
-      node.box_num = n_long;
-      node.box_long.set_empty();
-      for (Integer i{0}; i < n_long; ++i) {
-        node.box_long.extend(*boxes[m_tree_boxes_map[j++]]);
-      }
-
-      node_l.box.set_empty();
-      node_l.box_ptr = j;
-      for (Integer i{0}; i < n_left; ++i) {
-        node_l.box.extend(*boxes[m_tree_boxes_map[j++]]);
-      }
-      node_l.box_long = node_l.box;
-
-      node_r.box.set_empty();
-      node_r.box_ptr = j;
-      for (Integer i{0}; i < n_right; ++i) {
-        node_r.box.extend(*boxes[m_tree_boxes_map[j++]]);
-      }
-      node_r.box_long = node_r.box;
-
-      // Push children on stack (before emplacing, as emplacing may invalidate
-      // the reference to the current node)
-      Integer const child_l{node.child_l};
-      Integer const child_r{node.child_r};
-
-      // Push nodes on tree structure
-      m_tree_structure.emplace_back(node_l);
-      m_tree_structure.emplace_back(node_r);
-
-      // Push children on stack
-      stack.emplace_back(child_l);
-      stack.emplace_back(child_r);
-    }
+    // Assemble the parts in a fixed order (the result does not depend on the
+    // number of threads)
+    m_tree_structure.reserve(2 * num_boxes + 1);
+    this->assemble_part(top, -1);
   }
 
   // ---------------------------------------------------------------------------
@@ -677,6 +513,22 @@ public:
   }
 
   /**
+   * Intersect the tree with another tree.
+   * \param[in] tree Tree to intersect with.
+   * \param[out] pairs Intersection result: the pairs (i, j) of intersecting
+   * boxes, with i a box of this tree and j a box of the other tree, sorted and
+   * without duplicates.
+   * \return True if the trees intersect, false otherwise.
+   * \note This is faster than the \c IndexMap overload for large results.
+   */
+  bool intersect(Tree const &tree, IndexPairList &pairs) const {
+    Workspace ws;
+    this->intersect_tree_impl(tree, pairs, ws, false);
+    this->store_counters(ws.counters);
+    return !pairs.empty();
+  }
+
+  /**
    * Intersect the tree with itself.
    * \param[out] candidates Intersection result: for each box, the set of the
    * other boxes it intersects (a box is never reported with itself).
@@ -690,6 +542,20 @@ public:
   }
 
   /**
+   * Intersect the tree with itself.
+   * \param[out] pairs Intersection result: the pairs (i, j) of intersecting
+   * boxes, with i < j (each pair is reported once), sorted.
+   * \return True if at least two boxes intersect, false otherwise.
+   * \note This is faster than the \c IndexMap overload for large results.
+   */
+  bool self_intersect(IndexPairList &pairs) const {
+    Workspace ws;
+    this->intersect_tree_impl(*this, pairs, ws, true);
+    this->store_counters(ws.counters);
+    return !pairs.empty();
+  }
+
+  /**
    * Self-intersect the tree (i.e., intersect the tree with itself to find all
    * the intersecting boxes).
    * \param[out] candidates Intersection result: all the boxes that intersect at
@@ -697,12 +563,18 @@ public:
    * \return True if at least two boxes intersect, false otherwise.
    */
   bool self_intersect(IndexSet &candidates) const {
-    IndexMap candidates_map;
-    bool const intersects{this->self_intersect(candidates_map)};
+    IndexPairList pairs;
+    bool const intersects{this->self_intersect(pairs)};
+    IndexList ids;
+    ids.reserve(2 * pairs.size());
+    for (IndexPair const &p : pairs) {
+      ids.emplace_back(p.first);
+      ids.emplace_back(p.second);
+    }
+    std::sort(ids.begin(), ids.end());
     candidates.clear();
-    for (auto const &[key, values] : candidates_map) {
-      candidates.emplace(key);
-      candidates.insert(values.begin(), values.end());
+    for (Integer const id : ids) {
+      candidates.emplace_hint(candidates.end(), id);
     }
     return intersects;
   }
@@ -996,6 +868,266 @@ public:
 
 private:
   // ---------------------------------------------------------------------------
+  // Tree building
+  // ---------------------------------------------------------------------------
+
+  /**
+   * A part of the tree built by a single task: either a subtree built
+   * serially (\c nodes, with local indices) or a node split into two parts.
+   */
+  struct BuildPart {
+    Node node;                       /**< Split node (if left/right set). */
+    std::vector<Node> nodes;         /**< Serially built subtree. */
+    std::unique_ptr<BuildPart> left; /**< Left part. */
+    std::unique_ptr<BuildPart> right; /**< Right part. */
+    Integer dumps{0};                /**< Dumpings performed in this part. */
+  };
+
+  /**
+   * Split a node into its long boxes and two children.
+   * \param[in,out] node Node to split (its long boxes are updated).
+   * \param[in,out] best_map Scratch copy of the boxes map (only the node
+   * range is used).
+   * \param[in,out] dumps Dumpings counter.
+   * \param[out] node_l Left child (parent and child indices not set).
+   * \param[out] node_r Right child (parent and child indices not set).
+   * \return True if the node has been split, false if it is a leaf.
+   */
+  bool split_node(Node &node, IndexList &best_map, Integer &dumps,
+                  Node &node_l, Node &node_r) {
+    BoxUniquePtrList const &boxes{*m_boxes_ptr};
+
+    // If the node has less than one object, do not split it
+    if (node.box_num <= 1) {
+      return false;
+    }
+
+    // Compute the separation line and tolerance
+    Vector const sizes{node.box.max() - node.box.min()};
+    Integer sorting[N];
+    std::iota(sorting, sorting + N, 0);
+    std::sort(sorting, sorting + N,
+              [&sizes](Integer i, Integer j) { return sizes[i] > sizes[j]; });
+
+    Integer axis, n_long, n_left, n_right, id_ini, id_end;
+    Real separation_line, separation_tolerance;
+
+    Integer n_long_saved{node.box_num + 1};
+    Integer n_diff_saved{node.box_num + 1};
+    Integer axis_saved{sorting[0]};
+    bool valid_axis_found{false};
+    for (Integer dump{0}; dump < m_max_dumpings; ++dump) {
+      axis = sorting[dump];
+      separation_line = node.box.baricenter(axis);
+      separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
+
+      // Separate short and long boxes
+      n_long = n_left = n_right = 0;
+      id_ini = node.box_ptr;
+      id_end = node.box_ptr + node.box_num;
+      while (id_ini < id_end) {
+        Box const &box_id{*boxes[m_tree_boxes_map[id_ini]]};
+        typename Box::Side const side{
+            box_id.which_side(separation_line, separation_tolerance, axis)};
+        switch (side) {
+        case Box::Side::LEFT: // Left boxes are moved to the end
+          ++n_left;
+          --id_end;
+          std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
+          break;
+        case Box::Side::RIGHT: // Right boxes are moved to the end
+          ++n_right;
+          --id_end;
+          std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
+          break;
+        default:
+          ++n_long;
+          ++id_ini;
+        }
+      }
+
+      // Save the first and the best solution found so far
+      Integer const n_diff{std::abs(n_left - n_right)};
+      if ((n_long <= n_long_saved && n_long <= m_max_nodal_objects &&
+           n_diff < n_diff_saved) ||
+          !valid_axis_found) {
+        n_long_saved = n_long;
+        n_diff_saved = n_diff;
+        axis_saved = axis;
+        std::copy_n(m_tree_boxes_map.data() + node.box_ptr, node.box_num,
+                    best_map.data() + node.box_ptr);
+        valid_axis_found = true;
+      }
+
+      ++dumps;
+    }
+
+    // Terminate splitting if the long boxes cannot be split
+    if (n_long_saved == node.box_num) {
+      return false;
+    }
+
+    // Use the best solution found
+    std::copy_n(best_map.data() + node.box_ptr, node.box_num,
+                m_tree_boxes_map.data() + node.box_ptr);
+    n_long = n_long_saved;
+    axis = axis_saved;
+    separation_line = node.box.baricenter(axis);
+    separation_tolerance = sizes[axis] * m_separation_ratio_tolerance;
+
+    // Separate the left and right boxes
+    n_left = n_right = 0;
+    id_ini = node.box_ptr + n_long;
+    id_end = node.box_ptr + node.box_num;
+    while (id_ini < id_end) {
+      Box const &box_id{*boxes[m_tree_boxes_map[id_ini]]};
+      typename Box::Side const side{
+          box_id.which_side(separation_line, separation_tolerance, axis)};
+      switch (side) {
+      case Box::Side::LEFT: // Left boxes stay in place
+        ++id_ini;
+        ++n_left;
+        break;
+      case Box::Side::RIGHT: // Right boxes are swapped with the last one
+        --id_end;
+        ++n_right;
+        std::swap(m_tree_boxes_map[id_ini], m_tree_boxes_map[id_end]);
+        break;
+      default:
+        break;
+      }
+    }
+
+    // Compute the bounding box of the long boxes, and left and right children
+    Integer j{node.box_ptr};
+
+    node.box_num = n_long;
+    node.box_long.set_empty();
+    for (Integer i{0}; i < n_long; ++i) {
+      node.box_long.extend(*boxes[m_tree_boxes_map[j++]]);
+    }
+
+    node_l.child_l = node_l.child_r = -1;
+    node_l.box_num = node_l.box_tot_num = n_left;
+    node_l.box.set_empty();
+    node_l.box_ptr = j;
+    for (Integer i{0}; i < n_left; ++i) {
+      node_l.box.extend(*boxes[m_tree_boxes_map[j++]]);
+    }
+    node_l.box_long = node_l.box;
+
+    node_r.child_l = node_r.child_r = -1;
+    node_r.box_num = node_r.box_tot_num = n_right;
+    node_r.box.set_empty();
+    node_r.box_ptr = j;
+    for (Integer i{0}; i < n_right; ++i) {
+      node_r.box.extend(*boxes[m_tree_boxes_map[j++]]);
+    }
+    node_r.box_long = node_r.box;
+    return true;
+  }
+
+  /**
+   * Build serially (and non-recursively) the subtree rooted at a node.
+   * \param[in] root Root of the subtree.
+   * \param[out] nodes Nodes of the subtree, with local indices (the root is
+   * the first node, its parent is -1).
+   * \param[in,out] best_map Scratch copy of the boxes map.
+   * \param[in,out] dumps Dumpings counter.
+   */
+  void build_serial(Node const &root, std::vector<Node> &nodes,
+                    IndexList &best_map, Integer &dumps) {
+    nodes.clear();
+    nodes.reserve(2 * root.box_num + 1);
+    nodes.emplace_back(root);
+    nodes.back().parent = -1;
+    nodes.back().child_l = nodes.back().child_r = -1;
+    IndexList stack;
+    stack.reserve(128);
+    stack.emplace_back(0);
+    while (!stack.empty()) {
+      Integer const id{stack.back()};
+      stack.pop_back();
+      Node node_l, node_r;
+      if (!this->split_node(nodes[id], best_map, dumps, node_l, node_r)) {
+        continue;
+      }
+      Integer const child_l{static_cast<Integer>(nodes.size())};
+      nodes[id].child_l = child_l;
+      nodes[id].child_r = child_l + 1;
+      node_l.parent = node_r.parent = id;
+      nodes.emplace_back(node_l); // May invalidate references to nodes
+      nodes.emplace_back(node_r);
+      stack.emplace_back(child_l);
+      stack.emplace_back(child_l + 1);
+    }
+  }
+
+  /**
+   * Build the part of the tree rooted at a node. Nodes with more than
+   * \c AABBTREE_PARALLEL_BUILD_GRAIN boxes are split and their children are
+   * built as independent (OpenMP) tasks; smaller subtrees, or subtrees deeper
+   * than 64 levels, are built serially.
+   */
+  void build_part(BuildPart *part, Node node, IndexList *best_map,
+                  Integer const level) {
+    if (node.box_num <= AABBTREE_PARALLEL_BUILD_GRAIN || level >= 64) {
+      this->build_serial(node, part->nodes, *best_map, part->dumps);
+      return;
+    }
+    Node node_l, node_r;
+    if (!this->split_node(node, *best_map, part->dumps, node_l, node_r)) {
+      part->nodes.emplace_back(node);
+      return;
+    }
+    part->node = node;
+    part->left = std::make_unique<BuildPart>();
+    part->right = std::make_unique<BuildPart>();
+    BuildPart *left{part->left.get()};
+    BuildPart *right{part->right.get()};
+#ifdef _OPENMP
+#pragma omp task firstprivate(left, node_l, best_map, level)
+#endif
+    this->build_part(left, node_l, best_map, level + 1);
+#ifdef _OPENMP
+#pragma omp task firstprivate(right, node_r, best_map, level)
+#endif
+    this->build_part(right, node_r, best_map, level + 1);
+#ifdef _OPENMP
+#pragma omp taskwait
+#endif
+  }
+
+  /**
+   * Append a built part to the tree structure.
+   * \param[in] part Part to append.
+   * \param[in] parent Index of the parent node (-1 for the root).
+   * \return The index of the root node of the part.
+   */
+  Integer assemble_part(BuildPart const &part, Integer const parent) {
+    m_dump_counter += part.dumps;
+    Integer const offset{this->size()};
+    if (!part.left) {
+      for (Node node : part.nodes) {
+        node.parent = node.parent < 0 ? parent : node.parent + offset;
+        if (node.child_l >= 0) {
+          node.child_l += offset;
+          node.child_r += offset;
+        }
+        m_tree_structure.emplace_back(node);
+      }
+      return offset;
+    }
+    m_tree_structure.emplace_back(part.node);
+    m_tree_structure.back().parent = parent;
+    Integer const child_l{this->assemble_part(*part.left, offset)};
+    Integer const child_r{this->assemble_part(*part.right, offset)};
+    m_tree_structure[offset].child_l = child_l;
+    m_tree_structure[offset].child_r = child_r;
+    return offset;
+  }
+
+  // ---------------------------------------------------------------------------
   // Parallel driver
   // ---------------------------------------------------------------------------
 
@@ -1246,14 +1378,86 @@ private:
   }
 
   /**
+   * Store an intersecting pair. In a self-intersection each pair is found
+   * once: pair lists store it as (min, max), maps in both directions.
+   */
+  static void emit_pair(IndexPairList &pairs, Integer const a, Integer const b,
+                        bool const self) {
+    if (self && b < a) {
+      pairs.emplace_back(b, a);
+    } else {
+      pairs.emplace_back(a, b);
+    }
+  }
+  static void emit_pair(IndexMap &map, Integer const a, Integer const b,
+                        bool const self) {
+    map[a].insert(b);
+    if (self) {
+      map[b].insert(a);
+    }
+  }
+
+  /**
+   * Merge two partial results of a tree-tree intersection.
+   */
+  static void merge_results(IndexPairList &dst, IndexPairList &src) {
+    dst.insert(dst.end(), src.begin(), src.end());
+    IndexPairList().swap(src);
+  }
+  static void merge_results(IndexMap &dst, IndexMap &src) {
+    merge_index_maps(dst, src);
+  }
+
+  /**
+   * Finalize the result of a tree-tree intersection: sort the pairs and remove
+   * the duplicates (the same pair may be found more than once, e.g. the long
+   * boxes of a node against themselves in a self-intersection).
+   */
+  static void finalize_result(IndexPairList &pairs) {
+    std::sort(pairs.begin(), pairs.end());
+    pairs.erase(std::unique(pairs.begin(), pairs.end()), pairs.end());
+  }
+  static void finalize_result(IndexMap &) {}
+
+  /**
+   * Push the pairs to visit after (id_s1, id_s2) in a self-intersection. The
+   * pair of a node with itself is split without generating mirrored pairs:
+   * (x, x) --> (xl, xl), (xr, xr), (xl, xr), (long(x), xl), (long(x), xr),
+   * while the long boxes of x against themselves are handled at (x, x).
+   * Pairs of distinct nodes follow the general rule.
+   */
+  static void push_self_children_pairs(IndexList &stack, Integer const id_s1,
+                                       Integer const id_s2, Node const &node_1,
+                                       Node const &node_2) {
+    if (id_s1 != id_s2 || id_s1 < 0) {
+      push_children_pairs(stack, id_s1, id_s2, node_1, node_2);
+      return;
+    }
+    if (node_1.child_l < 0) {
+      return; // Leaf with itself: done
+    }
+    Integer const l{node_1.child_l};
+    Integer const r{node_1.child_r};
+    stack.insert(stack.end(), {l, l, r, r, l, r});
+    if (node_1.box_num > 0) {
+      Integer const x{negate(id_s1)};
+      stack.insert(stack.end(), {x, l, x, r});
+    }
+  }
+
+  /**
    * Process one pair of nodes of a tree-tree intersection: intersect their
    * long boxes and push the pairs of children to visit next on the stack.
    * If \c self is true the pairs of a box with itself are discarded.
    */
+  template <typename Result>
   void intersect_pair_step(Tree const &tree, Integer const id_s1,
-                           Integer const id_s2, IndexMap &candidates,
+                           Integer const id_s2, Result &candidates,
                            QueryCounters &c, bool const self,
                            IndexList &stack) const {
+    auto emit = [&candidates, self](Integer const a, Integer const b) {
+      emit_pair(candidates, a, b, self);
+    };
     BoxUniquePtrList const &boxes_1{*m_boxes_ptr};
     BoxUniquePtrList const &boxes_2{*tree.m_boxes_ptr};
     Integer const id_1{id_s1 < 0 ? negate(id_s1) : id_s1};
@@ -1286,7 +1490,7 @@ private:
                 continue;
               }
               if (++c.objs; box_1.intersects(*boxes_2[pos_2])) {
-                candidates[pos_1].insert(pos_2);
+                emit(pos_1, pos_2);
               }
             }
           }
@@ -1303,7 +1507,7 @@ private:
                 continue;
               }
               if (++c.objs; boxes_1[pos_1]->intersects(box_2)) {
-                candidates[pos_1].insert(pos_2);
+                emit(pos_1, pos_2);
               }
             }
           }
@@ -1311,27 +1515,33 @@ private:
       }
     }
 
-    push_children_pairs(stack, id_s1, id_s2, node_1, node_2);
+    if (self) {
+      push_self_children_pairs(stack, id_s1, id_s2, node_1, node_2);
+    } else {
+      push_children_pairs(stack, id_s1, id_s2, node_1, node_2);
+    }
   }
 
   /**
    * Intersect the tree with another tree (see \c intersect and
    * \c self_intersect).
    */
-  void intersect_tree_impl(Tree const &tree, IndexMap &candidates,
-                           Workspace &ws, bool const self) const {
-    candidates.clear();
+  template <typename Result>
+  void intersect_tree_impl(Tree const &tree, Result &result, Workspace &ws,
+                           bool const self) const {
+    result.clear();
     if (this->is_empty() || tree.is_empty()) {
       return;
     }
     this->dual_traversal(
-        tree, candidates, ws,
+        tree, result, ws,
         [this, &tree, self](Integer const id_s1, Integer const id_s2,
-                            IndexMap &result, Workspace &w, IndexList &stack) {
-          this->intersect_pair_step(tree, id_s1, id_s2, result, w.counters,
-                                    self, stack);
+                            Result &r, Workspace &w, IndexList &stack) {
+          this->intersect_pair_step(tree, id_s1, id_s2, r, w.counters, self,
+                                    stack);
         },
-        [](IndexMap &dst, IndexMap &src) { merge_index_maps(dst, src); });
+        [](Result &dst, Result &src) { merge_results(dst, src); });
+    finalize_result(result);
   }
 
   /**
@@ -1506,10 +1716,14 @@ private:
           pairs[n_kept++] = std::make_tuple(d, a, b);
         }
       }
-      std::sort(pairs.begin(), pairs.begin() + n_kept,
-                [](auto const &x, auto const &y) {
-                  return std::get<0>(x) > std::get<0>(y);
-                });
+      // Insertion sort by decreasing distance (at most 3 pairs; std::sort on
+      // such small arrays triggers false -Warray-bounds warnings with GCC)
+      for (std::size_t k{1}; k < n_kept; ++k) {
+        for (std::size_t h{k};
+             h > 0 && std::get<0>(pairs[h - 1]) < std::get<0>(pairs[h]); --h) {
+          std::swap(pairs[h - 1], pairs[h]);
+        }
+      }
       stack.resize(first);
       for (std::size_t k{0}; k < n_kept; ++k) {
         stack.emplace_back(std::get<1>(pairs[k]));
