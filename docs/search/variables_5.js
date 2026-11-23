@@ -1,5 +1,19 @@
 var searchData=
 [
-  ['node_5fcheck_5fcounter_0',['node_check_counter',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a7573d84929ea1167373dfb513a1fdb07',1,'AABBtree::Tree::Statistics']]],
-  ['nodes_1',['nodes',['../struct_a_a_b_btree_1_1_tree_1_1_statistics.html#a6ce9ff6cb6a4f55eb79d60b6a6087f77',1,'AABBtree::Tree::Statistics']]]
+  ['m_5fboxes_5fptr_0',['m_boxes_ptr',['../class_a_a_b_btree_1_1_tree.html#a2b9c9d294c7a7cbee627f3086e6b085a',1,'AABBtree::Tree']]],
+  ['m_5fdirection_1',['m_direction',['../class_a_a_b_btree_1_1_ray.html#a24478776f3c50e04797d762c882fc9ee',1,'AABBtree::Ray']]],
+  ['m_5fdump_5fcounter_2',['m_dump_counter',['../class_a_a_b_btree_1_1_tree.html#aa9a43b9b304fa185e0e59a555550a9ff',1,'AABBtree::Tree']]],
+  ['m_5flong_5fcheck_5fcounter_3',['m_long_check_counter',['../class_a_a_b_btree_1_1_tree.html#a82576c45b86a3fbceab13d2c6bb1b8ab',1,'AABBtree::Tree']]],
+  ['m_5fmax_4',['m_max',['../class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9',1,'AABBtree::Box']]],
+  ['m_5fmax_5fdumpings_5',['m_max_dumpings',['../class_a_a_b_btree_1_1_tree.html#ac44e1932b6f4e3cecf5043477c93748d',1,'AABBtree::Tree']]],
+  ['m_5fmax_5fnodal_5fobjects_6',['m_max_nodal_objects',['../class_a_a_b_btree_1_1_tree.html#a5f031878cb331577c243a40b3082601d',1,'AABBtree::Tree']]],
+  ['m_5fmin_7',['m_min',['../class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d',1,'AABBtree::Box']]],
+  ['m_5fnode_5fcheck_5fcounter_8',['m_node_check_counter',['../class_a_a_b_btree_1_1_tree.html#a124bb8302f5d8353e667cae4681c1039',1,'AABBtree::Tree']]],
+  ['m_5fnum_5fthreads_9',['m_num_threads',['../class_a_a_b_btree_1_1_tree.html#a8ec8c0fc8095681dd59f5f898d0671f5',1,'AABBtree::Tree']]],
+  ['m_5fobjs_5fcheck_5fcounter_10',['m_objs_check_counter',['../class_a_a_b_btree_1_1_tree.html#aa6129ce6f281ff94c8877c82bc420ea1',1,'AABBtree::Tree']]],
+  ['m_5forigin_11',['m_origin',['../class_a_a_b_btree_1_1_ray.html#a9912b7fd7e82732fb66b9168003266d7',1,'AABBtree::Ray']]],
+  ['m_5fseparation_5fratio_5ftolerance_12',['m_separation_ratio_tolerance',['../class_a_a_b_btree_1_1_tree.html#aa8910734f7976650755d164f238e1186',1,'AABBtree::Tree']]],
+  ['m_5ftree_5fboxes_5fmap_13',['m_tree_boxes_map',['../class_a_a_b_btree_1_1_tree.html#abdf0751289c44c1563c9fb62cf9bfde3',1,'AABBtree::Tree']]],
+  ['m_5ftree_5fstructure_14',['m_tree_structure',['../class_a_a_b_btree_1_1_tree.html#afa8009bf7ddf296eb7cd30281e981b88',1,'AABBtree::Tree']]],
+  ['m_5fvalue_15',['m_value',['../class_a_a_b_btree_1_1detail_1_1_relaxed_counter.html#a28201b57ff54196c68b24eb530297f2d',1,'AABBtree::detail::RelaxedCounter']]]
 ];

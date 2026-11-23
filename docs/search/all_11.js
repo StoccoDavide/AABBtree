@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['_7ebox_0',['~Box',['../class_a_a_b_btree_1_1_box.html#a964eb75aa54e1e49314965b06dc557f3',1,'AABBtree::Box']]],
-  ['_7eray_1',['~Ray',['../class_a_a_b_btree_1_1_ray.html#ad87fb0ada272f808c7c69d88c83ae1f8',1,'AABBtree::Ray']]],
-  ['_7etree_2',['~Tree',['../class_a_a_b_btree_1_1_tree.html#aa5f0a19da9c6cb05f69d6dc1719d806a',1,'AABBtree::Tree']]]
+  ['vector_0',['Vector',['../class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3',1,'AABBtree::Box::Vector'],['../class_a_a_b_btree_1_1_ray.html#a77a12561a68e2159ba3bfd86099e3c01',1,'AABBtree::Ray::Vector'],['../class_a_a_b_btree_1_1_tree.html#ae455d9f7b6f6caca4e7734797239686d',1,'AABBtree::Tree::Vector'],['../namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5',1,'AABBtree::Vector']]],
+  ['volume_1',['volume',['../class_a_a_b_btree_1_1_box.html#af428580546b8f2e490a69659e25cfade',1,'AABBtree::Box']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['side_0',['Side',['../class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133',1,'AABBtree::Box']]]
+  ['distancekind_0',['DistanceKind',['../class_a_a_b_btree_1_1_ray.html#abb8e69ffc9496c0bdbcfb0e0fecddcfc',1,'AABBtree::Ray']]]
 ];

@@ -1,0 +1,830 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- BEGIN opengraph metadata -->
+<meta property="og:title" content="Doxygen Awesome" />
+<meta property="og:image" content="https://repository-images.githubusercontent.com/348492097/4f16df80-88fb-11eb-9d31-4015ff22c452" />
+<meta property="og:description" content="Custom CSS theme for doxygen html-documentation with lots of customization parameters." />
+<meta property="og:url" content="https://jothepro.github.io/doxygen-awesome-css/" />
+<!-- END opengraph metadata -->
+<!-- BEGIN twitter metadata -->
+<meta name="twitter:image:src" content="https://repository-images.githubusercontent.com/348492097/4f16df80-88fb-11eb-9d31-4015ff22c452" />
+<meta name="twitter:title" content="Doxygen Awesome" />
+<meta name="twitter:description" content="Custom CSS theme for doxygen html-documentation with lots of customization parameters." />
+<!-- END twitter metadata -->
+<title>AABBtree: include/AABBtree/Box.hh Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link rel="icon" type="image/svg+xml" href="logo.png"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-fragment-copy-button.js"></script>
+<script type="text/javascript" src="doxygen-awesome-paragraph-link.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript" src="doxygen-awesome-tabs.js"></script>
+<script type="text/javascript" src="toggle-alternative-theme.js"></script>
+<script type="text/javascript">
+    DoxygenAwesomeFragmentCopyButton.init()
+    DoxygenAwesomeDarkModeToggle.init()
+    DoxygenAwesomeParagraphLink.init()
+    DoxygenAwesomeInteractiveToc.init()
+    DoxygenAwesomeTabs.init()
+</script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="custom.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
+<link href="custom-alternative.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- https://tholman.com/github-corners/ -->
+<a href="https://github.com/StoccoDavide/AABBtree" class="github-corner" title="View source on GitHub" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 250 250" width="40" height="40" style="position: absolute; top: 0; border: 0; right: 0; z-index: 99;" aria-hidden="true">
+    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">AABBtree
+   &#160;<span id="projectnumber">0.0.1</span>
+   </div>
+   <div id="projectbrief">A C++ non-recursive ND AABB tree</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('_box_8hh_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Box.hh</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="_box_8hh.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (c) 2026, Davide Stocco and Enrico Bertolazzi.                  *</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *                                                                           *</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * The AABBtree project is distributed under the BSD 2-Clause License.       *</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> *                                                                           *</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * Davide Stocco Enrico Bertolazzi                                           *</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * University of Trento University of Trento                                 *</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> * davide.stocco@unitn.it                         enrico.bertolazzi@unitn.it *</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">// DISCLAIMER: The code in this file is a modified version of the Eigen library.</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#ifndef INCLUDE_AABBTREE_BOX_HH</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="_box_8hh.html#a83b54e85ef36839c4e62477f47ba9799">   16</a></span><span class="preprocessor">#define INCLUDE_AABBTREE_BOX_HH</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="_ray_8hh.html">AABBtree/Ray.hh</a>&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_a_a_b_btree.html">AABBtree</a> {</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">template</span> &lt;std::<span class="keywordtype">float</span>ing_po<span class="keywordtype">int</span> Real, Integer N&gt; <span class="keyword">class </span>Ray;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span></div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="};">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html">   50</a></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">float</span>ing_po<span class="keywordtype">int</span> Real, Integer N&gt; <span class="keyword">class </span><a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keyword">static_assert</span>(N &gt; 0, <span class="stringliteral">&quot;Box dimension must be positive.&quot;</span>);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">   53</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> = <a class="code hl_typedef" href="namespace_a_a_b_btree.html#a3076e2acccd9d95fea5910dea68e2fa9">AABBtree::Point&lt;Real, N&gt;</a>;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">   54</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> = <a class="code hl_typedef" href="namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5">AABBtree::Vector&lt;Real, N&gt;</a>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aab02d8642ffdeb9841964ef8a7dd2e3a">   55</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#aab02d8642ffdeb9841964ef8a7dd2e3a">BoxUniquePtr</a> = <a class="code hl_typedef" href="namespace_a_a_b_btree.html#a9e5702de99d3fcf4ad607f3e85584e62">AABBtree::BoxUniquePtr&lt;Real, N&gt;</a>;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a8ff722bc466a483458aafdb1a5a3f8e7">   56</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a8ff722bc466a483458aafdb1a5a3f8e7">BoxUniquePtrList</a> = <a class="code hl_typedef" href="namespace_a_a_b_btree.html#ab51fda1565368b57db9aa1db9f5cd623">AABBtree::BoxUniquePtrList&lt;Real, N&gt;</a>;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">   59</a></span>      <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>; </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">   61</a></span>      <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>; </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a964eb75aa54e1e49314965b06dc557f3">   67</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a964eb75aa54e1e49314965b06dc557f3">~Box</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">   74</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a>() { this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3">set_empty</a>(); }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a918395e6ce294ea3e15f7626fe1ca9b9">   80</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a918395e6ce294ea3e15f7626fe1ca9b9">Box</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b) : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>) {}</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ad076e3e79de9ab72fdf7b709d7f8fdb7">   91</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ad076e3e79de9ab72fdf7b709d7f8fdb7">Box</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;t_min, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;t_max) : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(t_min), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(t_max) {}</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aa4518bac6771168aa0037cf0825ca36b">   97</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aa4518bac6771168aa0037cf0825ca36b">Box</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p) : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(p), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(p) {}</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span></div>
+<div class="foldopen" id="foldopen00105" data-start="{" data-end="}">
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a3ec28784b55c73ce776206757f0f0f36">  105</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a3ec28784b55c73ce776206757f0f0f36">Box</a>(Real <span class="keyword">const</span> x_min, Real <span class="keyword">const</span> x_max)</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <span class="keyword">requires</span>(N == 1) : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(x_min), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(x_max) {}</div>
+</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span></div>
+<div class="foldopen" id="foldopen00116" data-start="{" data-end="}">
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a311d11935b5d1aa59bbde5490b39f5ce">  116</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a311d11935b5d1aa59bbde5490b39f5ce">Box</a>(Real <span class="keyword">const</span> x_min, Real <span class="keyword">const</span> y_min, Real <span class="keyword">const</span> x_max, Real <span class="keyword">const</span> y_max)</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keyword">requires</span>(N == 2)</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>      : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(x_min, y_min), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(x_max, y_max) {}</div>
+</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span></div>
+<div class="foldopen" id="foldopen00130" data-start="{" data-end="}">
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#afbcf6ddb81f08a49e99cf5b24bb736e0">  130</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#afbcf6ddb81f08a49e99cf5b24bb736e0">Box</a>(Real <span class="keyword">const</span> x_min, Real <span class="keyword">const</span> y_min, Real <span class="keyword">const</span> z_min, Real <span class="keyword">const</span> x_max,</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>      Real <span class="keyword">const</span> y_max, Real <span class="keyword">const</span> z_max)</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    <span class="keyword">requires</span>(N == 3)</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>      : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(x_min, y_min, z_min), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(x_max, y_max, z_max) {}</div>
+</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">float</span>ing_po<span class="keywordtype">int</span> OtherReal&gt;</div>
+<div class="foldopen" id="foldopen00142" data-start="{" data-end="}">
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#afb467ec08cdc4f956c686f758ea5a981">  142</a></span>  <span class="keyword">explicit</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#afb467ec08cdc4f956c686f758ea5a981">Box</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box&lt;OtherReal, N&gt;</a> <span class="keyword">const</span> &amp;b)</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>      : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(b.<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c">min</a>().template <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">cast</a>&lt;Real&gt;()),</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(b.<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#af3422d6b20966e42eb57f0695d0dcf5b">max</a>().template <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">cast</a>&lt;Real&gt;()) {}</div>
+</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span></div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a77818e24d0375dc6bd8dfda6da234a6b">  151</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a77818e24d0375dc6bd8dfda6da234a6b">operator=</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span></div>
+<div class="foldopen" id="foldopen00158" data-start="{" data-end="}">
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">  158</a></span>  <span class="keyword">template</span> &lt;std::<span class="keywordtype">float</span>ing_po<span class="keywordtype">int</span> NewReal&gt; <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box&lt;NewReal, N&gt;</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">cast</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box&lt;NewReal, N&gt;</a>(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.template <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">cast&lt;NewReal&gt;</a>(),</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>                           <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.template <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">cast&lt;NewReal&gt;</a>());</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>  }</div>
+</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span></div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c">  167</a></span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c">min</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>; }</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span></div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ae47ee2a4b0d7bbbe598b4fbdc997dc7a">  173</a></span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ae47ee2a4b0d7bbbe598b4fbdc997dc7a">min</a>() { <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>; }</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span></div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#af3422d6b20966e42eb57f0695d0dcf5b">  179</a></span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#af3422d6b20966e42eb57f0695d0dcf5b">max</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>; }</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ae73f76a2e70d558c718f2c04348c919f">  185</a></span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ae73f76a2e70d558c718f2c04348c919f">max</a>() { <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>; }</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span></div>
+<div class="foldopen" id="foldopen00191" data-start="{" data-end="}">
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5">  191</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5">reorder</a>() {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>      <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] &gt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]) {</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        std::swap(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i], <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]);</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>      }</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    }</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  }</div>
+</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span></div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a14020411b85f83053bca13c2e177861b">  204</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a14020411b85f83053bca13c2e177861b">is_empty</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.array() &lt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.array()).any(); }</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span></div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>  <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen00213" data-start="{" data-end="}">
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a1ab47e5b75897380957bb3c21cf1972f">  213</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a1ab47e5b75897380957bb3c21cf1972f">is_approx</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b,</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            Real <span class="keyword">const</span> tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.isApprox(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>, tol) &amp;&amp; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.isApprox(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>, tol);</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>  }</div>
+</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span></div>
+<div class="foldopen" id="foldopen00223" data-start="{" data-end="}">
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a39272fe17a5e25d25fe34280cecb3691">  223</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a39272fe17a5e25d25fe34280cecb3691">is_degenerate</a>(</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>      Real <span class="keyword">const</span> tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.isApprox(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>, tol);</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>  }</div>
+</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span></div>
+<div class="foldopen" id="foldopen00232" data-start="{" data-end="}">
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ab2cfd36b0b72269a19d501836eb2cda4">  232</a></span>  <a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ab2cfd36b0b72269a19d501836eb2cda4">longest_axis</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> sizes{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>};</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    <span class="keywordflow">return</span> std::distance(sizes.data(),</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                         std::max_element(sizes.data(), sizes.data() + N));</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>  }</div>
+</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span></div>
+<div class="foldopen" id="foldopen00244" data-start="{" data-end="}">
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ada2b96790c11ba4934a72c8e60c6e90f">  244</a></span>  <a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ada2b96790c11ba4934a72c8e60c6e90f">longest_axis</a>(Real &amp;max_length, Real &amp;mid_point)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> axis{-1};</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    max_length = -1;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>      <span class="keywordflow">if</span> (Real <span class="keyword">const</span> tmp_length{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(i) - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(i)}; max_length &lt; tmp_length) {</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        max_length = tmp_length;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        mid_point = 0.5 * (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(i) + <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(i));</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>        axis = i;</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>      }</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    }</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    <span class="keywordflow">return</span> axis;</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>  }</div>
+</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span></div>
+<div class="foldopen" id="foldopen00262" data-start="{" data-end="}">
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a72db6bb99930ac21bc29f7fd0ac28f1b">  262</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a72db6bb99930ac21bc29f7fd0ac28f1b">sort_axes_length</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> &amp;sizes, Eigen::Vector&lt;Integer, N&gt; &amp;ipos)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    sizes = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    ipos = Eigen::Vector&lt;Integer, N&gt;::LinSpaced(N, 0, N - 1);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    std::ranges::sort(ipos.data(), ipos.data() + N, std::ranges::greater{},</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                      [&amp;sizes](<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i) { return sizes[i]; });</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  }</div>
+</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span></div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aa5b990da2a46a32808ad12d4f2db03d8">  273</a></span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aa5b990da2a46a32808ad12d4f2db03d8">baricenter</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 0.5 * (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> + <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>); }</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span></div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a347eade35e84554bf4014a9df3f29b51">  280</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a347eade35e84554bf4014a9df3f29b51">baricenter</a>(<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 0.5 * (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(i) + <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(i)); }</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#af428580546b8f2e490a69659e25cfade">  286</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#af428580546b8f2e490a69659e25cfade">volume</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>).prod(); }</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span></div>
+<div class="foldopen" id="foldopen00292" data-start="{" data-end="}">
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a4b3703f9cb73b8fb6607764f7e7fd16b">  292</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a4b3703f9cb73b8fb6607764f7e7fd16b">surface</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> sizes{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>};</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    Real area{0};</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>      Real prod{1.0};</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>      <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> j{0}; j &lt; N; ++j)</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="keywordflow">if</span> (j != i)</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>          prod *= sizes[j];</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>      area += 2.0 * prod;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    }</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    <span class="keywordflow">return</span> area;</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>  }</div>
+</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span></div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ae9ec87df4ce83e41baecf7414c78761e">  310</a></span>  <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ae9ec87df4ce83e41baecf7414c78761e">diagonal</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>; }</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span></div>
+<div class="foldopen" id="foldopen00316" data-start="{" data-end="}">
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2">  316</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2">set_degenerate</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p) {</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> = p;</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> = p;</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>  }</div>
+</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span></div>
+<div class="foldopen" id="foldopen00324" data-start="{" data-end="}">
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3">  324</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3">set_empty</a>() {</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.setConstant(+std::numeric_limits&lt;Real&gt;::infinity());</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.setConstant(-std::numeric_limits&lt;Real&gt;::infinity());</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>  }</div>
+</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span></div>
+<div class="foldopen" id="foldopen00334" data-start="{" data-end="}">
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aefcb301f705aa851978432ca2d0b4aff">  334</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aefcb301f705aa851978432ca2d0b4aff">intersects</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    <span class="comment">// return (m_min.array() &lt;= b.m_max.array()).all() &amp;&amp; (b.m_min.array() &lt;=</span></div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    <span class="comment">// m_max.array()).all();</span></div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.size(); ++d)</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>      <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[d] &gt; b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[d] || b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[d] &gt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[d])</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>  }</div>
+</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span></div>
+<div class="foldopen" id="foldopen00348" data-start="{" data-end="}">
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aa4f2bec5f0a3abe0c8a8babfc1a88b5a">  348</a></span>  <span class="keyword">template</span> &lt;Integer d = 2&gt; <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aa4f2bec5f0a3abe0c8a8babfc1a88b5a">quasi_intersects</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.template head&lt;d&gt;().array() &lt;=</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>            b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.template head&lt;d&gt;().array())</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>               .all() &amp;&amp;</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>           (b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.template head&lt;d&gt;().array() &lt;=</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>            <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.template head&lt;d&gt;().array())</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>               .all();</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>  }</div>
+</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span></div>
+<div class="foldopen" id="foldopen00363" data-start="{" data-end="}">
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aa61b7be5d4a5682ab6adbf9a711054d1">  363</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aa61b7be5d4a5682ab6adbf9a711054d1">intersect</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b_in, <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> &amp;b_out)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    b_out.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.cwiseMax(b_in.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>);</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    b_out.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.cwiseMin(b_in.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>);</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    <span class="keywordflow">return</span> (b_out.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.array() &lt;= b_out.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.array()).all();</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>  }</div>
+</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span></div>
+<div class="foldopen" id="foldopen00374" data-start="{" data-end="}">
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#affb0818565339d76daeb751e0cf39142">  374</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#affb0818565339d76daeb751e0cf39142">merged</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a>(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.cwiseMin(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>), <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.cwiseMax(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>));</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>  }</div>
+</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span></div>
+<div class="foldopen" id="foldopen00383" data-start="{" data-end="}">
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a5249a23c4c84d82957caee3f326004e3">  383</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5249a23c4c84d82957caee3f326004e3">translate</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> <span class="keyword">const</span> &amp;t) {</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> += t;</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> += t;</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>  }</div>
+</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span></div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#afcd84231074643798ed905173ad1230b">  394</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#afcd84231074643798ed905173ad1230b">translated</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> <span class="keyword">const</span> &amp;t)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a>(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> + t, <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> + t); }</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span></div>
+<div class="foldopen" id="foldopen00404" data-start="{" data-end="}">
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a0dfab5d13334fbf33398465886aba3c8">  404</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Transform&gt; <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0dfab5d13334fbf33398465886aba3c8">transformed</a>(Transform <span class="keyword">const</span> &amp;t)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>    <span class="comment">// Transform the center, and bound the transformed half sizes with the</span></div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>    <span class="comment">// absolute value of the linear part (exact for the box of a rotated box)</span></div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> center{t * this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aa5b990da2a46a32808ad12d4f2db03d8">baricenter</a>()};</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>    <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">Vector</a> <span class="keyword">const</span> half{t.linear().cwiseAbs() * (Real(0.5) * (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>))};</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a>(center - half), <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a>(center + half));</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>  }</div>
+</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span></div>
+<div class="foldopen" id="foldopen00420" data-start="{" data-end="}">
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a88e10afbd89ac29964576b8ae8b9c6ec">  420</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Transform&gt; <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a88e10afbd89ac29964576b8ae8b9c6ec">transform</a>(Transform <span class="keyword">const</span> &amp;t) {</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>    *<span class="keyword">this</span> = this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0dfab5d13334fbf33398465886aba3c8">transformed</a>(t);</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>  }</div>
+</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span></div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c">  428</a></span>  <span class="keyword">enum class</span> <a class="code hl_enumeration" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133">Side</a> : <a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> { LEFT = -1, INSIDE = 0, RIGHT = +1 };</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span></div>
+<div class="foldopen" id="foldopen00438" data-start="{" data-end="}">
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a55b38df4a999605c3c42698b68f68364">  438</a></span>  <a class="code hl_enumeration" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133">Side</a> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a55b38df4a999605c3c42698b68f68364">which_side</a>(Real <span class="keyword">const</span> x, Real <span class="keyword">const</span> tol, <a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> <span class="keyword">const</span> dim)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    Real <span class="keyword">const</span> x_min{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>(dim)};</div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    Real <span class="keyword">const</span> x_max{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>(dim)};</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>    <span class="keywordtype">bool</span> <span class="keyword">const</span> on_left{x_max &lt; x + tol};</div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>    <span class="keywordtype">bool</span> <span class="keyword">const</span> on_right{x - tol &lt; x_min};</div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>    <span class="keywordflow">if</span> (on_left &amp;&amp; on_right) {</div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>      <span class="keywordflow">return</span> 0.5 * (x_min + x_max) &lt; x ? <a class="code hl_enumvalue" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758">Side::LEFT</a> : <a class="code hl_enumvalue" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a21507b40c80068eda19865706fdc2403">Side::RIGHT</a>;</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (on_left) {</div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>      <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758">Side::LEFT</a>;</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (on_right) {</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>      <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a21507b40c80068eda19865706fdc2403">Side::RIGHT</a>;</div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>      <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c">Side::INSIDE</a>;</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>    }</div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>  }</div>
+</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span></div>
+<div class="foldopen" id="foldopen00459" data-start="{" data-end="}">
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a7f35349a4abeee59e639d6ca1a87ca66">  459</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a7f35349a4abeee59e639d6ca1a87ca66">contains</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>    <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.array() &lt;= p.array()).all() &amp;&amp;</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>           (p.array() &lt;= <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.array()).all();</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>  }</div>
+</div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span></div>
+<div class="foldopen" id="foldopen00470" data-start="{" data-end="}">
+<div class="line"><a id="l00470" name="l00470"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aefdb702d97615acdeaa7714feb3df15e">  470</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aefdb702d97615acdeaa7714feb3df15e">intersects</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>    <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.array() &lt;= p.array()).all() &amp;&amp;</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>           (p.array() &lt;= <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.array()).all();</div>
+<div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>  }</div>
+</div>
+<div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span></div>
+<div class="foldopen" id="foldopen00482" data-start="{" data-end="}">
+<div class="line"><a id="l00482" name="l00482"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a1a4622e018649340aa30a861ca99a498">  482</a></span>  <span class="keyword">template</span> &lt;Integer d = 2&gt; <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a1a4622e018649340aa30a861ca99a498">quasi_intersects</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>    <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.template head&lt;d&gt;().array() &lt;= p.template head&lt;d&gt;().array()) &amp;&amp;</div>
+<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>           (p.template head&lt;d&gt;().array() &lt;= <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.template head&lt;d&gt;().array());</div>
+<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>  }</div>
+</div>
+<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span></div>
+<div class="foldopen" id="foldopen00492" data-start="{" data-end="}">
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a41217ce3aabe0710ce4aa966ff97eb14">  492</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a41217ce3aabe0710ce4aa966ff97eb14">contains</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>    <span class="keywordflow">return</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.array() &lt;= b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.array()).all() &amp;&amp;</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>           (b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.array() &lt;= <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.array()).all();</div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>  }</div>
+</div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span></div>
+<div class="foldopen" id="foldopen00502" data-start="{" data-end="}">
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a05545fb6a0034d9e37cacaefd338bc52">  502</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Derived&gt; <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a05545fb6a0034d9e37cacaefd338bc52">extend</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p) {</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.cwiseMin(p);</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.cwiseMax(p);</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>  }</div>
+</div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span></div>
+<div class="foldopen" id="foldopen00514" data-start="{" data-end="}">
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a0940a8a4182bf2d6b0d17f3462448b51">  514</a></span>  <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> &amp;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0940a8a4182bf2d6b0d17f3462448b51">extend</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b) {</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a> = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.cwiseMin(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>);</div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>    <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a> = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.cwiseMax(b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>);</div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>  }</div>
+</div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span></div>
+<div class="foldopen" id="foldopen00528" data-start="{" data-end="}">
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">  528</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">squared_interior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>    Real dist2{0.0};</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>      <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] &gt; p[i]) {</div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        Real aux{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] - p[i]};</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>        dist2 += aux * aux;</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (p[i] &gt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]) {</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>        Real aux{p[i] - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]};</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>        dist2 += aux * aux;</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>      }</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>    }</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    <span class="keywordflow">return</span> dist2;</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  }</div>
+</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span></div>
+<div class="foldopen" id="foldopen00552" data-start="{" data-end="}">
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a981f263990a59ff5f06a794de7908c44">  552</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a981f263990a59ff5f06a794de7908c44">squared_interior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;c)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>    <span class="keywordflow">if</span> (this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a7f35349a4abeee59e639d6ca1a87ca66">contains</a>(p)) {</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>      c = p; <span class="comment">// The closest point of the box is the point itself</span></div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>      <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    }</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>    c = p.cwiseMax(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>).cwiseMin(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>);</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>    <span class="keywordflow">return</span> (p - c).squaredNorm();</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>  }</div>
+</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span></div>
+<div class="foldopen" id="foldopen00569" data-start="{" data-end="}">
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a682218b415157b4f0ed7ca04d8aba918">  569</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a682218b415157b4f0ed7ca04d8aba918">interior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">squared_interior_distance</a>(p));</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>  }</div>
+</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span></div>
+<div class="foldopen" id="foldopen00582" data-start="{" data-end="}">
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a867a5de14734e6afb543feaf550432e2">  582</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a867a5de14734e6afb543feaf550432e2">interior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;c)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">squared_interior_distance</a>(p, c));</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>  }</div>
+</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span></div>
+<div class="foldopen" id="foldopen00594" data-start="{" data-end="}">
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">  594</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">squared_exterior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>    Real dist2{0.0};</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>      Real <span class="keyword">const</span> aux1{std::abs(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] - p[i])};</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>      Real <span class="keyword">const</span> aux2{std::abs(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i] - p[i])};</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      Real <span class="keyword">const</span> aux3{std::max(aux1, aux2)};</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      dist2 += aux3 * aux3;</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>    }</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>    <span class="keywordflow">return</span> dist2;</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>  }</div>
+</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span></div>
+<div class="foldopen" id="foldopen00614" data-start="{" data-end="}">
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a5906b2531058fa9deeb111cd14dfdb83">  614</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5906b2531058fa9deeb111cd14dfdb83">squared_exterior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;f)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>      Real <span class="keyword">const</span> aux1{std::abs(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] - p[i])};</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>      Real <span class="keyword">const</span> aux2{std::abs(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i] - p[i])};</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>      f[i] = aux1 &gt; aux2 ? <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] : <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i];</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>    }</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>    <span class="keywordflow">return</span> (f - p).squaredNorm();</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>  }</div>
+</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span></div>
+<div class="foldopen" id="foldopen00631" data-start="{" data-end="}">
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a6bb8ff31950aa877535af613b1eaf398">  631</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a6bb8ff31950aa877535af613b1eaf398">exterior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">squared_exterior_distance</a>(p));</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>  }</div>
+</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span></div>
+<div class="foldopen" id="foldopen00644" data-start="{" data-end="}">
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#af324631006940c5f2d4e8e349ed3ed3d">  644</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#af324631006940c5f2d4e8e349ed3ed3d">exterior_distance</a>(<a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> <span class="keyword">const</span> &amp;p, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;f)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">squared_exterior_distance</a>(p, f));</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>  }</div>
+</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span></div>
+<div class="foldopen" id="foldopen00656" data-start="{" data-end="}">
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a07998837c27fc8fecb1db11a95b4b3d3">  656</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a07998837c27fc8fecb1db11a95b4b3d3">squared_interior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>    <span class="keywordflow">if</span> (this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aefcb301f705aa851978432ca2d0b4aff">intersects</a>(b))</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>      <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    Real dist2{0.0};</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>      Real aux{<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] - b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]};</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>      <span class="keywordflow">if</span> (aux &lt; 0.0) {</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>        aux = b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] - <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i];</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        <span class="keywordflow">if</span> (aux &lt; 0.0) {</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>          <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>        }</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>      }</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>      dist2 += aux * aux;</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>    }</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>    <span class="keywordflow">return</span> dist2;</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>  }</div>
+</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span></div>
+<div class="foldopen" id="foldopen00683" data-start="{" data-end="}">
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a64a1656c5923bbdfb2e4f791c9738a08">  683</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a64a1656c5923bbdfb2e4f791c9738a08">squared_interior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    <span class="comment">// On the axes where the boxes overlap both points are the center of the</span></div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    <span class="comment">// overlap (if the boxes intersect, p1 = p2 is a point of the intersection)</span></div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>      <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] &gt; b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]) {</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>        p1[i] = b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i];</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>        p2[i] = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i];</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i] &gt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]) {</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>        p1[i] = <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i];</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>        p2[i] = b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i];</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>        p1[i] = p2[i] = 0.5 * (std::min(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i], b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]) +</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>                               std::max(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i], b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i]));</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>      }</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    }</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    <span class="keywordflow">return</span> (p2 - p1).squaredNorm();</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>  }</div>
+</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span></div>
+<div class="foldopen" id="foldopen00709" data-start="{" data-end="}">
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aeae246969fc7f7d2799e16938ad9f477">  709</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aeae246969fc7f7d2799e16938ad9f477">interior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">squared_interior_distance</a>(b));</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>  }</div>
+</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span></div>
+<div class="foldopen" id="foldopen00723" data-start="{" data-end="}">
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#af3b59d9166d94a31b4daa465f552c5a1">  723</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#af3b59d9166d94a31b4daa465f552c5a1">interior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">squared_interior_distance</a>(b, p1, p2));</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>  }</div>
+</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span></div>
+<div class="foldopen" id="foldopen00735" data-start="{" data-end="}">
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#acfe143f5c9cc9f87ef105fd859081f37">  735</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#acfe143f5c9cc9f87ef105fd859081f37">squared_exterior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    Real dist2{Real(0)};</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">Integer</a> i{0}; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>      Real <span class="keyword">const</span> aux{std::max(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i], b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>[i]) -</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>                     std::min(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i], b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>[i])};</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>      dist2 += aux * aux;</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    }</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    <span class="keywordflow">return</span> dist2;</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>  }</div>
+</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span></div>
+<div class="foldopen" id="foldopen00753" data-start="{" data-end="}">
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a2d198000f94d2312a92c732f01f91f8f">  753</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a2d198000f94d2312a92c732f01f91f8f">squared_exterior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    p1 = b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.cwiseMin(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>);</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    p2 = b.<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.cwiseMax(<a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>);</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    <span class="keywordflow">return</span> (p2 - p1).squaredNorm();</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>  }</div>
+</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span></div>
+<div class="foldopen" id="foldopen00767" data-start="{" data-end="}">
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a49df733ca32f9cb29c92340add0b8552">  767</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a49df733ca32f9cb29c92340add0b8552">exterior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">squared_exterior_distance</a>(b));</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  }</div>
+</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span></div>
+<div class="foldopen" id="foldopen00781" data-start="{" data-end="}">
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#af2c59eff9a15e1f86b6a8807172c151b">  781</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#af2c59eff9a15e1f86b6a8807172c151b">exterior_distance</a>(<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">Box</a> <span class="keyword">const</span> &amp;b, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    <span class="keywordflow">return</span> std::sqrt(this-&gt;<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">squared_exterior_distance</a>(b, p1, p2));</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>  }</div>
+</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span></div>
+<div class="foldopen" id="foldopen00791" data-start="{" data-end="}">
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a694fb50d6903698f5d5f9d13987f53ab">  791</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a694fb50d6903698f5d5f9d13987f53ab">intersects</a>(<a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r,</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>                  Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#a391682c0ea2b46a003fee07944f8da0a">intersects</a>(*<span class="keyword">this</span>, tol);</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>  }</div>
+</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span></div>
+<div class="foldopen" id="foldopen00804" data-start="{" data-end="}">
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ab630ca8a607097f944f9f5e2fc1fd15c">  804</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ab630ca8a607097f944f9f5e2fc1fd15c">intersect</a>(<a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;c, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;f,</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>                 Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#a7a4457fb3015b8e370ff99f553469730">intersect</a>(*<span class="keyword">this</span>, c, f, tol);</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>  }</div>
+</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span></div>
+<div class="foldopen" id="foldopen00818" data-start="{" data-end="}">
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a7849f201791853d4ab809eb1b0cb38b2">  818</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a7849f201791853d4ab809eb1b0cb38b2">squared_interior_distance</a>(</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r,</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#a962399209b88df906673d9da7662205c">squared_interior_distance</a>(*<span class="keyword">this</span>, tol);</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>  }</div>
+</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span></div>
+<div class="foldopen" id="foldopen00835" data-start="{" data-end="}">
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a1e2f77f0b2d374d25b17c70dbfd78fca">  835</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a1e2f77f0b2d374d25b17c70dbfd78fca">squared_interior_distance</a>(</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2,</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#a962399209b88df906673d9da7662205c">squared_interior_distance</a>(*<span class="keyword">this</span>, p2, p1, tol);</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>  }</div>
+</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span></div>
+<div class="foldopen" id="foldopen00850" data-start="{" data-end="}">
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a306abba988105093bd1cc2296aa85237">  850</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a306abba988105093bd1cc2296aa85237">interior_distance</a>(</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r,</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#ae571aac39cddd4de236ed8a8eb1df532">interior_distance</a>(*<span class="keyword">this</span>, tol);</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>  }</div>
+</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span></div>
+<div class="foldopen" id="foldopen00867" data-start="{" data-end="}">
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aafbe492da59e218d067c084589abe137">  867</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aafbe492da59e218d067c084589abe137">interior_distance</a>(</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2,</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#ae571aac39cddd4de236ed8a8eb1df532">interior_distance</a>(*<span class="keyword">this</span>, p2, p1, tol);</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>  }</div>
+</div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span></div>
+<div class="foldopen" id="foldopen00882" data-start="{" data-end="}">
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a142bd0fd8745d6284d0d84528eb43a16">  882</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a142bd0fd8745d6284d0d84528eb43a16">squared_exterior_distance</a>(</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r,</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#a88c56fef08173ab11a0fa99f81be0063">squared_exterior_distance</a>(*<span class="keyword">this</span>, tol);</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>  }</div>
+</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span></div>
+<div class="foldopen" id="foldopen00897" data-start="{" data-end="}">
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a272677adae2b85d99e51704216382cf9">  897</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a272677adae2b85d99e51704216382cf9">squared_exterior_distance</a>(</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2,</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#a88c56fef08173ab11a0fa99f81be0063">squared_exterior_distance</a>(*<span class="keyword">this</span>, p2, p1, tol);</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>  }</div>
+</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span></div>
+<div class="foldopen" id="foldopen00912" data-start="{" data-end="}">
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#ae84ef7949424dcff6185aac6215ef6fb">  912</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#ae84ef7949424dcff6185aac6215ef6fb">exterior_distance</a>(</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r,</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#acebca238ce7c0ea4b77c3848c52dfe75">exterior_distance</a>(*<span class="keyword">this</span>, tol);</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>  }</div>
+</div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span></div>
+<div class="foldopen" id="foldopen00929" data-start="{" data-end="}">
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#a27a6b1f2b611b5aedf60cf815613adde">  929</a></span>  Real <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#a27a6b1f2b611b5aedf60cf815613adde">exterior_distance</a>(</div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>      <a class="code hl_class" href="class_a_a_b_btree_1_1_ray.html">Ray&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;r, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p1, <a class="code hl_typedef" href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">Point</a> &amp;p2,</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>      Real tol = Eigen::NumTraits&lt;Real&gt;::dummy_precision())<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>    <span class="keywordflow">return</span> r.<a class="code hl_function" href="class_a_a_b_btree_1_1_ray.html#acebca238ce7c0ea4b77c3848c52dfe75">exterior_distance</a>(*<span class="keyword">this</span>, p2, p1, tol);</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>  }</div>
+</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span></div>
+<div class="foldopen" id="foldopen00939" data-start="{" data-end="}">
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno"><a class="line" href="class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9">  939</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9">print</a>(std::ostream &amp;os)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>    os &lt;&lt; <span class="stringliteral">&quot;BOX INFO&quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>       &lt;&lt; <span class="stringliteral">&quot;\tmin = &quot;</span> &lt;&lt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">m_min</a>.transpose() &lt;&lt; std::endl</div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>       &lt;&lt; <span class="stringliteral">&quot;\tmax = &quot;</span> &lt;&lt; <a class="code hl_variable" href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">m_max</a>.transpose() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>  }</div>
+</div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span> </div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>}; <span class="comment">// class Box</span></div>
+</div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span></div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span><span class="keyword">template</span> &lt;std::<span class="keywordtype">float</span>ing_po<span class="keywordtype">int</span> Real, Integer N&gt;</div>
+<div class="foldopen" id="foldopen00955" data-start="{" data-end="}">
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno"><a class="line" href="namespace_a_a_b_btree.html#a32285b9b38e8e5e4b3aae2a54764240f">  955</a></span>std::ostream &amp;<a class="code hl_function" href="namespace_a_a_b_btree.html#a32285b9b38e8e5e4b3aae2a54764240f">operator&lt;&lt;</a>(std::ostream &amp;os, <a class="code hl_class" href="class_a_a_b_btree_1_1_box.html">Box&lt;Real, N&gt;</a> <span class="keyword">const</span> &amp;b) {</div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>  b.<a class="code hl_function" href="class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9">print</a>(os);</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>  <span class="keywordflow">return</span> os;</div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>}</div>
+</div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span> </div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>} <span class="comment">// namespace AABBtree</span></div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span> </div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="preprocessor">#endif </span><span class="comment">// INCLUDE_AABBTREE_BOX_HH</span></div>
+<div class="ttc" id="a_ray_8hh_html"><div class="ttname"><a href="_ray_8hh.html">Ray.hh</a></div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html">AABBtree::Box</a></div><div class="ttdoc">A class representing an axis-aligned bounding box (AABB) in N-dimensional space.</div><div class="ttdef"><b>Definition</b> Box.hh:50</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a05545fb6a0034d9e37cacaefd338bc52"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a05545fb6a0034d9e37cacaefd338bc52">AABBtree::Box::extend</a></div><div class="ttdeci">Box &amp; extend(Point const &amp;p)</div><div class="ttdef"><b>Definition</b> Box.hh:502</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a06568741d1468838bb35db785e578791"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791">AABBtree::Box::Box</a></div><div class="ttdeci">Box()</div><div class="ttdef"><b>Definition</b> Box.hh:74</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a07998837c27fc8fecb1db11a95b4b3d3"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a07998837c27fc8fecb1db11a95b4b3d3">AABBtree::Box::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:656</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a0940a8a4182bf2d6b0d17f3462448b51"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a0940a8a4182bf2d6b0d17f3462448b51">AABBtree::Box::extend</a></div><div class="ttdeci">Box &amp; extend(Box const &amp;b)</div><div class="ttdef"><b>Definition</b> Box.hh:514</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a0cd1c3186ed4cf1daefdaca118e935e9"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a0cd1c3186ed4cf1daefdaca118e935e9">AABBtree::Box::m_max</a></div><div class="ttdeci">Point m_max</div><div class="ttdef"><b>Definition</b> Box.hh:61</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a0dfab5d13334fbf33398465886aba3c8"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a0dfab5d13334fbf33398465886aba3c8">AABBtree::Box::transformed</a></div><div class="ttdeci">Box transformed(Transform const &amp;t) const</div><div class="ttdef"><b>Definition</b> Box.hh:404</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a0e6f275a1d0cee9c0db2b7086f8927bc"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a0e6f275a1d0cee9c0db2b7086f8927bc">AABBtree::Box::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:594</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a11cf9fbd6bccc839e18618d768c5d4d2"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a11cf9fbd6bccc839e18618d768c5d4d2">AABBtree::Box::set_degenerate</a></div><div class="ttdeci">void set_degenerate(Point const &amp;p)</div><div class="ttdef"><b>Definition</b> Box.hh:316</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a14020411b85f83053bca13c2e177861b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a14020411b85f83053bca13c2e177861b">AABBtree::Box::is_empty</a></div><div class="ttdeci">bool is_empty() const</div><div class="ttdef"><b>Definition</b> Box.hh:204</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a142bd0fd8745d6284d0d84528eb43a16"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a142bd0fd8745d6284d0d84528eb43a16">AABBtree::Box::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Ray&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:882</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a1a4622e018649340aa30a861ca99a498"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a1a4622e018649340aa30a861ca99a498">AABBtree::Box::quasi_intersects</a></div><div class="ttdeci">bool quasi_intersects(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:482</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a1ab47e5b75897380957bb3c21cf1972f"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a1ab47e5b75897380957bb3c21cf1972f">AABBtree::Box::is_approx</a></div><div class="ttdeci">bool is_approx(Box const &amp;b, Real const tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:213</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a1e2f77f0b2d374d25b17c70dbfd78fca"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a1e2f77f0b2d374d25b17c70dbfd78fca">AABBtree::Box::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Ray&lt; Real, N &gt; const &amp;r, Point &amp;p1, Point &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:835</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a272677adae2b85d99e51704216382cf9"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a272677adae2b85d99e51704216382cf9">AABBtree::Box::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Ray&lt; Real, N &gt; const &amp;r, Point &amp;p1, Point &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:897</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a27a6b1f2b611b5aedf60cf815613adde"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a27a6b1f2b611b5aedf60cf815613adde">AABBtree::Box::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Ray&lt; Real, N &gt; const &amp;r, Point &amp;p1, Point &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:929</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a2d198000f94d2312a92c732f01f91f8f"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a2d198000f94d2312a92c732f01f91f8f">AABBtree::Box::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Box const &amp;b, Point &amp;p1, Point &amp;p2) const</div><div class="ttdef"><b>Definition</b> Box.hh:753</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a306abba988105093bd1cc2296aa85237"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a306abba988105093bd1cc2296aa85237">AABBtree::Box::interior_distance</a></div><div class="ttdeci">Real interior_distance(Ray&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:850</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a311d11935b5d1aa59bbde5490b39f5ce"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a311d11935b5d1aa59bbde5490b39f5ce">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Real const x_min, Real const y_min, Real const x_max, Real const y_max)</div><div class="ttdef"><b>Definition</b> Box.hh:116</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a347eade35e84554bf4014a9df3f29b51"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a347eade35e84554bf4014a9df3f29b51">AABBtree::Box::baricenter</a></div><div class="ttdeci">Real baricenter(Integer i) const</div><div class="ttdef"><b>Definition</b> Box.hh:280</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a353b258da7f59f229b6cbb0f7a9e0af5"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a353b258da7f59f229b6cbb0f7a9e0af5">AABBtree::Box::reorder</a></div><div class="ttdeci">void reorder()</div><div class="ttdef"><b>Definition</b> Box.hh:191</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a38313488d4e0aedc3a31a6d7884207f3"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a38313488d4e0aedc3a31a6d7884207f3">AABBtree::Box::set_empty</a></div><div class="ttdeci">void set_empty()</div><div class="ttdef"><b>Definition</b> Box.hh:324</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a39272fe17a5e25d25fe34280cecb3691"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a39272fe17a5e25d25fe34280cecb3691">AABBtree::Box::is_degenerate</a></div><div class="ttdeci">bool is_degenerate(Real const tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:223</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a3ec28784b55c73ce776206757f0f0f36"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a3ec28784b55c73ce776206757f0f0f36">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Real const x_min, Real const x_max)</div><div class="ttdef"><b>Definition</b> Box.hh:105</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a41217ce3aabe0710ce4aa966ff97eb14"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a41217ce3aabe0710ce4aa966ff97eb14">AABBtree::Box::contains</a></div><div class="ttdeci">bool contains(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:492</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a49df733ca32f9cb29c92340add0b8552"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a49df733ca32f9cb29c92340add0b8552">AABBtree::Box::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:767</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a4b3703f9cb73b8fb6607764f7e7fd16b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a4b3703f9cb73b8fb6607764f7e7fd16b">AABBtree::Box::surface</a></div><div class="ttdeci">Real surface() const</div><div class="ttdef"><b>Definition</b> Box.hh:292</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a5249a23c4c84d82957caee3f326004e3"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a5249a23c4c84d82957caee3f326004e3">AABBtree::Box::translate</a></div><div class="ttdeci">Box &amp; translate(Vector const &amp;t)</div><div class="ttdef"><b>Definition</b> Box.hh:383</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a55b38df4a999605c3c42698b68f68364"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a55b38df4a999605c3c42698b68f68364">AABBtree::Box::which_side</a></div><div class="ttdeci">Side which_side(Real const x, Real const tol, Integer const dim) const</div><div class="ttdef"><b>Definition</b> Box.hh:438</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a5906b2531058fa9deeb111cd14dfdb83"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a5906b2531058fa9deeb111cd14dfdb83">AABBtree::Box::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Point const &amp;p, Point &amp;f) const</div><div class="ttdef"><b>Definition</b> Box.hh:614</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a5e3331c16032b40e5137dcbabc1a4da2"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2">AABBtree::Box::cast</a></div><div class="ttdeci">Box&lt; NewReal, N &gt; cast() const</div><div class="ttdef"><b>Definition</b> Box.hh:158</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a5e5a9c7e964324a92228701571111655"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a5e5a9c7e964324a92228701571111655">AABBtree::Box::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:528</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a64a1656c5923bbdfb2e4f791c9738a08"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a64a1656c5923bbdfb2e4f791c9738a08">AABBtree::Box::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Box const &amp;b, Point &amp;p1, Point &amp;p2) const</div><div class="ttdef"><b>Definition</b> Box.hh:683</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a682218b415157b4f0ed7ca04d8aba918"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a682218b415157b4f0ed7ca04d8aba918">AABBtree::Box::interior_distance</a></div><div class="ttdeci">Real interior_distance(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:569</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a694fb50d6903698f5d5f9d13987f53ab"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a694fb50d6903698f5d5f9d13987f53ab">AABBtree::Box::intersects</a></div><div class="ttdeci">bool intersects(Ray&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:791</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a6bb8ff31950aa877535af613b1eaf398"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a6bb8ff31950aa877535af613b1eaf398">AABBtree::Box::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:631</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a72db6bb99930ac21bc29f7fd0ac28f1b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a72db6bb99930ac21bc29f7fd0ac28f1b">AABBtree::Box::sort_axes_length</a></div><div class="ttdeci">void sort_axes_length(Vector &amp;sizes, Eigen::Vector&lt; Integer, N &gt; &amp;ipos) const</div><div class="ttdef"><b>Definition</b> Box.hh:262</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a77818e24d0375dc6bd8dfda6da234a6b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a77818e24d0375dc6bd8dfda6da234a6b">AABBtree::Box::operator=</a></div><div class="ttdeci">Box &amp; operator=(Box const &amp;b)=default</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a7849f201791853d4ab809eb1b0cb38b2"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a7849f201791853d4ab809eb1b0cb38b2">AABBtree::Box::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Ray&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:818</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a7f35349a4abeee59e639d6ca1a87ca66"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a7f35349a4abeee59e639d6ca1a87ca66">AABBtree::Box::contains</a></div><div class="ttdeci">bool contains(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:459</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a867a5de14734e6afb543feaf550432e2"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a867a5de14734e6afb543feaf550432e2">AABBtree::Box::interior_distance</a></div><div class="ttdeci">Real interior_distance(Point const &amp;p, Point &amp;c) const</div><div class="ttdef"><b>Definition</b> Box.hh:582</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a879b322aa2867ade77e5bd22a7a88b4c"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a879b322aa2867ade77e5bd22a7a88b4c">AABBtree::Box::min</a></div><div class="ttdeci">Point const &amp; min() const</div><div class="ttdef"><b>Definition</b> Box.hh:167</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a88e10afbd89ac29964576b8ae8b9c6ec"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a88e10afbd89ac29964576b8ae8b9c6ec">AABBtree::Box::transform</a></div><div class="ttdeci">Box &amp; transform(Transform const &amp;t)</div><div class="ttdef"><b>Definition</b> Box.hh:420</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a8ff722bc466a483458aafdb1a5a3f8e7"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a8ff722bc466a483458aafdb1a5a3f8e7">AABBtree::Box::BoxUniquePtrList</a></div><div class="ttdeci">AABBtree::BoxUniquePtrList&lt; Real, N &gt; BoxUniquePtrList</div><div class="ttdef"><b>Definition</b> Box.hh:56</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a918395e6ce294ea3e15f7626fe1ca9b9"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a918395e6ce294ea3e15f7626fe1ca9b9">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Box const &amp;b)</div><div class="ttdef"><b>Definition</b> Box.hh:80</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a964eb75aa54e1e49314965b06dc557f3"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a964eb75aa54e1e49314965b06dc557f3">AABBtree::Box::~Box</a></div><div class="ttdeci">~Box()=default</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a96d1b4f32c26c0eed468571ab55678d3"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a96d1b4f32c26c0eed468571ab55678d3">AABBtree::Box::Vector</a></div><div class="ttdeci">AABBtree::Vector&lt; Real, N &gt; Vector</div><div class="ttdef"><b>Definition</b> Box.hh:54</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_a981f263990a59ff5f06a794de7908c44"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#a981f263990a59ff5f06a794de7908c44">AABBtree::Box::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Point const &amp;p, Point &amp;c) const</div><div class="ttdef"><b>Definition</b> Box.hh:552</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aa4518bac6771168aa0037cf0825ca36b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aa4518bac6771168aa0037cf0825ca36b">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Point const &amp;p)</div><div class="ttdef"><b>Definition</b> Box.hh:97</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aa4f2bec5f0a3abe0c8a8babfc1a88b5a"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aa4f2bec5f0a3abe0c8a8babfc1a88b5a">AABBtree::Box::quasi_intersects</a></div><div class="ttdeci">bool quasi_intersects(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:348</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aa5b990da2a46a32808ad12d4f2db03d8"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aa5b990da2a46a32808ad12d4f2db03d8">AABBtree::Box::baricenter</a></div><div class="ttdeci">Point baricenter() const</div><div class="ttdef"><b>Definition</b> Box.hh:273</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aa61b7be5d4a5682ab6adbf9a711054d1"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aa61b7be5d4a5682ab6adbf9a711054d1">AABBtree::Box::intersect</a></div><div class="ttdeci">bool intersect(Box const &amp;b_in, Box &amp;b_out) const</div><div class="ttdef"><b>Definition</b> Box.hh:363</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aab02d8642ffdeb9841964ef8a7dd2e3a"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aab02d8642ffdeb9841964ef8a7dd2e3a">AABBtree::Box::BoxUniquePtr</a></div><div class="ttdeci">AABBtree::BoxUniquePtr&lt; Real, N &gt; BoxUniquePtr</div><div class="ttdef"><b>Definition</b> Box.hh:55</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aafbe492da59e218d067c084589abe137"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aafbe492da59e218d067c084589abe137">AABBtree::Box::interior_distance</a></div><div class="ttdeci">Real interior_distance(Ray&lt; Real, N &gt; const &amp;r, Point &amp;p1, Point &amp;p2, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:867</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ab2cfd36b0b72269a19d501836eb2cda4"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ab2cfd36b0b72269a19d501836eb2cda4">AABBtree::Box::longest_axis</a></div><div class="ttdeci">Integer longest_axis() const</div><div class="ttdef"><b>Definition</b> Box.hh:232</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ab630ca8a607097f944f9f5e2fc1fd15c"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ab630ca8a607097f944f9f5e2fc1fd15c">AABBtree::Box::intersect</a></div><div class="ttdeci">bool intersect(Ray&lt; Real, N &gt; const &amp;r, Point &amp;c, Point &amp;f, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:804</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_acaa7ddaac7d9b33acc1348aabce9b3b1"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#acaa7ddaac7d9b33acc1348aabce9b3b1">AABBtree::Box::Point</a></div><div class="ttdeci">AABBtree::Point&lt; Real, N &gt; Point</div><div class="ttdef"><b>Definition</b> Box.hh:53</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_acd53c378a51bc5dc94b4eadde674d133"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133">AABBtree::Box::Side</a></div><div class="ttdeci">Side</div><div class="ttdef"><b>Definition</b> Box.hh:428</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_acd53c378a51bc5dc94b4eadde674d133a21507b40c80068eda19865706fdc2403"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a21507b40c80068eda19865706fdc2403">AABBtree::Box::Side::RIGHT</a></div><div class="ttdeci">@ RIGHT</div><div class="ttdef"><b>Definition</b> Box.hh:428</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a554a7418c4c0dafd902ebd377b87c80c">AABBtree::Box::Side::INSIDE</a></div><div class="ttdeci">@ INSIDE</div><div class="ttdef"><b>Definition</b> Box.hh:428</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#acd53c378a51bc5dc94b4eadde674d133a684d325a7303f52e64011467ff5c5758">AABBtree::Box::Side::LEFT</a></div><div class="ttdeci">@ LEFT</div><div class="ttdef"><b>Definition</b> Box.hh:428</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_acfe143f5c9cc9f87ef105fd859081f37"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#acfe143f5c9cc9f87ef105fd859081f37">AABBtree::Box::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:735</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ad076e3e79de9ab72fdf7b709d7f8fdb7"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ad076e3e79de9ab72fdf7b709d7f8fdb7">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Point const &amp;t_min, Point const &amp;t_max)</div><div class="ttdef"><b>Definition</b> Box.hh:91</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ad91f3a7823384249a73e2d35b3f6865d"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ad91f3a7823384249a73e2d35b3f6865d">AABBtree::Box::m_min</a></div><div class="ttdeci">Point m_min</div><div class="ttdef"><b>Definition</b> Box.hh:59</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ada2b96790c11ba4934a72c8e60c6e90f"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ada2b96790c11ba4934a72c8e60c6e90f">AABBtree::Box::longest_axis</a></div><div class="ttdeci">Integer longest_axis(Real &amp;max_length, Real &amp;mid_point) const</div><div class="ttdef"><b>Definition</b> Box.hh:244</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ae47ee2a4b0d7bbbe598b4fbdc997dc7a"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ae47ee2a4b0d7bbbe598b4fbdc997dc7a">AABBtree::Box::min</a></div><div class="ttdeci">Point &amp; min()</div><div class="ttdef"><b>Definition</b> Box.hh:173</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ae73f76a2e70d558c718f2c04348c919f"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ae73f76a2e70d558c718f2c04348c919f">AABBtree::Box::max</a></div><div class="ttdeci">Point &amp; max()</div><div class="ttdef"><b>Definition</b> Box.hh:185</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ae84ef7949424dcff6185aac6215ef6fb"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ae84ef7949424dcff6185aac6215ef6fb">AABBtree::Box::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Ray&lt; Real, N &gt; const &amp;r, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Box.hh:912</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_ae9ec87df4ce83e41baecf7414c78761e"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#ae9ec87df4ce83e41baecf7414c78761e">AABBtree::Box::diagonal</a></div><div class="ttdeci">Vector diagonal() const</div><div class="ttdef"><b>Definition</b> Box.hh:310</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aeae246969fc7f7d2799e16938ad9f477"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aeae246969fc7f7d2799e16938ad9f477">AABBtree::Box::interior_distance</a></div><div class="ttdeci">Real interior_distance(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:709</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aee189b04acb1fc71a2b58ad26f459ce9"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aee189b04acb1fc71a2b58ad26f459ce9">AABBtree::Box::print</a></div><div class="ttdeci">void print(std::ostream &amp;os) const</div><div class="ttdef"><b>Definition</b> Box.hh:939</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aefcb301f705aa851978432ca2d0b4aff"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aefcb301f705aa851978432ca2d0b4aff">AABBtree::Box::intersects</a></div><div class="ttdeci">bool intersects(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:334</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_aefdb702d97615acdeaa7714feb3df15e"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#aefdb702d97615acdeaa7714feb3df15e">AABBtree::Box::intersects</a></div><div class="ttdeci">bool intersects(Point const &amp;p) const</div><div class="ttdef"><b>Definition</b> Box.hh:470</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_af2c59eff9a15e1f86b6a8807172c151b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#af2c59eff9a15e1f86b6a8807172c151b">AABBtree::Box::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Box const &amp;b, Point &amp;p1, Point &amp;p2) const</div><div class="ttdef"><b>Definition</b> Box.hh:781</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_af324631006940c5f2d4e8e349ed3ed3d"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#af324631006940c5f2d4e8e349ed3ed3d">AABBtree::Box::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Point const &amp;p, Point &amp;f) const</div><div class="ttdef"><b>Definition</b> Box.hh:644</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_af3422d6b20966e42eb57f0695d0dcf5b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#af3422d6b20966e42eb57f0695d0dcf5b">AABBtree::Box::max</a></div><div class="ttdeci">Point const &amp; max() const</div><div class="ttdef"><b>Definition</b> Box.hh:179</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_af3b59d9166d94a31b4daa465f552c5a1"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#af3b59d9166d94a31b4daa465f552c5a1">AABBtree::Box::interior_distance</a></div><div class="ttdeci">Real interior_distance(Box const &amp;b, Point &amp;p1, Point &amp;p2) const</div><div class="ttdef"><b>Definition</b> Box.hh:723</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_af428580546b8f2e490a69659e25cfade"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#af428580546b8f2e490a69659e25cfade">AABBtree::Box::volume</a></div><div class="ttdeci">Real volume() const</div><div class="ttdef"><b>Definition</b> Box.hh:286</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_afb467ec08cdc4f956c686f758ea5a981"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#afb467ec08cdc4f956c686f758ea5a981">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Box&lt; OtherReal, N &gt; const &amp;b)</div><div class="ttdef"><b>Definition</b> Box.hh:142</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_afbcf6ddb81f08a49e99cf5b24bb736e0"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#afbcf6ddb81f08a49e99cf5b24bb736e0">AABBtree::Box::Box</a></div><div class="ttdeci">Box(Real const x_min, Real const y_min, Real const z_min, Real const x_max, Real const y_max, Real const z_max)</div><div class="ttdef"><b>Definition</b> Box.hh:130</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_afcd84231074643798ed905173ad1230b"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#afcd84231074643798ed905173ad1230b">AABBtree::Box::translated</a></div><div class="ttdeci">Box translated(Vector const &amp;t) const</div><div class="ttdef"><b>Definition</b> Box.hh:394</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_box_html_affb0818565339d76daeb751e0cf39142"><div class="ttname"><a href="class_a_a_b_btree_1_1_box.html#affb0818565339d76daeb751e0cf39142">AABBtree::Box::merged</a></div><div class="ttdeci">Box merged(Box const &amp;b) const</div><div class="ttdef"><b>Definition</b> Box.hh:374</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html">AABBtree::Ray</a></div><div class="ttdoc">A mathematical ray in N-dimensional space.</div><div class="ttdef"><b>Definition</b> Ray.hh:37</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html_a391682c0ea2b46a003fee07944f8da0a"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html#a391682c0ea2b46a003fee07944f8da0a">AABBtree::Ray::intersects</a></div><div class="ttdeci">bool intersects(Box const &amp;b, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Ray.hh:261</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html_a7a4457fb3015b8e370ff99f553469730"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html#a7a4457fb3015b8e370ff99f553469730">AABBtree::Ray::intersect</a></div><div class="ttdeci">bool intersect(Box const &amp;b, Point &amp;c, Point &amp;f, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Ray.hh:276</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html_a88c56fef08173ab11a0fa99f81be0063"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html#a88c56fef08173ab11a0fa99f81be0063">AABBtree::Ray::squared_exterior_distance</a></div><div class="ttdeci">Real squared_exterior_distance(Box const &amp;b, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Ray.hh:413</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html_a962399209b88df906673d9da7662205c"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html#a962399209b88df906673d9da7662205c">AABBtree::Ray::squared_interior_distance</a></div><div class="ttdeci">Real squared_interior_distance(Box const &amp;b, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Ray.hh:351</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html_acebca238ce7c0ea4b77c3848c52dfe75"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html#acebca238ce7c0ea4b77c3848c52dfe75">AABBtree::Ray::exterior_distance</a></div><div class="ttdeci">Real exterior_distance(Box const &amp;b, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Ray.hh:444</div></div>
+<div class="ttc" id="aclass_a_a_b_btree_1_1_ray_html_ae571aac39cddd4de236ed8a8eb1df532"><div class="ttname"><a href="class_a_a_b_btree_1_1_ray.html#ae571aac39cddd4de236ed8a8eb1df532">AABBtree::Ray::interior_distance</a></div><div class="ttdeci">Real interior_distance(Box const &amp;b, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const</div><div class="ttdef"><b>Definition</b> Ray.hh:383</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html"><div class="ttname"><a href="namespace_a_a_b_btree.html">AABBtree</a></div><div class="ttdoc">Namespace for the AABBtree library.</div><div class="ttdef"><b>Definition</b> AABBtree.hh:107</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html_a3076e2acccd9d95fea5910dea68e2fa9"><div class="ttname"><a href="namespace_a_a_b_btree.html#a3076e2acccd9d95fea5910dea68e2fa9">AABBtree::Point</a></div><div class="ttdeci">Eigen::Vector&lt; Real, N &gt; Point</div><div class="ttdef"><b>Definition</b> AABBtree.hh:133</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html_a32285b9b38e8e5e4b3aae2a54764240f"><div class="ttname"><a href="namespace_a_a_b_btree.html#a32285b9b38e8e5e4b3aae2a54764240f">AABBtree::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, Box&lt; Real, N &gt; const &amp;b)</div><div class="ttdef"><b>Definition</b> Box.hh:955</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html_a9e5702de99d3fcf4ad607f3e85584e62"><div class="ttname"><a href="namespace_a_a_b_btree.html#a9e5702de99d3fcf4ad607f3e85584e62">AABBtree::BoxUniquePtr</a></div><div class="ttdeci">std::unique_ptr&lt; Box&lt; Real, N &gt; &gt; BoxUniquePtr</div><div class="ttdef"><b>Definition</b> AABBtree.hh:129</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html_ab51fda1565368b57db9aa1db9f5cd623"><div class="ttname"><a href="namespace_a_a_b_btree.html#ab51fda1565368b57db9aa1db9f5cd623">AABBtree::BoxUniquePtrList</a></div><div class="ttdeci">std::vector&lt; BoxUniquePtr&lt; Real, N &gt; &gt; BoxUniquePtrList</div><div class="ttdef"><b>Definition</b> AABBtree.hh:131</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html_aec5095c0d6cc99712196e5eb635249d5"><div class="ttname"><a href="namespace_a_a_b_btree.html#aec5095c0d6cc99712196e5eb635249d5">AABBtree::Vector</a></div><div class="ttdeci">Eigen::Vector&lt; Real, N &gt; Vector</div><div class="ttdef"><b>Definition</b> AABBtree.hh:132</div></div>
+<div class="ttc" id="anamespace_a_a_b_btree_html_afe8ed3e31de700bac488261556f28fb2"><div class="ttname"><a href="namespace_a_a_b_btree.html#afe8ed3e31de700bac488261556f28fb2">AABBtree::Integer</a></div><div class="ttdeci">AABBTREE_DEFAULT_INTEGER_TYPE Integer</div><div class="ttdoc">The Integer type used in the AABBtree class.</div><div class="ttdef"><b>Definition</b> AABBtree.hh:115</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a href="dir_f7e0cc83eaf6361991b75ed336e873cc.html">AABBtree</a></li><li class="navelem"><a href="_box_8hh.html">Box.hh</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

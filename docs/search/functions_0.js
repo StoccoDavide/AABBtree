@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['baricenter_0',['baricenter',['../class_a_a_b_btree_1_1_box.html#aa5b990da2a46a32808ad12d4f2db03d8',1,'AABBtree::Box::baricenter() const'],['../class_a_a_b_btree_1_1_box.html#a347eade35e84554bf4014a9df3f29b51',1,'AABBtree::Box::baricenter(Integer i) const']]],
-  ['box_1',['Box',['../class_a_a_b_btree_1_1_box.html#a06568741d1468838bb35db785e578791',1,'AABBtree::Box::Box()'],['../class_a_a_b_btree_1_1_box.html#a918395e6ce294ea3e15f7626fe1ca9b9',1,'AABBtree::Box::Box(Box const &amp;b)'],['../class_a_a_b_btree_1_1_box.html#ad076e3e79de9ab72fdf7b709d7f8fdb7',1,'AABBtree::Box::Box(Point const &amp;t_min, Point const &amp;t_max)'],['../class_a_a_b_btree_1_1_box.html#aa4518bac6771168aa0037cf0825ca36b',1,'AABBtree::Box::Box(Point const &amp;p)'],['../class_a_a_b_btree_1_1_box.html#a59dda618a8e7748be8328384a5231d90',1,'AABBtree::Box::Box(Real const x_min, Real const x_max)'],['../class_a_a_b_btree_1_1_box.html#a443081bf3e484ad2c08e1e22dd75d41e',1,'AABBtree::Box::Box(Real const x_min, Real const y_min, Real const x_max, Real const y_max)'],['../class_a_a_b_btree_1_1_box.html#a2182892322aa8b5286c728e33dc7fbb7',1,'AABBtree::Box::Box(Real const x_min, Real const y_min, Real const z_min, Real const x_max, Real const y_max, Real const z_max)'],['../class_a_a_b_btree_1_1_box.html#afb467ec08cdc4f956c686f758ea5a981',1,'AABBtree::Box::Box(Box&lt; OtherReal, N &gt; const &amp;b)']]],
-  ['box_2',['box',['../class_a_a_b_btree_1_1_tree.html#a62beb725533fe539c507c9f9784d8902',1,'AABBtree::Tree']]],
-  ['boxes_3',['boxes',['../class_a_a_b_btree_1_1_tree.html#ae2dd1d764202f1fad879db777c2c9545',1,'AABBtree::Tree']]],
-  ['build_4',['build',['../class_a_a_b_btree_1_1_tree.html#a0fd40fa4b647373fff5867aa61295e6e',1,'AABBtree::Tree::build(std::unique_ptr&lt; BoxUniquePtrList &gt; boxes_ptr)'],['../class_a_a_b_btree_1_1_tree.html#a45c88efe5609636721e7bf2c4f5eb23d',1,'AABBtree::Tree::build()']]]
+  ['as_5fref_0',['as_ref',['../namespace_a_a_b_btree_1_1detail.html#a61ed0d0404565bdf137b8d28591d1ad9',1,'AABBtree::detail']]],
+  ['assemble_5fpart_1',['assemble_part',['../class_a_a_b_btree_1_1_tree.html#a9fee97675739b74e87a25bf324c33802',1,'AABBtree::Tree']]],
+  ['atomic_5fmin_2',['atomic_min',['../class_a_a_b_btree_1_1_tree.html#a69a689630fd2e25eb8aee2f0bb6ed58a',1,'AABBtree::Tree']]]
 ];

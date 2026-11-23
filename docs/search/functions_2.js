@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['depth_0',['depth',['../class_a_a_b_btree_1_1_tree.html#a8a159ce0f28a69b58a63ea09abac3150',1,'AABBtree::Tree']]],
-  ['diagonal_1',['diagonal',['../class_a_a_b_btree_1_1_box.html#ae9ec87df4ce83e41baecf7414c78761e',1,'AABBtree::Box']]],
-  ['direction_2',['direction',['../class_a_a_b_btree_1_1_ray.html#a57a927cf1257d6f3e531d60afa1afd1a',1,'AABBtree::Ray::direction()'],['../class_a_a_b_btree_1_1_ray.html#a1b6a7a472a1e036473f732691755e635',1,'AABBtree::Ray::direction() const']]],
-  ['distance_3',['distance',['../class_a_a_b_btree_1_1_ray.html#a0058d4e306ea6f8623601dcb8fb12f1f',1,'AABBtree::Ray::distance(Point const &amp;p, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const'],['../class_a_a_b_btree_1_1_ray.html#aa0b54cdf32b85ee2051649ea813b5dec',1,'AABBtree::Ray::distance(Point const &amp;p, Point &amp;c, Real tol=Eigen::NumTraits&lt; Real &gt;::dummy_precision()) const'],['../class_a_a_b_btree_1_1_tree.html#ac1aa9bbca13e25ebcea21dcf991fc248',1,'AABBtree::Tree::distance(Object const &amp;obj, IndexSet &amp;candidates) const'],['../class_a_a_b_btree_1_1_tree.html#ad1deed7eb803e029487abc3e30d4c608',1,'AABBtree::Tree::distance(Tree const &amp;tree, IndexMap &amp;candidates) const']]]
+  ['cast_0',['cast',['../class_a_a_b_btree_1_1_box.html#a5e3331c16032b40e5137dcbabc1a4da2',1,'AABBtree::Box::cast()'],['../class_a_a_b_btree_1_1_ray.html#a89a77a716329ceebfa089e4d2b28f102',1,'AABBtree::Ray::cast()']]],
+  ['clear_1',['clear',['../class_a_a_b_btree_1_1_tree.html#a5026296ed41a346a5a6a774e7b0ef481',1,'AABBtree::Tree']]],
+  ['clip_2',['clip',['../class_a_a_b_btree_1_1_ray.html#adadd1771c9bb7ba9feab0bdc083f42a0',1,'AABBtree::Ray']]],
+  ['closest_3',['closest',['../class_a_a_b_btree_1_1_tree.html#a5e4410d889ff610c22e25b940631e0a4',1,'AABBtree::Tree']]],
+  ['closest_5fbatch_4',['closest_batch',['../class_a_a_b_btree_1_1_tree.html#a27e4b10818dacea87fd04bdb27c06e91',1,'AABBtree::Tree']]],
+  ['closest_5fimpl_5',['closest_impl',['../class_a_a_b_btree_1_1_tree.html#a72a3ba4ee7d06f6fbe0038fff4edd01d',1,'AABBtree::Tree']]],
+  ['contains_6',['contains',['../class_a_a_b_btree_1_1_box.html#a7f35349a4abeee59e639d6ca1a87ca66',1,'AABBtree::Box::contains(Point const &amp;p) const'],['../class_a_a_b_btree_1_1_box.html#a41217ce3aabe0710ce4aa966ff97eb14',1,'AABBtree::Box::contains(Box const &amp;b) const'],['../class_a_a_b_btree_1_1_ray.html#a325f762c6151b4e323b27e30137bff02',1,'AABBtree::Ray::contains()']]]
 ];

@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['node_0',['node',['../class_a_a_b_btree_1_1_tree.html#aa9302d1b8ceed5681d7d63c08848d1ec',1,'AABBtree::Tree']]],
-  ['nodes_1',['nodes',['../class_a_a_b_btree_1_1_tree.html#a72b47a92dcabaf12d494767721ca7b3d',1,'AABBtree::Tree']]],
-  ['normalize_2',['normalize',['../class_a_a_b_btree_1_1_ray.html#aa25bacb795453c1f95b9f437f407e8da',1,'AABBtree::Ray']]],
-  ['normalized_3',['normalized',['../class_a_a_b_btree_1_1_ray.html#a48dd596b25be84c2d140cc48ac544f9d',1,'AABBtree::Ray']]]
+  ['load_0',['load',['../class_a_a_b_btree_1_1detail_1_1_relaxed_counter.html#a34d1d527c5ef9667500a5ee98f30e2bf',1,'AABBtree::detail::RelaxedCounter']]],
+  ['long_5fboxes_5fmay_5fmatch_1',['long_boxes_may_match',['../class_a_a_b_btree_1_1_tree.html#a5669ada2ff77ca8f3be155cd1729564f',1,'AABBtree::Tree']]],
+  ['longest_5faxis_2',['longest_axis',['../class_a_a_b_btree_1_1_box.html#ab2cfd36b0b72269a19d501836eb2cda4',1,'AABBtree::Box::longest_axis() const'],['../class_a_a_b_btree_1_1_box.html#ada2b96790c11ba4934a72c8e60c6e90f',1,'AABBtree::Box::longest_axis(Real &amp;max_length, Real &amp;mid_point) const']]]
 ];
