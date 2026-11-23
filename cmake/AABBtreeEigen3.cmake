@@ -27,4 +27,7 @@ else()
   add_library(Eigen3::Eigen INTERFACE IMPORTED GLOBAL)
   set_target_properties(Eigen3::Eigen PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${eigen3_SOURCE_DIR}")
+  # The downloaded headers are shipped with the AABBtree package, so that its
+  # users do not need to install Eigen separately
+  set(AABBTREE_BUNDLED_EIGEN_DIR "${eigen3_SOURCE_DIR}")
 endif()

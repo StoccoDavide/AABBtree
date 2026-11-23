@@ -162,9 +162,33 @@ install(EXPORT AABBtreeTargets
   DESTINATION ${AABBTREE_INSTALL_CMAKEDIR}
 )
 
+# Two package configurations: one to use AABBtree from this build directory,
+# one for the installed package. They differ in where the bundled Eigen headers
+# are (if Eigen was downloaded): in the download directory, or installed next
+# to the AABBtree headers.
+if(AABBTREE_BUNDLED_EIGEN_DIR)
+  set(AABBTREE_CONFIG_EIGEN_DIR "${AABBTREE_BUNDLED_EIGEN_DIR}")
+else()
+  set(AABBTREE_CONFIG_EIGEN_DIR "")
+endif()
 configure_package_config_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+  INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+if(AABBTREE_BUNDLED_EIGEN_DIR)
+  # Evaluated when the installed package is loaded
+  set(AABBTREE_CONFIG_EIGEN_DIR "\${PACKAGE_PREFIX_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/eigen3")
+  install(DIRECTORY ${AABBTREE_BUNDLED_EIGEN_DIR}/Eigen
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/eigen3)
+  install(FILES ${AABBTREE_BUNDLED_EIGEN_DIR}/COPYING.MPL2
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/eigen3)
+endif()
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/install/AABBtreeConfig.cmake
   INSTALL_DESTINATION ${AABBTREE_INSTALL_CMAKEDIR}
 )
 
@@ -182,7 +206,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/AABBtreeOpenMP.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeOpenMP.cmake COPYONLY)
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/install/AABBtreeConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/AABBtreeConfigVersion.cmake
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AABBtreeOpenMP.cmake
   DESTINATION ${AABBTREE_INSTALL_CMAKEDIR}
